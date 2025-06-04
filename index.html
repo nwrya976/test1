@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تصميم بلاطة مع تسليح (ملف HTML واحد)</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        /* هنا يجي كود الـ CSS اللي جان بملف style.css */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            direction: rtl; /* لاتجاه النص من اليمين لليسار */
+            text-align: right; /* لمحاذاة النص لليمين */
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        h1 {
+            width: 100%;
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        fieldset {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        legend {
+            font-weight: bold;
+            color: #555;
+            padding: 0 10px;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group label {
+            flex: 1;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .input-group input[type="number"] {
+            flex: 2;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .plot-container {
+            flex: 2;
+            min-width: 600px;
+            height: 600px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #eee;
+        }
+
+        /* التجاوبية */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .input-section, .plot-container {
+                min-width: unset;
+                width: 100%;
+            }
+            .input-group {
+                flex-direction: column;
+                align-items: flex-end;
+            }
+            .input-group label, .input-group input {
+                width: 100%;
+                text-align: right;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تصميم بلاطة مع تسليح</h1>
+
+        <div class="input-section">
+            <fieldset>
+                <legend>أبعاد البلاطة (بالسنتمتر)</legend>
+                <div class="input-group">
+                    <label for="lengthX">الطول (X):</label>
+                    <input type="number" id="lengthX" value="600">
+                </div>
+                <div class="input-group">
+                    <label for="widthY">العرض (Y):</label>
+                    <input type="number" id="widthY" value="500">
+                </div>
+                <div class="input-group">
+                    <label for="thicknessZ">السمك (Z):</label>
+                    <input type="number" id="thicknessZ" value="25">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>تسليح سفلي (بالسنتمتر)</legend>
+                <div class="input-group">
+                    <label for="bottomDiaX">قطر X:</label>
+                    <input type="number" id="bottomDiaX" value="1.6" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="bottomDiaY">قطر Y:</label>
+                    <input type="number" id="bottomDiaY" value="1.2" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="bottomSpacingX">تباعد X:</label>
+                    <input type="number" id="bottomSpacingX" value="20">
+                </div>
+                <div class="input-group">
+                    <label for="bottomSpacingY">تباعد Y:</label>
+                    <input type="number" id="bottomSpacingY" value="25">
+                </div>
+                <div class="input-group">
+                    <label for="bottomCover">غطاء خرساني:</label>
+                    <input type="number" id="bottomCover" value="2.5" step="0.1">
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>تسليح علوي (بالسنتمتر)</legend>
+                <div class="input-group">
+                    <label for="topDiaX">قطر X:</label>
+                    <input type="number" id="topDiaX" value="1.2" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="topDiaY">قطر Y:</label>
+                    <input type="number" id="topDiaY" value="1.0" step="0.1">
+                </div>
+                <div class="input-group">
+                    <label for="topSpacingX">تباعد X:</label>
+                    <input type="number" id="topSpacingX" value="25">
+                </div>
+                <div class="input-group">
+                    <label for="topSpacingY">تباعد Y:</label>
+                    <input type="number" id="topSpacingY" value="20">
+                </div>
+                <div class="input-group">
+                    <label for="topCover">غطاء خرساني:</label>
+                    <input type="number" id="topCover" value="2.5" step="0.1">
+                </div>
+            </fieldset>
+
+            <button onclick="drawSlab()">ارسم البلاطة مع التسليح</button>
+        </div>
+
+        <div id="slabPlot" class="plot-container">
+            </div>
+    </div>
+
+    <script>
+        /* هنا يجي كود الـ JavaScript اللي جان بملف script.js */
+
+        // دالة مساعدة لرسم طبقة تسليح (معادلة من كود بايثون)
+        function drawRebarLayer(
+            fig_data, // قائمة البيانات التي سيتم إضافتها إلى الرسم
+            rebar_diameter_x, rebar_diameter_y,
+            spacing_x, spacing_y,
+            z_position,
+            layer_name_prefix,
+            color,
+            length_x, width_y, cover
+        ) {
+            // قضبان باتجاه X
+            let num_rebars_x = Math.floor((width_y - 2 * cover) / spacing_y) + 1;
+            for (let i = 0; i < num_rebars_x; i++) {
+                let y_pos = cover + i * spacing_y;
+                if (y_pos > width_y - cover) { // تأكد من عدم تجاوز الحدود
+                    y_pos = width_y - cover;
+                }
+
+                let x_rebar = [cover, length_x - cover];
+                let y_rebar = [y_pos, y_pos];
+                let z_rebar = [z_position, z_position];
+
+                fig_data.push({
+                    x: x_rebar, y: y_rebar, z: z_rebar,
+                    mode: 'lines',
+                    type: 'scatter3d',
+                    line: { color: color, width: rebar_diameter_x * 4 }, // ضرب في 4 لزيادة وضوح الحجم
+                    name: `${layer_name_prefix} X Rebar ${i + 1}`
+                });
+            }
+
+            // قضبان باتجاه Y
+            let num_rebars_y = Math.floor((length_x - 2 * cover) / spacing_x) + 1;
+            for (let i = 0; i < num_rebars_y; i++) {
+                let x_pos = cover + i * spacing_x;
+                if (x_pos > length_x - cover) { // تأكد من عدم تجاوز الحدود
+                    x_pos = length_x - cover;
+                }
+
+                let y_rebar = [cover, width_y - cover];
+                let x_rebar = [x_pos, x_pos];
+                let z_rebar = [z_position, z_position];
+
+                fig_data.push({
+                    x: x_rebar, y: y_rebar, z: z_rebar,
+                    mode: 'lines',
+                    type: 'scatter3d',
+                    line: { color: color, width: rebar_diameter_y * 4 },
+                    name: `${layer_name_prefix} Y Rebar ${i + 1}`
+                });
+            }
+        }
+
+        // الدالة الرئيسية لرسم البلاطة عند الضغط على الزر
+        function drawSlab() {
+            try {
+                // قراءة قيم المدخلات من حقول HTML
+                const length_x = parseFloat(document.getElementById('lengthX').value);
+                const width_y = parseFloat(document.getElementById('widthY').value);
+                const thickness_z = parseFloat(document.getElementById('thicknessZ').value);
+
+                // حديد التسليح السفلي
+                const bottom_rebar_diameter_x = parseFloat(document.getElementById('bottomDiaX').value);
+                const bottom_rebar_diameter_y = parseFloat(document.getElementById('bottomDiaY').value);
+                const bottom_spacing_x = parseFloat(document.getElementById('bottomSpacingX').value);
+                const bottom_spacing_y = parseFloat(document.getElementById('bottomSpacingY').value);
+                const bottom_cover = parseFloat(document.getElementById('bottomCover').value);
+
+                // حديد التسليح العلوي
+                const top_rebar_diameter_x = parseFloat(document.getElementById('topDiaX').value);
+                const top_rebar_diameter_y = parseFloat(document.getElementById('topDiaY').value);
+                const top_spacing_x = parseFloat(document.getElementById('topSpacingX').value);
+                const top_spacing_y = parseFloat(document.getElementById('topSpacingY').value);
+                const top_cover = parseFloat(document.getElementById('topCover').value);
+
+                // التحقق من القيم المدخلة
+                if (isNaN(length_x) || isNaN(width_y) || isNaN(thickness_z) ||
+                    isNaN(bottom_rebar_diameter_x) || isNaN(bottom_rebar_diameter_y) || isNaN(bottom_spacing_x) || isNaN(bottom_spacing_y) || isNaN(bottom_cover) ||
+                    isNaN(top_rebar_diameter_x) || isNaN(top_rebar_diameter_y) || isNaN(top_spacing_x) || isNaN(top_spacing_y) || isNaN(top_cover) ) {
+                    alert("الرجاء إدخال أرقام صحيحة لجميع الحقول.");
+                    return;
+                }
+
+                let plot_data = []; // قائمة لتخزين جميع عناصر الرسم (slab, rebars)
+
+                // رسم جسم البلاطة
+                const x_slab = [0, length_x, length_x, 0, 0, length_x, length_x, 0];
+                const y_slab = [0, 0, width_y, width_y, 0, 0, width_y, width_y];
+                const z_slab = [0, 0, 0, 0, thickness_z, thickness_z, thickness_z, thickness_z];
+
+                const i_slab = [7, 0, 0, 0, 4, 4, 6, 6, 4, 0, 3, 2];
+                const j_slab = [3, 4, 1, 2, 5, 6, 5, 2, 0, 1, 6, 3];
+                const k_slab = [0, 7, 2, 3, 6, 7, 1, 1, 5, 5, 7, 6];
+
+                plot_data.push({
+                    x: x_slab, y: y_slab, z: z_slab,
+                    i: i_slab, j: j_slab, k: k_slab,
+                    type: 'mesh3d', // نوع الرسم للمجسمات ثلاثية الأبعاد
+                    color: 'rgb(180, 180, 180)',
+                    opacity: 0.6,
+                    name: 'Slab Body'
+                });
+
+                // رسم طبقة التسليح السفلي
+                const bottom_z_position = bottom_cover + Math.max(bottom_rebar_diameter_x, bottom_rebar_diameter_y) / 2;
+                drawRebarLayer(plot_data, bottom_rebar_diameter_x, bottom_rebar_diameter_y,
+                               bottom_spacing_x, bottom_spacing_y,
+                               bottom_z_position, 'Bottom', 'orange',
+                               length_x, width_y, bottom_cover);
+
+                // رسم طبقة التسليح العلوي
+                const top_z_position = thickness_z - top_cover - Math.max(top_rebar_diameter_x, top_rebar_diameter_y) / 2;
+                drawRebarLayer(plot_data, top_rebar_diameter_x, top_rebar_diameter_y,
+                               top_spacing_x, top_spacing_y,
+                               top_z_position, 'Top', 'blue',
+                               length_x, width_y, top_cover);
+
+                // إعدادات عرض الرسم
+                const layout = {
+                    title: '3D Slab with Reinforcement',
+                    scene: {
+                        xaxis: { title: 'Length X (cm)' },
+                        yaxis: { title: 'Width Y (cm)' },
+                        zaxis: { title: 'Thickness Z (cm)' },
+                        aspectmode: 'data' // يحافظ على النسب الحقيقية للأبعاد
+                    },
+                    showlegend: true,
+                    height: 600 // لضمان ارتفاع مناسب للرسم
+                };
+
+                // عرض الرسم داخل العنصر الذي له ID "slabPlot"
+                Plotly.newPlot('slabPlot', plot_data, layout);
+
+            } catch (error) {
+                alert("حدث خطأ: " + error.message);
+                console.error("Plotting error:", error);
+            }
+        }
+
+        // استدعاء الدالة عند تحميل الصفحة لأول مرة لرسم افتراضي
+        document.addEventListener('DOMContentLoaded', drawSlab);
+    </script>
+</body>
+</html>
