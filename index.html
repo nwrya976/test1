@@ -1585,15 +1585,15 @@ function shareProject() {
         });
     }
 
-   function handleShareLink() {
+  // Function to handle shared project links
+function handleShareLink() {
     const urlParams = new URLSearchParams(window.location.search);
-    const sharedToken = urlParams.get('shareToken'); // هنا تم تغيير المتغير
+    const sharedToken = urlParams.get('shareToken');
     const sharedDays = urlParams.get('days');
 
     if (sharedToken) {
         database.ref('projects').once('value').then(snapshot => {
             let foundProject = null;
-            // البحث عن المشروع باستخدام الرمز الفريد
             snapshot.forEach(userSnapshot => {
                 userSnapshot.forEach(projectSnapshot => {
                     const project = projectSnapshot.val();
@@ -1605,7 +1605,6 @@ function shareProject() {
             });
 
             if (foundProject) {
-                // If specific days are selected for sharing
                 if (sharedDays) {
                     const daysIndices = sharedDays.split(',').map(Number);
                     foundProject.days = foundProject.days.filter((day, index) => daysIndices.includes(index));
@@ -1667,4 +1666,5 @@ function shareProject() {
 
 </body>
 </html>
+
 
