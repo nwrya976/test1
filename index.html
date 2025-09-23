@@ -1127,15 +1127,17 @@
             return;
         }
         
-        const newProject = {
-            name,
-            duration,
-            cost,
-            startDate: new Date().toISOString().split("T")[0],
-            days: [],
-            payments: []
-        };
-        saveProject(newProject);
+       const newProject = {
+    name,
+    duration,
+    cost,
+    startDate: new Date().toISOString().split("T")[0],
+    days: [],
+    payments: [],
+    // هذا السطر يضيف التوكن الجديد
+    shareToken: Date.now().toString(36) + Math.random().toString(36).substr(2)
+};
+saveProject(newProject);
         
         document.getElementById("addProjectForm").classList.add("hidden");
         document.getElementById("projectName").value = "";
@@ -1459,7 +1461,7 @@
     function shareProject() {
         const shareOption = prompt("اختر نوع المشاركة:\n1. مشاركة جميع الأيام\n2. مشاركة أيام معينة");
         let projectToShare = projects[currentProjectIndex];
-        let shareLink = window.location.origin + window.location.pathname + `?share=${projectToShare.id}`;
+       let shareLink = window.location.origin + window.location.pathname + `?shareToken=${projectToShare.shareToken}`;
 
         if (shareOption === "1") {
             prompt("انسخ الرابط لمشاركة جميع الأيام:", shareLink);
@@ -1519,7 +1521,7 @@
             if (selectedIndices.length > 0) {
                 let projectId = projects[currentProjectIndex].id;
                 let daysString = selectedIndices.join(',');
-                let shareLink = window.location.origin + window.location.pathname + `?share=${projectId}&days=${daysString}`;
+                let shareLink = window.location.origin + window.location.pathname + `?shareToken=${projects[currentProjectIndex].shareToken}&days=${daysString}`;
                 prompt("انسخ الرابط لمشاركة الأيام المحددة:", shareLink);
             } else {
                 alert("لم يتم اختيار أي يوم.");
@@ -1585,44 +1587,44 @@
     }
 
     function handleShareLink() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const sharedProjectId = urlParams.get('share');
-        const sharedDays = urlParams.get('days');
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedToken = urlParams.get('shareToken');
+    const sharedDays = urlParams.get('days');
 
-        if (sharedProjectId) {
-            database.ref(`projects`).once('value').then(snapshot => {
-                let foundProject = null;
-                snapshot.forEach(userSnapshot => {
-                    userSnapshot.forEach(projectSnapshot => {
-                        if (projectSnapshot.key === sharedProjectId) {
-                            foundProject = projectSnapshot.val();
-                            foundProject.id = projectSnapshot.key;
-                        }
-                    });
-                });
-
-                if (foundProject) {
-                    if (sharedDays) {
-                        const daysIndices = sharedDays.split(',').map(Number);
-                        foundProject.days = foundProject.days.filter((day, index) => daysIndices.includes(index));
+    if (sharedToken) {
+        database.ref('projects').once('value').then(snapshot => {
+            let foundProject = null;
+            snapshot.forEach(userSnapshot => {
+                userSnapshot.forEach(projectSnapshot => {
+                    const project = projectSnapshot.val();
+                    if (project.shareToken === sharedToken) {
+                        foundProject = project;
+                        foundProject.id = projectSnapshot.key;
                     }
-
-                    hideAllPages();
-                    renderSharePage(foundProject);
-                } else {
-                    alert("المشروع غير موجود.");
-                    window.location.href = window.location.origin + window.location.pathname;
-                }
-            }).catch(error => {
-                console.error("Error fetching shared project:", error);
-                alert("حدث خطأ أثناء تحميل المشروع.");
-                window.location.href = window.location.origin + window.location.pathname;
+                });
             });
-            return true;
-        }
-        return false;
-    }
 
+            if (foundProject) {
+                if (sharedDays) {
+                    const daysIndices = sharedDays.split(',').map(Number);
+                    foundProject.days = foundProject.days.filter((day, index) => daysIndices.includes(index));
+                }
+                
+                hideAllPages();
+                renderSharePage(foundProject);
+            } else {
+                alert("المشروع غير موجود. تأكد من صحة الرابط.");
+                window.location.href = window.location.origin + window.location.pathname;
+            }
+        }).catch(error => {
+            console.error("Error fetching shared project:", error);
+            alert("حدث خطأ أثناء تحميل المشروع.");
+            window.location.href = window.location.origin + window.location.pathname;
+        });
+        return true;
+    }
+    return false;
+}
     // 🌙 وظائف الوضع الليلي
     document.addEventListener('DOMContentLoaded', (event) => {
         const darkModeToggle = document.getElementById('darkModeToggle');
