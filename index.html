@@ -121,6 +121,38 @@
             font-size: 1.5rem;
             margin-top: 0;
         }
+        /* لوحة التحكم المالية والتحليليّة */
+        .dashboard-box {
+            background: rgba(30, 34, 42, 0.8);
+            border: 1px solid #444;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        body.light-mode .dashboard-box {
+            background: #f9f9f9;
+            border-color: #ddd;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .card-stat {
+            background: #1d1f27;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+        body.light-mode .card-stat {
+            background: #fff;
+            border-color: #eee;
+        }
+        .card-stat small { color: #888; display: block; font-size: 0.8rem; margin-bottom: 4px; }
+        .card-stat span { font-weight: bold; font-size: 1.1rem; }
+        
         /* الأزرار */
         button {
             background: linear-gradient(135deg, #00b09b, #96c93d);
@@ -134,7 +166,7 @@
             transition: all 0.3s ease;
             margin-top: 10px;
             margin-right: 5px;
-            box-shadow: 0 5px 16px rgba(0, 255, 180, 0.3);
+            box-shadow: 0 5px 166px rgba(0, 255, 180, 0.3);
         }
         button:hover {
             background: linear-gradient(135deg, #00816a, #7db515);
@@ -437,139 +469,30 @@
             color: #2193b0;
             text-decoration: underline;
         }
-        /* 📱 تنسيقات الهواتف (تجاوبي) */
+        /* 📱 تنسيقات الهواتف */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-40px); }
-            to { opacity: 1; transform: translateX(0); }
+        @media (max-width: 768px) {
+            .container { padding: 15px 10px; margin-top: 40px; }
+            h1 { font-size: 22px; }
+            h2, h3 { font-size: 18px; }
+            input, select, textarea, button { font-size: 0.9rem; padding: 8px 10px; }
+            table { display: block; overflow-x: auto; white-space: nowrap; }
+            th, td { font-size: 0.85rem; padding: 6px; }
         }
-        @media(max-width: 600px) and (orientation: portrait) {
-            .flex-between {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .button-group {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-            }
-            .button-group button {
-                width: 100%;
-                margin: 8px 0;
-            }
-            button {
-                width: 100%;
-                margin: 8px 0;
-            }
-            .container {
-                padding: 25px 20px;
-                border-radius: 12px;
-            }
-            h1 {
-                font-size: 26px;
-            }
-            .user-header {
-                flex-direction: column;
-                text-align: center;
-                gap: 10px;
-            }
-            .theme-toggle {
-                top: 10px;
-                left: 10px;
-                font-size: 1.2rem;
-            }
+        
+        /* 🖨️ تنسيق ستايل الـ PDF الخاص بالطباعة الرسمية */
+        @media print {
+            body { background: white !important; color: black !important; padding: 0 !important; }
+            .container { background: white !important; box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            button, input, #darkModeToggle, .back, .theme-toggle, .user-header { display: none !important; }
+            h1, h2, h3 { color: black !important; background: none !important; -webkit-text-fill-color: initial !important; }
+            .day { background: white !important; border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px !important; }
+            table { display: table !important; width: 100% !important; }
+            th, td { border: 1px solid black !important; color: black !important; background: #f5f5f5 !important; }
         }
-        #sharePage .flex-between,
-        #sharePage .button-group {
-            display: none !important;
-        }
-
-/* تحسين العرض على الهواتف */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px 10px;
-        margin-top: 40px;
-    }
-
-    h1 {
-        font-size: 22px;
-    }
-
-    h2, h3 {
-        font-size: 18px;
-    }
-
-    input, select, textarea, button {
-        font-size: 0.9rem;
-        padding: 8px 10px;
-    }
-
-    /* يخلي الجدول يلف يمين ويسار */
-    table {
-        display: block;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-
-    th, td {
-        font-size: 0.85rem;
-        padding: 6px;
-    }
-
-    /* يخلي الأزرار جنب بعض */
-    .inline-buttons {
-        flex-direction: column;
-    }
-
-    .inline-buttons button {
-        width: 100%;
-    }
-}
-
-/* 🖨️ تنسيق ستايل الـ PDF الخاص بالطباعة الرسمية للمقاولات والمشاريع */
-@media print {
-    body {
-        background: white !important;
-        color: black !important;
-        padding: 0 !important;
-    }
-    .container {
-        background: white !important;
-        box-shadow: none !important;
-        border: none !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-    button, input, #darkModeToggle, .back, .theme-toggle, .user-header {
-        display: none !important; /* إخفاء الأزرار والأشياء غير الضرورية بالورق */
-    }
-    h1, h2, h3 {
-        color: black !important;
-        background: none !important;
-        -webkit-text-fill-color: initial !important;
-    }
-    .day {
-        background: white !important;
-        border: 1px solid #ccc !important;
-        page-break-inside: avoid; /* منع انقسام اليومية الواحدة عبر صفحتين */
-        margin-bottom: 20px !important;
-    }
-    table {
-        display: table !important;
-        width: 100% !important;
-    }
-    th, td {
-        border: 1px solid black !important;
-        color: black !important;
-        background: #f5f5f5 !important;
-    }
-}
-
     </style>
 </head>
 <body>
@@ -586,33 +509,27 @@
 <div class="auth-container" id="authPage">
     <div class="icon">📋</div>
     <h1 id="form-title">تسجيل الدخول</h1>
-    
     <div id="success-msg" class="success-message"></div>
     <div id="error-msg" class="error-message"></div>
-
     <form id="auth-form">
         <div class="form-group">
             <label for="email">البريد الإلكتروني:</label>
             <input type="email" id="email" name="email" placeholder="Your-Name@gmail.com" required>
         </div>
-
         <div class="form-group">
             <label for="password">كلمة المرور:</label>
             <input type="password" id="password" name="password" placeholder="••••••••" required>
             <a href="#" style="font-size: 0.9rem; color: #667eea; text-decoration: underline; display: block; text-align: right; margin-top: 10px;" onclick="resetPassword(); return false;" id="forgot-password-link">هل نسيت كلمة المرور؟</a>
         </div>
-
         <div class="form-group hidden" id="confirm-password-group">
             <label for="confirm-password">تأكيد كلمة المرور:</label>
             <input type="password" id="confirm-password" name="confirm-password" placeholder="••••••••">
         </div>
-
         <div class="button-group">
             <button type="button" id="login-btn" class="btn-primary">تسجيل دخول</button>
             <button type="button" id="signup-btn" class="btn-primary hidden">إنشاء حساب</button>
         </div>
     </form>
-
     <div class="form-toggle">
         <p id="toggle-text">ليس لديك حساب؟ <a href="#" id="toggle-link">إنشاء حساب جديد</a></p>
     </div>
@@ -626,7 +543,6 @@
         </div>
         <button id="logout-btn" class="btn-secondary" style="margin: 0;">تسجيل الخروج</button>
     </div>
-    
     <h1>📋 قائمة المشاريع</h1>
     <input type="text" id="searchInput" placeholder="🔍 بحث عن مشروع..." onkeyup="searchProjects()">
     <div id="projectList"></div>
@@ -635,7 +551,7 @@
         <input type="text" id="projectName" placeholder="اسم المشروع">
         <input type="number" id="projectDuration" placeholder="مدة المشروع (بالأيام)">
         <input type="number" id="projectCost" placeholder="تكلفة المشروع">
-        <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً؟ (أدخل 0 إذا كان جديداً)" value="0">
+        <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً؟" value="0">
         <button onclick="addProject()">حفظ</button>
     </div>
 </div>
@@ -649,18 +565,37 @@
         </div>
     </div>
     <h2 id="projTitle"></h2>
+    
+    <div class="dashboard-box" id="projectDashboard">
+        <h3>📊 الخلاصة المالية والزمنية</h3>
+        <div class="dashboard-grid">
+            <div class="card-stat">
+                <small>إجمالي المصاريف الفعلي</small>
+                <span id="statTotalSpent" style="color: #e74c3c;">0</span>
+            </div>
+            <div class="card-stat">
+                <small>الموقف المالي الحالي</small>
+                <span id="statFinancialStatus">0</span>
+            </div>
+            <div class="card-stat">
+                <small>الميزانية المستهلكة</small>
+                <span id="statBudgetPercent">0%</span>
+            </div>
+        </div>
+    </div>
+
     <div class="progress-bar"><div class="progress" id="projProgress"></div></div>
     <h3 id="daysLeft"></h3>
     <h3 id="projCost"></h3>
 
     <div id="paymentsSection">
-        <h3>💵 الدفعات</h3>
+        <h3>💵 الدفعات المستلمة من المالك</h3>
         <div id="paymentsList"></div>
         <button onclick="addPayment()">➕ إضافة دفعة</button>
         <h3 id="remainingCost"></h3>
     </div>
 
-    <h2>📅 الأيام</h2>
+    <h2>📅 الأيام واليوميات</h2>
     <input type="date" id="searchDayInput" onchange="searchDays()">
     <div id="daysList"></div>
     <button onclick="addDay()">➕ إضافة يوم</button>
@@ -677,11 +612,10 @@
     <textarea id="workersDetail"></textarea>
     <label>💰 المبالغ</label>
     <textarea id="costDetail"></textarea>
-    
     <h3>📸 الصور </h3>
     <input type="file" id="mediaInput" multiple accept="image/*,video/*">
     <div id="mediaList"></div>
-<button onclick="saveDay()">💾 حفظ / تعديل</button>
+    <button onclick="saveDay()">💾 حفظ / تعديل</button>
 </div>
 
 <div class="container hidden" id="sharePage">
@@ -718,19 +652,16 @@
   measurementId: "G-D1FRL391R4"
 };
     
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
 
-    // Global Variables
     let projects = [];
     let currentProjectIndex = null;
     let currentDayIndex = null;
     let currentUser = null;
     let isShareMode = false;
 
-    // UI Elements
     const authPage = document.getElementById('authPage');
     const mainPage = document.getElementById('mainPage');
     const projectPage = document.getElementById('projectPage');
@@ -754,70 +685,42 @@
     
     auth.onAuthStateChanged(user => {
         if (handleShareLink()) return;
-        if (user) {
-            currentUser = user;
-            showMainApp();
-            loadProjects();
-        } else {
-            currentUser = null;
-            hideAllPages();
-            authPage.classList.remove('hidden');
-        }
+        if (user) { currentUser = user; showMainApp(); loadProjects(); } 
+        else { currentUser = null; hideAllPages(); authPage.classList.remove('hidden'); }
     });
 
     window.addEventListener('load', function() {
         if (!handleShareLink()) {
             auth.onAuthStateChanged(user => {
-                if (user) {
-                    currentUser = user;
-                    showMainApp();
-                    loadProjects();
-                } else {
-                    currentUser = null;
-                    hideAllPages();
-                    authPage.classList.remove('hidden');
-                }
+                if (user) { currentUser = user; showMainApp(); loadProjects(); } 
+                else { currentUser = null; hideAllPages(); authPage.classList.remove('hidden'); }
             });
         }
     });
 
     function showSuccess(message) {
-        successMsg.textContent = message;
-        successMsg.style.display = 'block';
-        errorMsg.style.display = 'none';
+        successMsg.textContent = message; successMsg.style.display = 'block'; errorMsg.style.display = 'none';
         setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
     }
 
     function showError(message) {
-        errorMsg.textContent = message;
-        errorMsg.style.display = 'block';
-        successMsg.style.display = 'none';
+        errorMsg.textContent = message; errorMsg.style.display = 'block'; successMsg.style.display = 'none';
         setTimeout(() => { errorMsg.style.display = 'none'; }, 3000);
     }
     
    function toggleMode() {
     isLoginMode = !isLoginMode;
     if (isLoginMode) {
-        formTitle.textContent = 'تسجيل الدخول';
-        loginBtn.classList.remove('hidden');
-        signupBtn.classList.add('hidden');
-        confirmPasswordGroup.classList.add('hidden');
+        formTitle.textContent = 'تسجيل الدخول'; loginBtn.classList.remove('hidden'); signupBtn.classList.add('hidden'); confirmPasswordGroup.classList.add('hidden');
         if (forgotPasswordLink) forgotPasswordLink.style.display = 'block';
         toggleText.innerHTML = 'ليس لديك حساب؟ <a href="#" id="toggle-link">إنشاء حساب جديد</a>';
     } else {
-        formTitle.textContent = 'إنشاء حساب جديد';
-        signupBtn.classList.remove('hidden');
-        loginBtn.classList.add('hidden');
-        confirmPasswordGroup.classList.remove('hidden');
+        formTitle.textContent = 'إنشاء حساب جديد'; signupBtn.classList.remove('hidden'); loginBtn.classList.add('hidden'); confirmPasswordGroup.classList.remove('hidden');
         if (forgotPasswordLink) forgotPasswordLink.style.display = 'none';
         toggleText.innerHTML = 'لديك حساب؟ <a href="#" id="toggle-link">تسجيل الدخول</a>';
     }
     const newToggleLink = document.getElementById('toggle-link');
-    if (newToggleLink) {
-        newToggleLink.addEventListener('click', function(e) {
-            e.preventDefault(); toggleMode();
-        });
-    }
+    if (newToggleLink) { newToggleLink.addEventListener('click', function(e) { e.preventDefault(); toggleMode(); }); }
 }
 
     function login(email, password) {
@@ -828,7 +731,7 @@
 
     function signup(email, password, confirmPassword) {
         if (password !== confirmPassword) { showError('كلمات المرور غير متطابقة ❌'); return false; }
-        if (password.length < 6) { showError('كلمة المرور يجب أن تكون 6 أحرف على الأثل ❌'); return false; }
+        if (password.length < 6) { showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل ❌'); return false; }
         auth.createUserWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
@@ -856,16 +759,13 @@
     function logout() { auth.signOut().then(() => { showSuccess('تم تسجيل الخروج بنجاح! 👋'); }); }
 
     loginBtn.addEventListener('click', function() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+        const email = document.getElementById('email').value; const password = document.getElementById('password').value;
         if (!email || !password) { showError('يرجى ملء جميع الحقول المطلوبة ❌'); return; }
         login(email, password);
     });
 
     signupBtn.addEventListener('click', function() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
+        const email = document.getElementById('email').value; const password = document.getElementById('password').value; const confirmPassword = document.getElementById('confirm-password').value;
         if (!email || !password) { showError('يرجى ملء جميع الحقول المطلوبة ❌'); return; }
         if (!isLoginMode && !confirmPassword) { showError('يرجى تأكيد كلمة المرور ❌'); return; }
         if (isLoginMode) { login(email, password); } else { signup(email, password, confirmPassword); }
@@ -873,12 +773,7 @@
 
     toggleLink.addEventListener('click', function(e) { e.preventDefault(); toggleMode(); });
     logoutBtn.addEventListener('click', logout);
-    form.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            if (isLoginMode) { loginBtn.click(); } else { signupBtn.click(); }
-        }
-    });
+    form.addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); if (isLoginMode) { loginBtn.click(); } else { signupBtn.click(); } } });
 
     function loadProjects() {
         if (!currentUser || isShareMode) return;
@@ -935,9 +830,7 @@
             let grandTotal = totalSpent + totalDayCost;
             const div = document.createElement("div"); div.className = "project flex-between";
             div.innerHTML = `<b>${p.name}</b><span>💰 ${grandTotal.toLocaleString()} | 📊 ${progress}%</span>`;
-            div.onclick = () => {
-                const originalIndex = projects.findIndex(proj => proj.id === p.id); openProject(originalIndex);
-            };
+            div.onclick = () => { const originalIndex = projects.findIndex(proj => proj.id === p.id); openProject(originalIndex); };
             list.appendChild(div);
         });
     }
@@ -981,6 +874,7 @@
         projectsRef.child(projects[currentProjectIndex].id).remove().then(() => { showSuccess("تم الحذف بنجاح!"); backToProjects(); });
     }
     
+    // 🔥 تحديث دالة فتح المشروع لحساب وعرض خلاصة اللوحة المالية التلقائية
     function openProject(i){
         currentProjectIndex = i; mainPage.classList.add("hidden"); projectPage.classList.remove("hidden");
         let p = projects[i]; document.getElementById("projTitle").innerText = p.name;
@@ -989,7 +883,31 @@
         let start = new Date(p.startDate); let end = new Date(start); end.setDate(start.getDate() + p.duration);
         let left = Math.max(0, Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)));
         document.getElementById("daysLeft").innerText = "⏳ متبقي " + left + " يوم";
-        document.getElementById("projCost").innerText = "💰 التكلفة: " + p.cost.toLocaleString();
+        document.getElementById("projCost").innerText = "💰 الميزانية المقدرة: " + p.cost.toLocaleString();
+        
+        // 🧮 معادلات حساب أرقام اللوحة المالية (Dashboard)
+        let totalDayCost = (p.days || []).reduce((sum, d) => {
+            const numbers = (d.costDetail || "").match(/\d+/g);
+            if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
+            return sum;
+        }, 0);
+        let totalPayments = (p.payments || []).reduce((sum, pay) => sum + pay.amount, 0);
+        let financialBalance = totalPayments - totalDayCost;
+        let budgetPercent = p.cost > 0 ? Math.round((totalDayCost / p.cost) * 100) : 0;
+
+        // عرض الأرقام المحسوبة في واجهة اللوحة
+        document.getElementById("statTotalSpent").innerText = totalDayCost.toLocaleString() + " د.ع";
+        document.getElementById("statBudgetPercent").innerText = budgetPercent + "%";
+        
+        let finStatusEl = document.getElementById("statFinancialStatus");
+        if (financialBalance >= 0) {
+            finStatusEl.innerText = "💰 فائض: " + financialBalance.toLocaleString() + " د.ع";
+            finStatusEl.style.color = "#2ecc71";
+        } else {
+            finStatusEl.innerText = "⚠️ عجز: " + Math.abs(financialBalance).toLocaleString() + " د.ع";
+            finStatusEl.style.color = "#e74c3c";
+        }
+
         if (!isShareMode) { renderPayments(); }
         renderDays();
     }
@@ -1011,22 +929,22 @@
             div.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;";
             div.innerHTML = `<span>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date}</span><button class="delete">✖</button>`;
             div.querySelector("button").onclick = () => {
-                p.payments.splice(index, 1); saveProject(p).then(() => { renderPayments(); });
+                p.payments.splice(index, 1); saveProject(p).then(() => { openProject(currentProjectIndex); });
             };
             list.appendChild(div);
         });
         let totalPaid = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
         let remaining = p.cost - totalPaid;
-        document.getElementById("remainingCost").innerText = "المتبقي: " + remaining.toLocaleString();
+        document.getElementById("remainingCost").innerText = "المتبقي من العقد: " + remaining.toLocaleString();
     }
     
     function addPayment(){
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
-        let amount = parseInt(prompt("💵 مبلغ الدفعة:")); if(!amount || isNaN(amount)) return;
+        let amount = parseInt(prompt("💵 مبلغ الدفعة المستلمة:")); if(!amount || isNaN(amount)) return;
         if(!p.payments) p.payments = [];
         p.payments.push({amount, date: new Date().toISOString().split("T")[0]});
-        saveProject(p).then(() => { renderPayments(); });
+        saveProject(p).then(() => { openProject(currentProjectIndex); });
     }
 
     function renderDays(){
@@ -1089,14 +1007,14 @@
         if (isDateExists) { alert("❌ هذا التاريخ مسجل مسبقاً في هذا المشروع!"); return; }
         p.days.push({date: chosenDate, workDescription: "", workersDetail: "", costDetail: "", media: []}); 
         p.days.sort((a, b) => new Date(a.date) - new Date(b.date));
-        saveProject(p).then(() => { renderDays(); });
+        saveProject(p).then(() => { openProject(currentProjectIndex); });
     }
     
   function deleteDay(i){ 
     if(isShareMode) return;
     if(confirm("هل تريد حذف هذا اليوم؟")){ 
         let p = projects[currentProjectIndex]; p.days.splice(i,1); 
-        saveProject(p).then(() => { renderDays(); });
+        saveProject(p).then(() => { openProject(currentProjectIndex); });
     } 
 }
     
@@ -1111,7 +1029,7 @@
         renderMedia(); 
     }
     
-    function backToProject(){ dayPage.classList.add("hidden"); projectPage.classList.remove("hidden"); renderDays(); }
+    function backToProject(){ dayPage.classList.add("hidden"); projectPage.classList.remove("hidden"); openProject(currentProjectIndex); }
     
     function saveDay(){ 
         if (isShareMode) return;
@@ -1120,7 +1038,7 @@
         d.workersDetail = document.getElementById("workersDetail").value; 
         d.costDetail = document.getElementById("costDetail").value; 
         let files = document.getElementById("mediaInput").files;
-        if (files.length === 0) { saveProject(p).then(() => { renderMedia(); showSuccess("تم حفظ التعديلات بنجاح! 💾"); }); return; }
+        if (files.length === 0) { saveProject(p).then(() => { renderMedia(); openProject(currentProjectIndex); }); return; }
         let filesProcessed = 0;
         showSuccess("جاري معالجة وضغط الصور لحفظها خفيفة... ⏳");
         for (let f of files) {
@@ -1136,7 +1054,7 @@
                     if (!d.media) d.media = []; d.media.push(compressedData); filesProcessed++;
                     if (filesProcessed === files.length) {
                         saveProject(p).then(() => {
-                            renderMedia(); document.getElementById("mediaInput").value = ""; showSuccess("تم حفظ الصور المضغوطة بنجاح! 🚀");
+                            renderMedia(); document.getElementById("mediaInput").value = ""; openProject(currentProjectIndex);
                         });
                     }
                 };
@@ -1185,7 +1103,6 @@
         else if (shareOption === "2") { showDaySelectionPopup(); }
     }
 
-    // 🔥 تعديل واجهة الاختيار لتدعم طباعة التقرير PDF للأيام المحددة أو توليد الرابط
     function showDaySelectionPopup() {
         if (isShareMode) return;
         let popupContainer = document.createElement("div");
@@ -1206,7 +1123,6 @@
         
         let buttonDiv = document.createElement("div"); buttonDiv.style.cssText = "display: flex; flex-direction: column; gap: 8px; margin-top: 20px;";
         
-        // خيار 1: توليد الرابط التقليدي
         let linkBtn = document.createElement("button"); linkBtn.innerText = "🔗 إنشاء رابط ويب للأيام المحددة"; linkBtn.style.backgroundColor = "#3498db";
         linkBtn.onclick = () => {
             let selectedIndices = [];
@@ -1219,26 +1135,19 @@
             popupContainer.remove();
         };
 
-        // خيار 2: طباعة وحفظ كتقرير رسمي PDF
         let pdfBtn = document.createElement("button"); pdfBtn.innerText = "🖨️ تحميل وطباعة كتقرير رسمي PDF"; pdfBtn.style.backgroundColor = "#2ecc71";
         pdfBtn.onclick = () => {
             let selectedIndices = [];
             popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => { if (checkbox.checked) selectedIndices.push(index); });
             if (selectedIndices.length > 0) {
                 popupContainer.remove();
-                // فلترة وعرض الأيام المحددة فقط مؤقتاً في صفحة العرض المجهزة للطباعة
                 let originalDays = [...currentProject.days];
                 currentProject.days = currentProject.days.filter((day, index) => selectedIndices.includes(index));
-                
-                // فتح صفحة التقرير لتجهيز العناصر للطباعة
                 renderSharePage(currentProject);
-                
-                // تشغيل أمر الطباعة المباشر للمتصفح لحفظ الملف كـ PDF
                 setTimeout(() => {
                     window.print();
-                    // إرجاع الأيام الأصلية بالكامل بعد إغلاق نافذة الطباعة للحفاظ على قاعدة البيانات
                     currentProject.days = originalDays;
-                    backToProjectPageFromShare();
+                    openProject(currentProjectIndex);
                 }, 500);
             } else { alert("لم يتم اختيار أي يوم للطباعة."); }
         };
@@ -1247,14 +1156,13 @@
         cancelBtn.onclick = () => popupContainer.remove();
         
         buttonDiv.appendChild(pdfBtn); buttonDiv.appendChild(linkBtn); buttonDiv.appendChild(cancelBtn);
-        popupContent.appendChild(buttonDiv); popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
+        popupContent.appendChild(buttonDiv); popupContent.appendChild(buttonDiv); popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
     }
 
     function resetPassword() {
         const email = document.getElementById("email").value;
-        if (email) {
-            auth.sendPasswordResetEmail(email).then(() => { alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."); });
-        } else { alert("يرجى إدخال بريدك الإلكتروني أولاً في الحقل المخصص."); }
+        if (email) { auth.sendPasswordResetEmail(email).then(() => { alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."); }); } 
+        else { alert("يرجى إدخال بريدك الإلكتروني أولاً في الحقل المخصص."); }
     }
 
     function renderSharePage(projectData) {
