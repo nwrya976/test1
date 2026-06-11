@@ -29,159 +29,226 @@
             scroll-behavior: smooth;
             transition: background 0.5s ease, color 0.5s ease;
         }
-        /* الوضع الفاتح (Light Mode) */
+        /* 🌙 وضع الإضاءة (Light Mode) */
         body.light-mode {
-            background: linear-gradient(135deg, #f0f0f5, #ffffff);
-            color: #333;
-        }
-        .container {
-            width: 100%;
-            max-width: 600px;
-            padding: 20px;
-            background-color: #2c3e50;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            margin-bottom: 20px;
-            transition: background-color 0.5s ease;
+            background: #f0f0f0;
+            color: #111;
         }
         body.light-mode .container {
-            background-color: #ecf0f1;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        h1, h2, h3 {
-            color: #f39c12;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #34495e;
-            padding-bottom: 5px;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            color: #111;
         }
         body.light-mode h1, body.light-mode h2, body.light-mode h3 {
-            color: #d35400;
-            border-bottom-color: #bdc3c7;
+            color: #2193b0;
+            -webkit-text-fill-color: #2193b0;
         }
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #34495e;
-            border-radius: 8px;
-            background-color: #34495e;
+        body.light-mode button {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: #fff;
+        }
+        body.light-mode button.delete {
+            background: #e74c3c;
+        }
+        body.light-mode .project, body.light-mode .day {
+            background: #e6f4ea;
+            border: 1px solid #28a745;
+            color: #155724;
+        }
+        body.light-mode .project:hover, body.light-mode .day:hover {
+            background: #d4e9da;
+        }
+        body.light-mode input, body.light-mode textarea {
+            background-color: #fff;
+            color: #000;
+            border-color: #bbb;
+        }
+        /* زر تغيير الوضع (Mode Toggle) */
+        .theme-toggle {
+            background: none;
             color: #e0e0e0;
-            transition: all 0.3s ease;
-        }
-        body.light-mode input, body.light-mode select, body.light-mode textarea {
-            border-color: #bdc3c7;
-            background-color: #f4f6f7;
-            color: #333;
-        }
-        input:focus, select:focus, textarea:focus {
-            border-color: #f39c12;
-            outline: none;
-            box-shadow: 0 0 5px rgba(243, 156, 18, 0.5);
-        }
-        button {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            background-color: #f39c12;
-            color: #1f1f2e;
-            font-weight: bold;
-            transition: background-color 0.3s ease, transform 0.1s ease;
-            margin-top: 10px;
-            font-family: 'Cairo', sans-serif;
+            border: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            transition: color 0.3s, background 0.3s;
+        }
+        body.light-mode .theme-toggle {
+            color: #2c3e50;
+        }
+        /* صندوق الكونتينر */
+        .container {
+            background: rgba(40, 44, 52, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(6px);
+            padding: 40px 35px;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+            width: 95%;
+            max-width: 850px;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            animation: fadeInUp 0.6s ease-out;
+            margin-top: 80px;
+        }
+        .container:hover {
+            transform: scale(1.005);
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.5);
+        }
+        /* العنوان الرئيسي */
+        h1 {
+            color: #ffffff;
+            font-size: 36px;
+            margin-bottom: 25px;
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             text-align: center;
+        }
+        h2, h3 {
+            color: #ffffff;
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.5rem;
+            margin-top: 0;
+        }
+        /* الأزرار */
+        button {
+            background: linear-gradient(135deg, #00b09b, #96c93d);
+            color: #fff;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            margin-right: 5px;
+            box-shadow: 0 5px 16px rgba(0, 255, 180, 0.3);
         }
         button:hover {
-            background-color: #e67e22;
+            background: linear-gradient(135deg, #00816a, #7db515);
+            box-shadow: 0 8px 22px rgba(0, 255, 180, 0.4);
             transform: translateY(-1px);
         }
-        button.btn-secondary {
-            background-color: #34495e;
-            color: #e0e0e0;
-        }
-        button.btn-secondary:hover {
-            background-color: #2c3e50;
-        }
         button.delete {
-            background-color: #e74c3c;
-            color: white;
-            padding: 5px 10px;
-            font-size: 0.8em;
-            margin: 0;
+            background: #e74c3c;
+            box-shadow: 0 5px 16px rgba(231, 76, 60, 0.3);
         }
         button.delete:hover {
-            background-color: #c0392b;
+            background: #c0392b;
+            box-shadow: 0 8px 22px rgba(231, 76, 60, 0.4);
+        }
+        button.back {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            box-shadow: 0 5px 16px rgba(155, 89, 182, 0.3);
+        }
+        button.back:hover {
+            background: linear-gradient(135deg, #6c3483, #8e44ad);
+        }
+        .project, .day {
+            padding: 15px;
+            background: #282c34;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            margin: 10px 0;
+            transition: background 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .project:hover, .day:hover {
+            background: #343a40;
+            cursor: pointer;
+        }
+        .progress-bar {
+            background: #1d1f27;
+            border-radius: 8px;
+            height: 25px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        .progress {
+            background: linear-gradient(to right, #00b09b, #96c93d);
+            height: 100%;
+            border-radius: 8px;
+            width: 0%;
+            color: white;
+            text-align: center;
+            line-height: 25px;
+            font-size: 14px;
+            transition: width 0.5s ease-in-out;
         }
         .hidden {
-            display: none !important;
+            display: none;
         }
-        .message {
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 10px;
+            border: 1px solid #444;
+            background-color: #1d1f27;
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        input:focus, textarea:focus {
+            border-color: #6dd5ed;
+            outline: none;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            display: block;
+        }
+        th, td {
+            border: 1px solid #444;
             padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
+            text-align: right;
+            white-space: nowrap;
         }
-        .success {
-            background-color: #2ecc71;
-            color: white;
-        }
-        .error {
-            background-color: #e74c3c;
-            color: white;
+        th {
+            background: #1d1f27;
+            color: #e0e0e0;
         }
         .flex-between {
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        .project, .day {
-            background-color: #34495e;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            border-right: 5px solid #f39c12;
-        }
-        body.light-mode .project, body.light-mode .day {
-            background-color: #f4f6f7;
-            border: 1px solid #bdc3c7;
-        }
-        .project:hover, .day:hover {
-            background-color: #3f5873;
-        }
-        .progress-bar-container {
-            background-color: #bdc3c7;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 10px;
-            height: 25px;
-        }
-        .progress-bar {
-            background-color: #2ecc71;
-            height: 100%;
-            text-align: center;
-            line-height: 25px;
-            color: white;
-            transition: width 0.5s ease;
-        }
-        .media-list {
-            display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 10px;
         }
-        .media-list img, .media-list video {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 5px;
+        .day-details {
+            margin-top: 15px;
+            display: none;
+            background: #22262b;
+            padding: 10px;
+            border-radius: 8px;
+        }
+        img, video {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 8px;
+            margin: 5px;
             cursor: pointer;
-            transition: transform 0.2s ease;
+            border: 2px solid #ddd;
+            transition: transform 0.2s, border-color 0.2s;
         }
-        .media-list img:hover, .media-list video:hover {
+        img:hover, video:hover {
             transform: scale(1.05);
+            border-color: #3498db;
         }
         .fullscreen {
             position: fixed;
@@ -189,215 +256,421 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0,0,0,0.95);
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             z-index: 1000;
         }
         .fullscreen img, .fullscreen video {
             max-width: 90%;
             max-height: 90%;
-            object-fit: contain;
+            border-radius: 0;
         }
-        .day-details {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px dashed #5a748a;
-            display: none; /* مخفية بشكل افتراضي */
+        #searchInput, #searchDayInput {
+            padding: 12px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        /* Auth Page Styles */
+        .auth-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            color: #333;
+            margin-top: 50px;
+        }
+        .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+        .auth-container h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            background: none;
+            -webkit-text-fill-color: #333;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: right;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 500;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            text-align: right;
+            background: white;
+            color: #333;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 2rem;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #f7f7f7;
+            color: #333;
+            border: 2px solid #ddd;
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-secondary:hover {
+            background: #e7e7e7;
+            transform: translateY(-2px);
+        }
+        .success-message {
+            display: none;
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 1px solid #c3e6cb;
+        }
+        .error-message {
+            display: none;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            border: 1px solid #f5c6cb;
+        }
+        .form-toggle {
+            margin-top: 1rem;
+            color: #666;
+        }
+        .form-toggle a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .form-toggle a:hover {
+            text-decoration: underline;
+        }
+        .user-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: right;
+            color: #333;
         }
         .user-header {
+            background: rgba(40, 44, 52, 0.95);
+            color: #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 10px 0;
-            border-bottom: 1px solid #34495e;
+            flex-wrap: wrap;
         }
         body.light-mode .user-header {
-            border-bottom-color: #bdc3c7;
+            background: #ffffff;
+            color: #333;
+            border: 1px solid #ddd;
         }
-        /* الوضع الليلي / الفاتح Toggle */
-        #darkModeToggle {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #f39c12;
-            color: #1f1f2e;
-            font-size: 1.2em;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 50;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
+        /* Developer Info Footer */
+        .developer-info {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+            padding: 10px;
+            border-top: 1px solid #333;
+            width: 100%;
         }
-        #darkModeToggle:hover {
-            background-color: #e67e22;
-            transform: scale(1.05);
+        body.light-mode .developer-info {
+            color: #555;
+            border-top: 1px solid #ccc;
+        }
+        .developer-info a {
+            color: #6dd5ed;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .developer-info a:hover {
+            color: #2193b0;
+            text-decoration: underline;
+        }
+        /* 📱 تنسيقات الهواتف (تجاوبي) */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @media(max-width: 600px) and (orientation: portrait) {
+            .flex-between {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .button-group {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+            }
+            .button-group button {
+                width: 100%;
+                margin: 8px 0;
+            }
+            button {
+                width: 100%;
+                margin: 8px 0;
+            }
+            .container {
+                padding: 25px 20px;
+                border-radius: 12px;
+            }
+            h1 {
+                font-size: 26px;
+            }
+            .user-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            .theme-toggle {
+                top: 10px;
+                left: 10px;
+                font-size: 1.2rem;
+            }
+        }
+        #sharePage .flex-between,
+        #sharePage .button-group {
+            display: none !important;
+        }
+
+        /* تحسين العرض على الهواتف */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px 10px;
+                margin-top: 40px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            h2, h3 {
+                font-size: 18px;
+            }
+
+            input, select, textarea, button {
+                font-size: 0.9rem;
+                padding: 8px 10px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+
+            th, td {
+                font-size: 0.85rem;
+                padding: 6px;
+            }
+
+            .inline-buttons {
+                flex-direction: column;
+            }
+
+            .inline-buttons button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div id="darkModeToggle">
-        <i class="fas fa-moon"></i>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
+
+<div id="darkModeToggle" class="theme-toggle">
+    <i class="fas fa-adjust"></i>
+</div>
+
+<div class="auth-container" id="authPage">
+    <div class="icon">📋</div>
+    <h1 id="form-title">تسجيل الدخول</h1>
+    
+    <div id="success-msg" class="success-message"></div>
+    <div id="error-msg" class="error-message"></div>
+
+    <form id="auth-form">
+        <div class="form-group">
+            <label for="email">البريد الإلكتروني:</label>
+            <input type="email" id="email" name="email" placeholder="Your-Name@gmail.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">كلمة المرور:</label>
+            <input type="password" id="password" name="password" placeholder="••••••••" required>
+            <a href="#" style="font-size: 0.9rem; color: #667eea; text-decoration: underline; display: block; text-align: right; margin-top: 10px;" onclick="resetPassword(); return false;" id="forgot-password-link">هل نسيت كلمة المرور؟</a>
+        </div>
+
+        <div class="form-group hidden" id="confirm-password-group">
+            <label for="confirm-password">تأكيد كلمة المرور:</label>
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="••••••••">
+        </div>
+
+        <div class="button-group">
+            <button type="button" id="login-btn" class="btn-primary">تسجيل دخول</button>
+            <button type="button" id="signup-btn" class="btn-primary hidden">إنشاء حساب</button>
+        </div>
+    </form>
+
+    <div class="form-toggle">
+        <p id="toggle-text">ليس لديك حساب؟ <a href="#" id="toggle-link">إنشاء حساب جديد</a></p>
     </div>
+</div>
 
-    <div class="container" id="authPage">
-        <h1 id="form-title">تسجيل الدخول</h1>
-        <div id="success-msg" class="message success hidden"></div>
-        <div id="error-msg" class="message error hidden"></div>
-
-        <form id="auth-form" onsubmit="event.preventDefault()">
-            <input type="email" id="email" placeholder="البريد الإلكتروني" required>
-            <input type="password" id="password" placeholder="كلمة المرور" required>
-            
-            <div id="confirm-password-group" class="hidden">
-                <input type="password" id="confirm-password" placeholder="تأكيد كلمة المرور">
-            </div>
-
-            <button type="submit" id="login-btn">تسجيل الدخول</button>
-            <button type="submit" id="signup-btn" class="hidden">إنشاء حساب</button>
-        </form>
-
-        <p id="toggle-text" style="margin-top: 15px; text-align: center;">
-            ليس لديك حساب؟ <a href="#" id="toggle-link">إنشاء حساب جديد</a>
-        </p>
-        <p style="margin-top: 10px; text-align: center;">
-             <a href="#" id="forgot-password-link" onclick="resetPassword()">نسيت كلمة المرور؟</a>
-        </p>
+<div class="container hidden" id="mainPage">
+    <div class="user-header">
+        <div>
+            <h2 style="margin: 0;">مرحباً، <span id="user-display-name"></span>! 🙋‍♂️</h2>
+            <small id="user-display-email"></small>
+        </div>
+        <button id="logout-btn" class="btn-secondary" style="margin: 0;">تسجيل الخروج</button>
     </div>
+    
+    <h1>📋 قائمة المشاريع</h1>
+    <input type="text" id="searchInput" placeholder="🔍 بحث عن مشروع..." onkeyup="searchProjects()">
+    <div id="projectList"></div>
+    <button onclick="showAddProject()">➕ إضافة مشروع</button>
+    <div id="addProjectForm" class="hidden">
+        <input type="text" id="projectName" placeholder="اسم المشروع">
+        <input type="number" id="projectDuration" placeholder="مدة المشروع (بالأيام)">
+        <input type="number" id="projectCost" placeholder="تكلفة المشروع">
+        <button onclick="addProject()">حفظ</button>
+    </div>
+</div>
 
-    <div class="container hidden" id="mainPage">
-        <div class="user-header">
-            <div>
-                <h2 style="margin: 0;">مرحباً، <span id="user-display-name"></span>! 🙋‍♂️</h2>
-                <small id="user-display-email"></small>
-            </div>
-            <button id="logout-btn" class="btn-secondary" style="margin: 0;" onclick="logout()">تسجيل الخروج</button>
-        </div>
-        
-        <div id="subscription-status" style="margin-bottom: 20px; padding: 15px; border-radius: 10px; text-align: center; background: #34495e; color: #ecf0f1;">
-            <p id="sub-message">جاري التحقق من حالة الاشتراك...</p>
-            <button id="upgrade-btn" class="hidden" style="margin-top: 10px; background: linear-gradient(135deg, #f39c12, #e67e22);">🚀 الترقية للاشتراك غير المحدود</button>
-        </div>
-        <h1>📋 قائمة المشاريع</h1>
-
-        <input type="search" id="searchInput" placeholder="ابحث باسم المشروع..." oninput="searchProjects()">
-
-        <div id="projectList">
-            <p>جاري تحميل المشاريع...</p>
-        </div>
-
-        <button onclick="showAddProject()">+ إضافة مشروع جديد</button>
-
-        <div id="addProjectForm" class="hidden" style="margin-top: 20px; border: 1px solid #f39c12; padding: 15px; border-radius: 10px;">
-            <h3>إضافة مشروع جديد</h3>
-            <input type="text" id="projectName" placeholder="اسم المشروع" required>
-            <input type="number" id="projectDuration" placeholder="المدة المتوقعة بالأيام" required>
-            <input type="number" id="projectCost" placeholder="التكلفة الإجمالية المتوقعة" required>
-            <button onclick="addProject()">حفظ المشروع</button>
+<div class="container hidden" id="projectPage">
+    <div class="flex-between">
+        <button class="back" onclick="backToProjects()">⬅ رجوع</button>
+        <div class="button-group">
+            <button onclick="editProject()">✏ تعديل</button>
+            <button class="delete" onclick="deleteProject()">🗑 حذف</button>
         </div>
     </div>
+    <h2 id="projTitle"></h2>
+    <div class="progress-bar"><div class="progress" id="projProgress"></div></div>
+    <h3 id="daysLeft"></h3>
+    <h3 id="projCost"></h3>
 
-    <div class="container hidden" id="projectPage">
-        <div class="flex-between">
-            <h1 id="projTitle">عنوان المشروع</h1>
-            <button class="btn-secondary" onclick="backToProjects()">⬅ العودة</button>
-        </div>
-
-        <div class="progress-bar-container">
-            <div class="progress-bar" id="projProgress" style="width: 0%;">0%</div>
-        </div>
-
-        <div style="margin-top: 15px;" class="flex-between">
-            <span id="projCost">💰 التكلفة: 0</span>
-            <span id="daysLeft">⏳ متبقي 0 يوم</span>
-        </div>
-
-        <div style="margin-top: 20px;">
-            <button onclick="editProject()">✏ تعديل المشروع</button>
-            <button class="delete" onclick="deleteProject()">🗑 حذف المشروع</button>
-            <button class="btn-secondary" onclick="shareProject()">🔗 مشاركة (عرض فقط)</button>
-        </div>
-
-        <h2 style="margin-top: 20px;">💵 الدفعات</h2>
+    <div id="paymentsSection">
+        <h3>💵 الدفعات</h3>
         <div id="paymentsList"></div>
-        <div class="flex-between" style="font-weight: bold; padding-top: 10px; border-top: 1px solid #34495e;">
-            <span id="remainingCost">المتبقي: 0</span>
-            <button onclick="addPayment()">+ إضافة دفعة</button>
-        </div>
-
-        <h2 style="margin-top: 20px;">🗓 سجل الأيام</h2>
-        <div id="daysList"></div>
-        <button onclick="addDay()">+ إضافة يوم عمل</button>
+        <button onclick="addPayment()">➕ إضافة دفعة</button>
+        <h3 id="remainingCost"></h3>
     </div>
 
-    <div class="container hidden" id="dayPage">
-        <div class="flex-between">
-            <h1 id="dayDate">📅 اليوم</h1>
-            <button class="btn-secondary" onclick="backToProject()">⬅ العودة للمشروع</button>
-        </div>
-        
-        <h3>🔨 تفاصيل العمل</h3>
-        <textarea id="workDescription" rows="4" placeholder="أعمال اليوم المنجزة"></textarea>
-        
-        <h3>👷 تفاصيل الكادر</h3>
-        <input type="text" id="workersDetail" placeholder="أسماء وعدد الكادر">
-        
-        <h3>💰 تفاصيل المبالغ المصروفة (اليوم)</h3>
-        <textarea id="costDetail" rows="3" placeholder="المصروفات النثرية: حديد 500، إسمنت 300"></textarea>
+    <h2>📅 الأيام</h2>
+    <input type="date" id="searchDayInput" onchange="searchDays()">
+    <div id="daysList"></div>
+    <button onclick="addDay()">➕ إضافة يوم</button>
+    <br><br>
+    <button onclick="shareProject()">🔗 مشاركة (عرض فقط)</button>
+</div>
 
-        <h3 style="margin-top: 20px;">📸 المرفقات (صور/فيديوهات)</h3>
-        <div id="mediaList"></div>
-        <button onclick="saveDay()">✅ حفظ اليوم</button>
+<div class="container hidden" id="dayPage">
+    <button class="back" onclick="backToProject()">⬅ رجوع للمشروع</button>
+    <h2 id="dayDate"></h2>
+    <label>🔨 عمل اليوم</label>
+    <textarea id="workDescription"></textarea>
+    <label>👷 الكادر</label>
+    <textarea id="workersDetail"></textarea>
+    <label>💰 المبالغ</label>
+    <textarea id="costDetail"></textarea>
+    
+    <h3>📸 الصور </h3>
+    <input type="file" id="mediaInput" multiple accept="image/*,video/*">
+    <div id="mediaList"></div>
+    <button onclick="saveDay()">💾 حفظ / تعديل</button>
+</div>
+
+<div class="container hidden" id="sharePage">
+    <div class="flex-between">
+        <button class="back" onclick="backToProjectPageFromShare()">⬅ رجوع للمشروع</button>
+        <button class="back" onclick="backToProjects()">⬅ رجوع للقائمة</button>
     </div>
+    <h2 id="shareProjTitle"></h2>
+    <div class="progress-bar"><div class="progress" id="shareProjProgress"></div></div>
+    <h3 id="shareDaysLeft"></h3>
+    <h3 id="shareProjCost"></h3>
+    <h3>💵 الدفعات</h3>
+    <div id="sharePaymentsList"></div>
+    <h2>📅 الأيام</h2>
+    <div id="shareDaysList"></div>
+</div>
 
-    <div class="container hidden" id="sharePage">
-        <div class="flex-between">
-            <h1 id="shareProjTitle" style="color: #2ecc71;">عرض المشروع (للمشاركة فقط)</h1>
-            <button class="btn-secondary" onclick="backToProjects()">إغلاق ✖</button>
-        </div>
+<div class="developer-info">
+    <p>تطوير: المهندس كاظم قاسم</p>
+    <p>رقم الهاتف: <a href="tel:07746424814">07746424814</a></p>
+</div>
 
-        <div class="progress-bar-container">
-            <div class="progress-bar" id="shareProjProgress" style="width: 0%;">0%</div>
-        </div>
-
-        <div style="margin-top: 15px;" class="flex-between">
-            <span id="shareProjCost">💰 التكلفة: 0</span>
-            <span id="shareDaysLeft">⏳ متبقي 0 يوم</span>
-        </div>
-
-        <h2 style="margin-top: 20px;">💵 الدفعات</h2>
-        <div id="sharePaymentsList"></div>
-
-        <h2 style="margin-top: 20px;">🗓 سجل الأيام</h2>
-        <div id="shareDaysList"></div>
-    </div>
-
-
-    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-database.js"></script>
-
-    <script>
+<script>
     // ========== نظام إدارة المشاريع - JavaScript Code ==========
     
-    // ** ⚠️ يجب استبدال هذا الكود بإعدادات مشروعك من Firebase ⚠️ **
     const firebaseConfig = {
-      apiKey: "AIzaSyDye4DgqNvEwwWDYf1yjW5yfJc14p1LmiU",
-      authDomain: "your-project-10fbe.firebaseapp.com",
-      databaseURL: "https://your-project-10fbe-default-rtdb.firebaseio.com",
-      projectId: "your-project-10fbe",
-      storageBucket: "your-project-10fbe.firebasestorage.app",
-      messagingSenderId: "715972050011",
-      appId: "1:715972050011:web:d5a4507dcfc30fa779d37e",
-      measurementId: "G-D1FRL391R4"
+        apiKey: "AIzaSyDye4DgqNvEwwWDYf1yjW5yfJc14p1LmiU",
+        authDomain: "your-project-10fbe.firebaseapp.com",
+        databaseURL: "https://your-project-10fbe-default-rtdb.firebaseio.com",
+        projectId: "your-project-10fbe",
+        storageBucket: "your-project-10fbe.firebasestorage.app",
+        messagingSenderId: "715972050011",
+        appId: "1:715972050011:web:d5a4507dcfc30fa779d37e",
+        measurementId: "G-D1FRL391R4"
     };
     
     // Initialize Firebase
@@ -405,16 +678,12 @@
     const auth = firebase.auth();
     const database = firebase.database();
 
-    // ** متغيرات الاشتراكات (NEW) **
-    const MAX_FREE_PROJECTS = 3; // الحد الأقصى للمشاريع المجانية
-    let userIsPremium = false; 
-
     // Global Variables
     let projects = [];
     let currentProjectIndex = null;
     let currentDayIndex = null;
     let currentUser = null;
-    let isShareMode = false; // متغير للتحقق من وضع المشاركة
+    let isShareMode = false;
 
     // UI Elements
     const authPage = document.getElementById('authPage');
@@ -435,139 +704,44 @@
     const userDisplayName = document.getElementById('user-display-name');
     const userDisplayEmail = document.getElementById('user-display-email');
     const forgotPasswordLink = document.getElementById('forgot-password-link'); 
-    // New Subscription UI Elements
-    const subscriptionStatusDiv = document.getElementById('subscription-status');
-    const upgradeBtn = document.getElementById('upgrade-btn');
+    const darkModeToggle = document.getElementById('darkModeToggle');
 
-    
     let isLoginMode = true;
-
-    // ** دالة جلب حالة الاشتراك من Firebase (NEW) **
-    function fetchUserPremiumStatus() {
-        if (!currentUser) return;
-        database.ref(`users/${currentUser.uid}/isPremium`).once('value', snapshot => {
-            userIsPremium = snapshot.val() === true;
-            updateSubscriptionUI();
-            // لضمان تحديث الأزرار والرسائل بعد جلب حالة الاشتراك
-            renderProjects(); 
-        }).catch(error => {
-            console.error("Error fetching premium status:", error);
-            updateSubscriptionUI();
-        });
-    }
-
-    // ** دالة تحديث واجهة حالة الاشتراك (NEW) **
-    function updateSubscriptionUI() {
-        const subMessage = document.getElementById('sub-message');
-        
-        if (userIsPremium) {
-            subscriptionStatusDiv.style.background = '#27ae60'; // Green for premium
-            subMessage.textContent = '✅ حسابك: اشتراك غير محدود (بريميوم).';
-            upgradeBtn.classList.add('hidden');
-        } else {
-            const remaining = MAX_FREE_PROJECTS - projects.length;
-            subscriptionStatusDiv.style.background = '#c0392b'; // Red/Warning for free
-            
-            subMessage.innerHTML = `
-                ❌ حسابك: **مجاني**. لديك **${Math.max(0, remaining)}** مشروع متبقي.
-                <br>
-                لإضافة مشاريع غير محدودة، يرجى الترقية الآن!
-            `;
-            // إظهار زر الترقية إذا لم يكن المستخدم بريميوم
-            upgradeBtn.classList.remove('hidden');
-            upgradeBtn.onclick = handleUpgradeClick;
-            
-            // تحديث زر إضافة مشروع في حال وصول للحد
-            const addProjectBtn = document.querySelector('#mainPage button[onclick="showAddProject()"]');
-            if (addProjectBtn) {
-                if (projects.length >= MAX_FREE_PROJECTS) {
-                    addProjectBtn.style.opacity = '0.5';
-                    addProjectBtn.style.cursor = 'not-allowed';
-                    addProjectBtn.onclick = () => showError(`لا يمكنك إضافة أكثر من ${MAX_FREE_PROJECTS} مشاريع في الحساب المجاني. يرجى الترقية.`);
-                } else {
-                    addProjectBtn.style.opacity = '1';
-                    addProjectBtn.style.cursor = 'pointer';
-                    addProjectBtn.onclick = showAddProject; // إعادة ربط الدالة الأصلية
-                }
-            }
-        }
-    }
-
-    // ** دالة للتعامل مع النقر على زر الترقية (NEW) **
-    function handleUpgradeClick() {
-        // ** ⚠️ هنا يجب وضع منطق تحويل المستخدم إلى صفحة الدفع والاشتراك الحقيقية. ⚠️ **
-        alert("سيتم نقلك الآن إلى صفحة الدفع. بعد الدفع، يرجى التواصل معنا لتفعيل الحساب.");
-        
-        // ** ميزة الترقية الوهمية للاختبار: **
-        if(confirm("هل تريد تفعيل وضع (البريميوم الوهمي) للاختبار؟")) {
-             database.ref(`users/${currentUser.uid}`).update({ isPremium: true })
-                .then(() => {
-                    showSuccess("تم تفعيل الاشتراك (الوهمي) بنجاح! 🎉 يرجى تحديث الصفحة.");
-                    fetchUserPremiumStatus(); // Reload status
-                })
-                .catch(e => showError("خطأ في التفعيل الوهمي: " + e.message));
-        }
-    }
-
-
-    // Check for user login state with share mode support
-    auth.onAuthStateChanged(user => {
-        // أولاً تحقق من وجود رابط مشاركة
-        if (handleShareLink()) {
-            // إذا كان هناك رابط مشاركة، لا تطلب تسجيل دخول
-            return;
-        }
-        
-        if (user) {
-            currentUser = user;
-            showMainApp();
-            fetchUserPremiumStatus(); // <--- Call new function on login
-            loadProjects();
-        } else {
-            currentUser = null;
-            userIsPremium = false; // Reset status on logout
-            hideAllPages();
-            authPage.classList.remove('hidden');
-        }
-    });
-
-    // Initial check for shared links
+    
+    // موحد - الفحص المبدئي وإدارة الجلسة
     window.addEventListener('load', function() {
-        if (!handleShareLink()) {
-            // إذا لم يكن هناك رابط مشاركة، تحقق من تسجيل الدخول العادي
-            auth.onAuthStateChanged(user => {
-                if (user) {
-                    currentUser = user;
-                    showMainApp();
-                    fetchUserPremiumStatus(); // <--- Call new function on load
-                    loadProjects();
-                } else {
-                    currentUser = null;
-                    userIsPremium = false; // Reset status on logout
-                    hideAllPages();
-                    authPage.classList.remove('hidden');
-                }
-            });
+        if (handleShareLink()) {
+            return; // توقف هنا إذا كان الرابط هو رابط مشاركة
         }
+        
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                showMainApp();
+                loadProjects();
+            } else {
+                currentUser = null;
+                hideAllPages();
+                authPage.classList.remove('hidden');
+            }
+        });
     });
 
     // Message functions
     function showSuccess(message) {
+        if(!successMsg) return;
         successMsg.textContent = message;
         successMsg.style.display = 'block';
         errorMsg.style.display = 'none';
-        setTimeout(() => {
-            successMsg.style.display = 'none';
-        }, 3000);
+        setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
     }
 
     function showError(message) {
+        if(!errorMsg) return;
         errorMsg.textContent = message;
         errorMsg.style.display = 'block';
         successMsg.style.display = 'none';
-        setTimeout(() => {
-            errorMsg.style.display = 'none';
-        }, 5000); // 5 seconds for subscription error
+        setTimeout(() => { errorMsg.style.display = 'none'; }, 3000);
     }
     
     // Auth functions
@@ -579,7 +753,6 @@
             signupBtn.classList.add('hidden');
             confirmPasswordGroup.classList.add('hidden');
             if (forgotPasswordLink) forgotPasswordLink.style.display = 'block';
-
             toggleText.innerHTML = 'ليس لديك حساب؟ <a href="#" id="toggle-link">إنشاء حساب جديد</a>';
         } else {
             formTitle.textContent = 'إنشاء حساب جديد';
@@ -587,7 +760,6 @@
             loginBtn.classList.add('hidden');
             confirmPasswordGroup.classList.remove('hidden');
             if (forgotPasswordLink) forgotPasswordLink.style.display = 'none';
-
             toggleText.innerHTML = 'لديك حساب؟ <a href="#" id="toggle-link">تسجيل الدخول</a>';
         }
 
@@ -602,13 +774,10 @@
 
     function login(email, password) {
         auth.signInWithEmailAndPassword(email, password)
-            .then((userCredential) => {
-                showSuccess('تم تسجيل الدخول بنجاح! 🎉');
-            })
+            .then(() => { showSuccess('تم تسجيل الدخول بنجاح! 🎉'); })
             .catch((error) => {
-                const errorMessage = error.message;
                 showError('حدث خطأ أثناء تسجيل الدخول. تأكد من البريد الإلكتروني وكلمة المرور.');
-                console.error("Login error: ", errorMessage);
+                console.error("Login error: ", error.message);
             });
     }
 
@@ -625,13 +794,10 @@
         auth.createUserWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
-                // ** NEW CODE - Add isPremium field **
                 database.ref('users/' + user.uid).set({
                     email: email,
-                    name: email.split('@')[0],
-                    isPremium: false 
+                    name: email.split('@')[0]
                 }).then(() => {
-                // ** END NEW CODE **
                     showSuccess('تم إنشاء الحساب بنجاح! 🎉 يمكنك الآن تسجيل الدخول');
                     setTimeout(() => {
                         toggleMode();
@@ -640,22 +806,20 @@
                 });
             })
             .catch((error) => {
-               const errorMessage = error.message;
-                if (errorMessage.includes("email-already-in-use")) {
+                if (error.message.includes("email-already-in-use")) {
                     showError('هذا البريد الإلكتروني مستخدم بالفعل ❌');
                 } else {
                     showError('حدث خطأ أثناء إنشاء الحساب. حاول مرة أخرى.');
                 }
-                console.error("Signup error: ", errorMessage);
             });
     }
 
     function hideAllPages() {
-        authPage.classList.add('hidden');
-        mainPage.classList.add('hidden');
-        projectPage.classList.add('hidden');
-        dayPage.classList.add('hidden');
-        sharePage.classList.add('hidden');
+        if(authPage) authPage.classList.add('hidden');
+        if(mainPage) mainPage.classList.add('hidden');
+        if(projectPage) projectPage.classList.add('hidden');
+        if(dayPage) dayPage.classList.add('hidden');
+        if(sharePage) sharePage.classList.add('hidden');
     }
 
     function showMainApp() {
@@ -669,705 +833,482 @@
 
     function logout() {
         auth.signOut()
-            .then(() => {
-                showSuccess('تم تسجيل الخروج بنجاح! 👋');
-            })
-            .catch((error) => {
-                showError('حدث خطأ أثناء تسجيل الخروج.');
-                console.error("Logout error: ", error);
-            });
+            .then(() => { showSuccess('تم تسجيل الخروج بنجاح! 👋'); })
+            .catch((error) => { showError('حدث خطأ أثناء تسجيل الخروج.'); });
     }
 
     // Auth Event Listeners
-    loginBtn.addEventListener('click', function() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        if (!email || !password) {
-            showError('يرجى ملء جميع الحقول المطلوبة ❌');
-            return;
-        }
-        login(email, password);
-    });
-
-    signupBtn.addEventListener('click', function() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirm-password').value;
-        if (!email || !password) {
-            showError('يرجى ملء جميع الحقول المطلوبة ❌');
-            return;
-        }
-        if (!isLoginMode && !confirmPassword) {
-            showError('يرجى تأكيد كلمة المرور ❌');
-            return;
-        }
-        if (isLoginMode) {
+    if(loginBtn) {
+        loginBtn.addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            if (!email || !password) { showError('يرجى ملء جميع الحقول المطلوبة ❌'); return; }
             login(email, password);
-        } else {
-            signup(email, password, confirmPassword);
-        }
-    });
+        });
+    }
 
-    logoutBtn.addEventListener('click', logout); // Ensure logout is handled if not defined inline in HTML
+    if(signupBtn) {
+        signupBtn.addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            if (!email || !password) { showError('يرجى ملء جميع الحقول المطلوبة ❌'); return; }
+            if (!isLoginMode && !confirmPassword) { showError('يرجى تأكيد كلمة المرور ❌'); return; }
+            if (isLoginMode) { login(email, password); } else { signup(email, password, confirmPassword); }
+        });
+    }
 
-    // ========== Project Management Functions with Firebase ==========
-    // Load projects from Firebase
+    if(toggleLink) toggleLink.addEventListener('click', function(e) { e.preventDefault(); toggleMode(); });
+    if(logoutBtn) logoutBtn.addEventListener('click', logout);
+    if(form) {
+        form.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (isLoginMode) { loginBtn.click(); } else { signupBtn.click(); }
+            }
+        });
+    }
+
+    // ========== Project Management Functions ==========
     function loadProjects() {
         if (!currentUser || isShareMode) return;
-        const projectsRef = database.ref(`projects/${currentUser.uid}`);
-        projectsRef.on('value', snapshot => {
+        database.ref(`projects/${currentUser.uid}`).on('value', snapshot => {
             const data = snapshot.val();
             projects = [];
             if (data) {
                 projects = Object.keys(data).map(key => ({ id: key, ...data[key] }));
             }
             renderProjects();
-            updateSubscriptionUI(); // <--- Call to update UI after loading projects count
         });
     }
 
-    // Save project data to Firebase
     function saveProject(projectData) {
         return new Promise((resolve, reject) => {
-            if (!currentUser || isShareMode) {
-                showError("خطأ: لم يتم تسجيل الدخول.");
-                return reject("No user logged in.");
-            }
-            // ** NEW CODE - Subscription Check before saving new project **
-            if (!projectData.id && !userIsPremium && projects.length >= MAX_FREE_PROJECTS) {
-                 showError(`الحد الأقصى للمشاريع في الحساب المجاني هو ${MAX_FREE_PROJECTS}. يرجى الترقية للحساب غير المحدود.`);
-                 return reject("Subscription limit reached.");
-            }
-            // ** END NEW CODE **
-
+            if (!currentUser || isShareMode) { showError("خطأ: لم يتم تسجيل الدخول."); return reject(); }
             const projectsRef = database.ref(`projects/${currentUser.uid}`);
             if (projectData.id) {
                 const projectId = projectData.id;
-                delete projectData.id;
-                projectsRef.child(projectId).update(projectData).then(() => {
-                    showSuccess("تم تحديث المشروع بنجاح!");
-                    resolve();
-                }).catch(error => {
-                    console.error("Error updating project: ", error);
-                    showError("حدث خطأ أثناء تحديث المشروع.");
-                    reject(error);
-                });
+                let copy = {...projectData}; delete copy.id;
+                projectsRef.child(projectId).update(copy).then(() => { showSuccess("تم تحديث المشروع!"); resolve(); }).catch(reject);
             } else {
-                projectsRef.push(projectData).then(() => {
-                    showSuccess("تم إضافة المشروع بنجاح!");
-                    resolve();
-                }).catch(error => {
-                    console.error("Error adding new project: ", error);
-                    showError("حدث خطأ أثناء إضافة المشروع.");
-                    reject(error);
-                });
+                projectsRef.push(projectData).then(() => { showSuccess("تم إضافة المشروع!"); resolve(); }).catch(reject);
             }
         });
     }
-
-    // === عرض المشاريع
+    
     function renderProjects(){
-        const list=document.getElementById("projectList");
-        list.innerHTML="";
-        if (projects.length === 0) {
-            list.innerHTML = "<p>لا يوجد مشاريع. ابدأ بإضافة مشروع جديد!</p>";
-            // Ensure form is hidden if no projects but not adding
-            if (document.getElementById("addProjectForm")) {
-                document.getElementById("addProjectForm").classList.add("hidden");
-            }
-            return;
-        }
+        const list=document.getElementById("projectList"); list.innerHTML="";
+        if (projects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع. ابدأ بإضافة مشروع جديد!</p>"; return; }
         projects.forEach((p,i)=>{
-            let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
-            let totalSpent = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
-            let totalDayCost = (p.days || []).reduce((sum, d) => {
-                // Simple cost parsing (for the sake of completeness based on previous code)
+            let progress = Math.round(((p.days ? Object.keys(p.days).length : 0) / p.duration) * 100);
+            let totalDayCost = p.days ? Object.values(p.days).reduce((sum, d) => {
                 const numbers = (d.costDetail || "").match(/\d+/g);
-                if (numbers) {
-                    return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0);
-                }
-                return sum;
-            }, 0);
-            let grandTotal = totalSpent + totalDayCost; 
+                return sum + (numbers ? numbers.reduce((daySum, num) => daySum + parseInt(num), 0) : 0);
+            }, 0) : 0;
             const div=document.createElement("div");
             div.className="project flex-between";
-            div.innerHTML=`<b>${p.name}</b><span>💰 ${grandTotal.toLocaleString()} | 📊 ${progress}%</span>`;
+            div.innerHTML=`<b>${p.name}</b><span>💰 ${totalDayCost.toLocaleString()} | 📊 ${progress}%</span>`;
             div.onclick=()=>openProject(i);
             list.appendChild(div);
         });
-        updateSubscriptionUI(); // <--- Call to update UI after rendering
     }
-
+    
     function searchProjects(){
         const query=document.getElementById("searchInput").value.toLowerCase();
-        const list=document.getElementById("projectList");
-        list.innerHTML = "";
+        const list=document.getElementById("projectList"); list.innerHTML = "";
         const filteredProjects = projects.filter(p => p.name.toLowerCase().includes(query));
-        if (filteredProjects.length === 0) {
-            list.innerHTML = "<p>لا يوجد مشاريع تطابق البحث.</p>";
-            return;
-        }
-        filteredProjects.forEach((p, i) => {
-            let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
-            let totalSpent = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
-            let totalDayCost = (p.days || []).reduce((sum, d) => {
-                const numbers = (d.costDetail || "").match(/\d+/g);
-                if (numbers) {
-                    return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0);
-                }
-                return sum;
-            }, 0);
-            let grandTotal = totalSpent + totalDayCost;
+        if (filteredProjects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع تطابق البحث.</p>"; return; }
+        filteredProjects.forEach((p) => {
+            let progress = Math.round(((p.days ? Object.keys(p.days).length : 0) / p.duration) * 100);
             const div = document.createElement("div");
             div.className = "project flex-between";
-            div.innerHTML = `<b>${p.name}</b><span>💰 ${grandTotal.toLocaleString()} | 📊 ${progress}%</span>`;
-            div.onclick = () => {
-                const originalIndex = projects.findIndex(proj => proj.id === p.id);
-                openProject(originalIndex);
-            };
+            div.innerHTML = `<b>${p.name}</b><span>📊 ${progress}%</span>`;
+            div.onclick = () => { openProject(projects.findIndex(proj => proj.id === p.id)); };
             list.appendChild(div);
         });
     }
-
-    // ** MODIFIED FUNCTION - Check Limit Here **
-    function showAddProject(){
-        if (isShareMode) return;
-        
-        if (!userIsPremium && projects.length >= MAX_FREE_PROJECTS) {
-            showError(`لا يمكنك إضافة أكثر من ${MAX_FREE_PROJECTS} مشاريع في الحساب المجاني. يرجى الترقية للحساب غير المحدود.`);
-            document.getElementById("addProjectForm").classList.add("hidden"); 
-            return;
-        }
-        
-        document.getElementById("addProjectForm").classList.remove("hidden");
-    }
-
-    // ** MODIFIED FUNCTION - Check Limit Here for safety (although showAddProject handles the click) **
+    
+    function showAddProject(){ if (isShareMode) return; document.getElementById("addProjectForm").classList.remove("hidden"); }
+    
     function addProject(){
         if (isShareMode) return;
-
-        if (!userIsPremium && projects.length >= MAX_FREE_PROJECTS) {
-            showError(`الحد الأقصى للمشاريع في الحساب المجاني هو ${MAX_FREE_PROJECTS}.`);
-            document.getElementById("addProjectForm").classList.add("hidden"); 
-            return;
-        }
-
         let name = document.getElementById("projectName").value;
         let duration = parseInt(document.getElementById("projectDuration").value);
         let cost = parseInt(document.getElementById("projectCost").value);
         if(!name || !duration || !cost){alert("أدخل الحقول كاملة");return;}
-        
-        // Basic validation
-        if (duration <= 0 || cost <= 0) {
-            showError("المدة والتكلفة يجب أن تكونا قيم موجبة.");
-            return;
-        }
-        
-        const newProject = {
-            name,
-            duration,
-            cost,
-            startDate: new Date().toISOString().split("T")[0],
-            days: [],
-            payments: []
-        };
-        saveProject(newProject).then(() => {
-            // Success handled in saveProject
-            document.getElementById("addProjectForm").classList.add("hidden");
-            document.getElementById("projectName").value = "";
-            document.getElementById("projectDuration").value = "";
-            document.getElementById("projectCost").value = "";
-        }).catch(() => {
-            // Error handled in saveProject
-        });
+        saveProject({ name, duration, cost, startDate: new Date().toISOString().split("T")[0], days: [], payments: [] });
+        document.getElementById("addProjectForm").classList.add("hidden");
+        document.getElementById("projectName").value = "";
+        document.getElementById("projectDuration").value = "";
+        document.getElementById("projectCost").value = "";
     }
     
     function editProject(){
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
-        let newName = prompt("✏ تعديل اسم المشروع:", p.name);
-        if(newName) p.name = newName;
-        let newCost = prompt("✏ تعديل تكلفة المشروع:", p.cost);
-        if(newCost && !isNaN(newCost)) p.cost = parseInt(newCost);
-        let newDuration = prompt("✏ تعديل مدة المشروع بالأيام:", p.duration);
-        if(newDuration && !isNaN(newDuration)) p.duration = parseInt(newDuration);
-        saveProject(p).then(() => {
-            openProject(currentProjectIndex);
-        });
+        let newName = prompt("✏ تعديل اسم المشروع:", p.name); if(newName) p.name = newName;
+        let newCost = prompt("✏ تعديل تكلفة المشروع:", p.cost); if(newCost) p.cost = parseInt(newCost);
+        let newDuration = prompt("✏ تعديل مدة المشروع بالأيام:", p.duration); if(newDuration) p.duration = parseInt(newDuration);
+        saveProject(p).then(() => { openProject(currentProjectIndex); });
     }
     
     function deleteProject(){
         if (isShareMode) return;
-        if(!confirm("هل أنت متأكد من حذف هذا المشروع نهائياً؟")) return;
-        const projectsRef = database.ref(`projects/${currentUser.uid}`);
-        projectsRef.child(projects[currentProjectIndex].id).remove().then(() => {
-            showSuccess("تم حذف المشروع بنجاح!");
-            backToProjects();
-        }).catch(error => {
-            console.error("Error removing project: ", error);
-            showError("حدث خطأ أثناء حذف المشروع.");
+        database.ref(`projects/${currentUser.uid}/${projects[currentProjectIndex].id}`).remove().then(() => {
+            showSuccess("تم حذف المشروع بنجاح!"); backToProjects();
         });
     }
-
-    // === فتح مشروع
+    
     function openProject(i){
         currentProjectIndex = i;
         mainPage.classList.add("hidden");
         projectPage.classList.remove("hidden");
         let p = projects[i];
         document.getElementById("projTitle").innerText = p.name;
-        
-        let daysCount = p.days ? p.days.length : 0;
-        let progress = Math.round((daysCount / p.duration) * 100);
+        let dayCount = p.days ? Object.keys(p.days).length : 0;
+        let progress = Math.round((dayCount / p.duration) * 100);
         let bar = document.getElementById("projProgress");
-        bar.style.width = progress + "%";
-        bar.innerText = progress + "%";
-        
-        let start = new Date(p.startDate);
-        let end = new Date(start);
-        end.setDate(start.getDate() + p.duration);
+        bar.style.width = progress + "%"; bar.innerText = progress + "%";
+        let start = new Date(p.startDate); let end = new Date(start); end.setDate(start.getDate() + p.duration);
         let left = Math.max(0, Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)));
         document.getElementById("daysLeft").innerText = "⏳ متبقي " + left + " يوم";
         document.getElementById("projCost").innerText = "💰 التكلفة: " + p.cost.toLocaleString();
-        
-        if (!isShareMode) {
-            renderPayments();
-        }
+        if (!isShareMode) { renderPayments(); }
         renderDays();
     }
     
     function backToProjects(){
-        projectPage.classList.add("hidden");
-        dayPage.classList.add("hidden");
-        sharePage.classList.add("hidden");
-        if (isShareMode) { // في وضع المشاركة، إخفاء كل شيء وإظهار رسالة
-            hideAllPages();
+        projectPage.classList.add("hidden"); dayPage.classList.add("hidden"); sharePage.classList.add("hidden");
+        if (isShareMode) {
             document.body.innerHTML = '<div class="container"><h1>شكراً لك! يمكنك إغلاق هذه الصفحة الآن.</h1></div>';
         } else {
-            mainPage.classList.remove("hidden");
-            // loadProjects is called in onAuthStateChanged, which handles the rendering
-            loadProjects(); 
+            mainPage.classList.remove("hidden"); renderProjects();
         }
     }
     
-    function backToProjectPageFromShare(){
-        if (isShareMode) return;
-        sharePage.classList.add("hidden");
-        projectPage.classList.remove("hidden");
-    }
-
-    // === الدفعات
+    function backToProjectPageFromShare(){ if (isShareMode) return; sharePage.classList.add("hidden"); projectPage.classList.remove("hidden"); }
+    
     function renderPayments(){
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
-        const list = document.getElementById("paymentsList");
-        list.innerHTML = "";
-        (p.payments || []).forEach((pay, index) => {
+        const list = document.getElementById("paymentsList"); list.innerHTML = "";
+        let paymentsArr = p.payments ? (Array.isArray(p.payments) ? p.payments : Object.values(p.payments)) : [];
+        paymentsArr.forEach((pay, index) => {
             const div = document.createElement("div");
-            div.style.display = "flex";
-            div.style.justifyContent = "space-between";
-            div.style.alignItems = "center";
-            div.style.marginBottom = "5px";
-            div.innerHTML = `
-                <span>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date}</span>
-                <button class="delete">✖</button>
-            `;
+            div.className = "flex-between"; div.style.marginBottom = "5px";
+            div.innerHTML = `<span>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date}</span><button class="delete">✖</button>`;
             div.querySelector("button").onclick = () => {
-                p.payments.splice(index, 1);
-                saveProject(p).then(() => {
-                    renderPayments();
-                });
+                paymentsArr.splice(index, 1); p.payments = paymentsArr;
+                saveProject(p).then(() => { renderPayments(); });
             };
             list.appendChild(div);
         });
-        let totalPaid = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
-        let remaining = p.cost - totalPaid;
-        document.getElementById("remainingCost").innerText = "المتبقي: " + remaining.toLocaleString();
+        let totalPaid = paymentsArr.reduce((sum, pr) => sum + pr.amount, 0);
+        document.getElementById("remainingCost").innerText = "المتبقي: " + (p.cost - totalPaid).toLocaleString();
     }
     
     function addPayment(){
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
-        let amountStr = prompt("💵 مبلغ الدفعة:");
-        if(!amountStr) return; 
-        let amount = parseInt(amountStr);
-        if(isNaN(amount) || amount <= 0) {
-            alert("الرجاء إدخال مبلغ صحيح وموجب.");
-            return;
-        }
-        let today = new Date().toISOString().split("T")[0];
+        let amount = parseInt(prompt("💵 مبلغ الدفعة:")); if(!amount || isNaN(amount)) return;
         if(!p.payments) p.payments = [];
-        p.payments.push({amount, date: today});
-        saveProject(p).then(() => {
-            renderPayments();
-        });
+        let paymentsArr = Array.isArray(p.payments) ? p.payments : Object.values(p.payments);
+        paymentsArr.push({amount, date: new Date().toISOString().split("T")[0]});
+        p.payments = paymentsArr;
+        saveProject(p).then(() => { renderPayments(); });
     }
 
-    // === الأيام
     function renderDays(){
-        const list=document.getElementById("daysList");
-        list.innerHTML="";
+        const list=document.getElementById("daysList"); list.innerHTML="";
         let p=projects[currentProjectIndex];
-        (p.days || []).forEach((d,i)=>{
-            const div=document.createElement("div");
-            div.className="day";
+        let daysArr = p.days ? (Array.isArray(p.days) ? p.days : Object.values(p.days)) : [];
+        daysArr.forEach((d,i)=>{
+            const div=document.createElement("div"); div.className="day";
             div.innerHTML=`
                 <div class="flex-between" onclick="toggleDayDetails(${i})">
-                    <b>اليوم ${i+1} - 📅 ${d.date}</b>
-                    <span>
-                        <button class="delete" onclick="event.stopPropagation(); deleteDay(${i})">✖</button>
-                    </span>
+                    <b>اليوم ${i+1} - ${d.date} (${getDayName(d.date)})</b><span>⬇ التفاصيل</span>
                 </div>
-                <div class="day-details" id="dayDetails${i}">
-                    <p><b>🔨 العمل:</b> ${d.workDescription || "لا يوجد"}</p>
-                    <p><b>👷 الكادر:</b> ${d.workersDetail || "لا يوجد"}</p>
-                    <p><b>💰 المبالغ:</b> ${d.costDetail || "لا يوجد"}</p>
-                    <h3>📸 المرفقات</h3>
-                    <div class="media-list" id="mediaListDay${i}"></div>
-                    <button onclick="editDay(${i})">✏ تعديل اليوم</button>
-                </div>
-            `;
+                <div id="details-${i}" class="day-details">
+                    <table>
+                        <tr><th>🔨 العمل</th><td>${(d.workDescription||"-").replace(/\n/g,"<br>")}</td></tr>
+                        <tr><th>👷 الكادر</th><td>${(d.workersDetail||"-").replace(/\n/g,"<br>")}</td></tr>
+                        <tr><th>💰 المبالغ</th><td>${(d.costDetail||"-").replace(/\n/g,"<br>")}</td></tr>
+                    </table>
+                    <div>${(d.media||[]).map(src=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")}</div>
+                    ${!isShareMode ? `<button onclick="openDay(${i})">✏ تعديل</button><button class="delete" onclick="deleteDay(${i});event.stopPropagation();">🗑 حذف</button>` : ''}
+                </div>`;
             list.appendChild(div);
-            renderMedia(i, `mediaListDay${i}`, d.media || []);
         });
-        // إخفاء زر إضافة يوم إذا كانت الأيام المضافة وصلت إلى مدة المشروع
-        const addDayBtn = document.querySelector('#projectPage button[onclick="addDay()"]');
-        if (addDayBtn) {
-            if ((p.days || []).length >= p.duration) {
-                addDayBtn.style.display = 'none';
-            } else {
-                addDayBtn.style.display = 'block';
-            }
-        }
-    }
-
-    function toggleDayDetails(i){
-        const details = document.getElementById(`dayDetails${i}`);
-        if(details) details.style.display = details.style.display === 'block' ? 'none' : 'block';
-    }
-
-    function addDay(){
-        if (isShareMode) return;
-        let p = projects[currentProjectIndex];
-        let nextDayIndex = (p.days || []).length;
-
-        if (nextDayIndex >= p.duration) {
-            alert("لقد وصلت إلى الحد الأقصى لأيام العمل المحددة للمشروع.");
-            return;
-        }
-
-        currentDayIndex = nextDayIndex;
-        // Calculate the actual date based on the project's start date
-        let startDate = new Date(p.startDate);
-        let dayDate = new Date(startDate);
-        dayDate.setDate(startDate.getDate() + nextDayIndex);
-
-        let newDay = {
-            date: dayDate.toISOString().split("T")[0],
-            workDescription: "",
-            workersDetail: "",
-            costDetail: "",
-            media: []
-        };
-        if (!p.days) p.days = [];
-        p.days.push(newDay);
-        saveProject(p).then(() => {
-            openDay(currentDayIndex);
-        });
-    }
-
-    function deleteDay(i){
-        if (isShareMode) return;
-        if(confirm(`هل أنت متأكد من حذف اليوم ${i+1}؟`)){
-            let p = projects[currentProjectIndex];
-            p.days.splice(i, 1);
-            saveProject(p).then(() => {
-                backToProject();
-            });
-        }
-    }
-
-    function editDay(i){
-        currentDayIndex = i;
-        openDay(i);
-    }
-
-    function openDay(i){
-        currentDayIndex = i;
-        projectPage.classList.add("hidden");
-        dayPage.classList.remove("hidden");
-        let p = projects[currentProjectIndex];
-        let d = p.days[i];
-
-        document.getElementById("dayDate").innerText = `📅 اليوم ${i+1} - ${d.date}`;
-        document.getElementById("workDescription").value = d.workDescription || "";
-        document.getElementById("workersDetail").value = d.workersDetail || "";
-        document.getElementById("costDetail").value = d.costDetail || "";
-        
-        // إخفاء/إظهار زر الحفظ إذا كان في وضع المشاركة
-        const saveBtn = document.querySelector('#dayPage button[onclick="saveDay()"]');
-        if (saveBtn) {
-            saveBtn.style.display = isShareMode ? 'none' : 'block';
-        }
-        
-        renderMedia(i, 'mediaList', d.media || []);
-    }
-
-    function saveDay(){
-        if (isShareMode) return;
-        let p = projects[currentProjectIndex];
-        let d = p.days[currentDayIndex];
-
-        d.workDescription = document.getElementById("workDescription").value;
-        d.workersDetail = document.getElementById("workersDetail").value;
-        d.costDetail = document.getElementById("costDetail").value;
-        
-        // Save uploaded media (placeholder/note)
-        const mediaInput = document.getElementById('mediaInput');
-        if (mediaInput && mediaInput.files.length > 0) {
-            showError("تخزين الملفات يتطلب خدمة تخزين (مثل Firebase Storage) غير مدمجة في هذا الملف. سيتم حفظ النصوص فقط.");
-            mediaInput.value = ''; // Clear file input
-        }
-
-        saveProject(p).then(() => {
-            backToProject();
-        });
-    }
-
-    function backToProject(){
-        dayPage.classList.add("hidden");
-        openProject(currentProjectIndex);
     }
     
-    // Media functions (simplified, assuming media are just URLs/Base64 if uploaded to storage)
-    function renderMedia(dayIndex, listId, mediaUrls) {
-        const list = document.getElementById(listId);
-        if (!list) return;
-        list.innerHTML = "";
-        mediaUrls.forEach((url, index) => {
-            const isVideo = url.endsWith('.mp4') || url.endsWith('.mov'); // Simple check
-            const element = document.createElement(isVideo ? 'video' : 'img');
-            element.src = url;
-            element.alt = isVideo ? 'فيديو' : 'صورة';
-            if (isVideo) element.controls = true;
-            element.onclick = () => showFullScreen(url, isVideo);
-
-            const container = document.createElement('div');
-            container.style.position = 'relative';
-            container.style.display = 'inline-block';
-            container.appendChild(element);
-
-            if (!isShareMode) {
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'delete';
-                deleteBtn.textContent = '✖';
-                deleteBtn.style.position = 'absolute';
-                deleteBtn.style.top = '0';
-                deleteBtn.style.right = '0';
-                deleteBtn.style.fontSize = '10px';
-                deleteBtn.style.padding = '3px 6px';
-                deleteBtn.style.margin = '0';
-                deleteBtn.onclick = (e) => {
-                    e.stopPropagation();
-                    if(confirm("هل أنت متأكد من حذف هذا الملف؟")){
-                        let p = projects[currentProjectIndex];
-                        p.days[dayIndex].media.splice(index, 1);
-                        saveProject(p).then(() => {
-                            // Check which page is visible to render correctly
-                            if (document.getElementById('dayPage').classList.contains('hidden')) {
-                                openProject(currentProjectIndex); // If on project page
-                            } else {
-                                openDay(dayIndex); // If on day page
-                            }
-                        });
-                    }
-                };
-                container.appendChild(deleteBtn);
+    function searchDays(){
+        const query=document.getElementById("searchDayInput").value.toLowerCase();
+        const list=document.getElementById("daysList"); list.innerHTML="";
+        let p = projects[currentProjectIndex];
+        let daysArr = p.days ? (Array.isArray(p.days) ? p.days : Object.values(p.days)) : [];
+        daysArr.forEach((d, i) => {
+            if(JSON.stringify(d).toLowerCase().includes(query)) {
+                const div = document.createElement("div"); div.className = "day";
+                div.innerHTML=`
+                    <div class="flex-between" onclick="toggleDayDetails(${i})">
+                        <b>اليوم ${i+1} - ${d.date} (${getDayName(d.date)})</b><span>⬇ التفاصيل</span>
+                    </div>
+                    <div id="details-${i}" class="day-details">
+                        <table>
+                            <tr><th>🔨 العمل</th><td>${(d.workDescription||"-").replace(/\n/g,"<br>")}</td></tr>
+                        </table>
+                        <div>${(d.media||[]).map(src=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")}</div>
+                    </div>`;
+                list.appendChild(div);
             }
-            list.appendChild(container);
         });
     }
+    
+    function toggleDayDetails(i){ let el=document.getElementById("details-"+i); if(el) el.style.display=el.style.display==="block"?"none":"block"; }
+    function getDayName(dateStr){ const days=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"]; return days[new Date(dateStr).getDay()]; }
+    
+    function addDay(){ 
+        if (isShareMode) return;
+        let p = projects[currentProjectIndex];
+        if (!p.days) p.days = [];
+        let daysArr = Array.isArray(p.days) ? p.days : Object.values(p.days);
+        daysArr.push({date:new Date().toISOString().split("T")[0],workDescription:"",workersDetail:"",costDetail:"",media:[]}); 
+        p.days = daysArr;
+        saveProject(p).then(() => { renderDays(); });
+    }
+    
+    function deleteDay(i){ 
+        if(isShareMode) return;
+        if(confirm("هل تريد حذف هذا اليوم؟")){ 
+            let p = projects[currentProjectIndex];
+            let daysArr = Array.isArray(p.days) ? p.days : Object.values(p.days);
+            daysArr.splice(i,1); p.days = daysArr;
+            saveProject(p).then(() => { renderDays(); });
+        } 
+    }
+    
+    function openDay(i){ 
+        if (isShareMode) return;
+        currentDayIndex = i; 
+        projectPage.classList.add("hidden"); dayPage.classList.remove("hidden"); 
+        let daysArr = projects[currentProjectIndex].days;
+        let d = Array.isArray(daysArr) ? daysArr[i] : Object.values(daysArr)[i];
+        document.getElementById("dayDate").innerText = "📅 " + d.date + " (" + getDayName(d.date) + ")"; 
+        document.getElementById("workDescription").value = d.workDescription || ""; 
+        document.getElementById("workersDetail").value = d.workersDetail || ""; 
+        document.getElementById("costDetail").value = d.costDetail || ""; 
+        renderMedia(); 
+    }
+    
+    function backToProject(){ dayPage.classList.add("hidden"); projectPage.classList.remove("hidden"); renderDays(); }
+    
+    function saveDay(){ 
+        if (isShareMode) return;
+        let p = projects[currentProjectIndex];
+        let daysArr = Array.isArray(p.days) ? p.days : Object.values(p.days);
+        let d = daysArr[currentDayIndex];
+        d.workDescription = document.getElementById("workDescription").value; 
+        d.workersDetail = document.getElementById("workersDetail").value; 
+        d.costDetail = document.getElementById("costDetail").value; 
+        
+        let files = document.getElementById("mediaInput").files;
+        if (files.length === 0) {
+            p.days = daysArr; saveProject(p).then(() => { renderMedia(); alert("تم الحفظ!"); }); return;
+        }
 
-    function showFullScreen(url, isVideo) {
-        const fsDiv = document.createElement('div');
-        fsDiv.className = 'fullscreen';
-        fsDiv.onclick = () => fsDiv.remove();
-
-        const media = document.createElement(isVideo ? 'video' : 'img');
-        media.src = url;
-        if (isVideo) media.controls = true;
-        media.onclick = (e) => e.stopPropagation(); // Prevent closing when clicking media
-
-        fsDiv.appendChild(media);
-        document.body.appendChild(fsDiv);
+        let filesProcessed = 0;
+        for (let f of files) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let img = new Image();
+                img.onload = function() {
+                    let canvas = document.createElement('canvas'); let ctx = canvas.getContext('2d');
+                    let ratio = Math.min(800 / img.width, 600 / img.height);
+                    canvas.width = img.width * ratio; canvas.height = img.height * ratio;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    if (!d.media) d.media = [];
+                    d.media.push(canvas.toDataURL('image/jpeg', 0.6));
+                    filesProcessed++;
+                    if (filesProcessed === files.length) {
+                        p.days = daysArr; saveProject(p).then(() => { renderMedia(); });
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(f);
+        }
+    }
+    
+    function renderMedia(){ 
+        if (isShareMode) return;
+        let daysArr = projects[currentProjectIndex].days;
+        let d = Array.isArray(daysArr) ? daysArr[currentDayIndex] : Object.values(daysArr)[currentDayIndex];
+        let container=document.getElementById("mediaList"); container.innerHTML=""; 
+        (d.media || []).forEach((src,j)=>{ 
+            let div=document.createElement("div"); div.style.display="inline-block"; div.style.position="relative"; 
+            let img=document.createElement("img"); img.src=src; img.onclick=()=>openFullscreen(src); 
+            let del=document.createElement("button"); del.innerText="x"; del.className="delete"; 
+            del.style.position="absolute"; del.style.top="0"; del.style.right="0"; 
+            del.onclick=(event)=>{ event.stopPropagation(); if (confirm("احذف الصورة؟")) { deleteImage(currentDayIndex,j); } }; 
+            div.appendChild(img); div.appendChild(del); container.appendChild(div); 
+        }); 
+    }
+    
+    function deleteImage(dayIndex,imgIndex){ 
+        if (isShareMode) return;
+        let p = projects[currentProjectIndex];
+        let daysArr = Array.isArray(p.days) ? p.days : Object.values(p.days);
+        daysArr[dayIndex].media.splice(imgIndex,1); p.days = daysArr;
+        saveProject(p).then(() => { if(dayIndex===currentDayIndex) renderMedia(); });
+    }
+    
+    function openFullscreen(src){ 
+        let fs=document.createElement("div"); fs.className="fullscreen"; 
+        let img=document.createElement("img"); img.src=src; fs.appendChild(img); 
+        fs.onclick=()=>fs.remove(); document.body.appendChild(fs); 
+    }
+    
+    function shareProject() {
+        if (isShareMode) return;
+        const shareOption = prompt("اختر نوع المشاركة:\n1. مشاركة جميع الأيام\n2. مشاركة أيام معينة");
+        let projectToShare = projects[currentProjectIndex];
+        let shareLink = window.location.origin + window.location.pathname + `?share=${projectToShare.id}&uid=${currentUser.uid}`;
+        if (shareOption === "1") { prompt("رابط مشاركة جميع الأيام:", shareLink); } 
+        else if (shareOption === "2") { showDaySelectionPopup(); }
     }
 
-    // Share link logic
-    function shareProject() {
-        if (!currentUser || isShareMode) return;
+    function showDaySelectionPopup() {
+        if (isShareMode) return;
+        let popupContainer = document.createElement("div");
+        popupContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;";
+        let popupContent = document.createElement("div");
+        popupContent.style.cssText = "background: #fff; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; text-align: right; color:#333;";
+        
+        let title = document.createElement("h3"); title.innerText = "اختر الأيام:"; popupContent.appendChild(title);
         let p = projects[currentProjectIndex];
-        const shareURL = `${window.location.origin}${window.location.pathname}?share=${currentUser.uid}_${p.id}`;
-        // Use a textarea trick to easily copy on mobile/desktop
-        const textarea = document.createElement('textarea');
-        textarea.value = shareURL;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        showSuccess("تم نسخ رابط المشاركة (عرض فقط) إلى الحافظة!");
-        // prompt("رابط المشاركة (عرض فقط): انسخ الرابط وشاركه:", shareURL);
+        let daysArr = p.days ? (Array.isArray(p.days) ? p.days : Object.values(p.days)) : [];
+        
+        daysArr.forEach((day, index) => {
+            let dayDiv = document.createElement("div");
+            dayDiv.innerHTML = `<input type="checkbox" id="day-${index}" style="margin-left:10px;"><label for="day-${index}">اليوم ${index + 1} - ${day.date}</label>`;
+            popupContent.appendChild(dayDiv);
+        });
+
+        let btnDiv = document.createElement("div"); btnDiv.style.marginTop = "20px";
+        let shareBtn = document.createElement("button"); shareBtn.innerText = "إنشاء رابط";
+        shareBtn.onclick = () => {
+            let selected = []; popupContent.querySelectorAll("input[type='checkbox']").forEach((cb, idx) => { if(cb.checked) selected.push(idx); });
+            if (selected.length > 0) {
+                prompt("الرابط المخصص للأيام المحددة:", window.location.origin + window.location.pathname + `?share=${p.id}&uid=${currentUser.uid}&days=${selected.join(',')}`);
+            } else { alert("لم تختار أي يوم."); }
+            popupContainer.remove();
+        };
+        let cancelBtn = document.createElement("button"); cancelBtn.innerText = "إلغاء"; cancelBtn.className="delete"; cancelBtn.onclick = () => popupContainer.remove();
+        
+        btnDiv.appendChild(shareBtn); btnDiv.appendChild(cancelBtn); popupContent.appendChild(btnDiv);
+        popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
+    }
+
+    function resetPassword() {
+        const email = document.getElementById("email").value;
+        if (email) {
+            auth.sendPasswordResetEmail(email).then(() => { alert("تم إرسال رابط إعادة التعيين!"); }).catch(() => { alert("حدث خطأ."); });
+        } else { alert("أدخل بريدك أولاً."); }
+    }
+
+    function renderSharePage(projectData) {
+        hideAllPages();
+        sharePage.classList.remove('hidden');
+        isShareMode = true;
+        document.getElementById("shareProjTitle").innerText = projectData.name;
+        let daysArr = projectData.days ? (Array.isArray(projectData.days) ? projectData.days : Object.values(projectData.days)) : [];
+        let progress = Math.min(100, Math.round((daysArr.length / projectData.duration) * 100));
+        let bar = document.getElementById("shareProjProgress"); bar.style.width = progress + "%"; bar.innerText = progress + "%";
+        
+        let start=new Date(projectData.startDate); let end=new Date(start); end.setDate(start.getDate()+projectData.duration);
+        let left=Math.max(0,Math.ceil((end-new Date())/(1000*60*60*24)));
+        document.getElementById("shareDaysLeft").innerText="⏳ متبقي "+left+" يوم";
+        document.getElementById("shareProjCost").innerText="💰 التكلفة: "+(projectData.cost || 0).toLocaleString();
+
+        let payArr = projectData.payments ? (Array.isArray(projectData.payments) ? projectData.payments : Object.values(projectData.payments)) : [];
+        document.getElementById("sharePaymentsList").innerHTML = payArr.map(pay => `<div>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date}</div>`).join("") || "لا توجد دفعات مسجلة.";
+
+        const daysList = document.getElementById("shareDaysList"); daysList.innerHTML = "";
+        daysArr.forEach((d,i)=>{
+            const div = document.createElement("div"); div.className = "day";
+            div.innerHTML=`
+                <b>اليوم ${i+1} - ${d.date} (${getDayName(d.date)})</b>
+                <table>
+                    <tr><th>🔨 العمل</th><td>${(d.workDescription||"-").replace(/\n/g,"<br>")}</td></tr>
+                    <tr><th>👷 الكادر</th><td>${(d.workersDetail||"-").replace(/\n/g,"<br>")}</td></tr>
+                    <tr><th>💰 المبالغ</th><td>${(d.costDetail||"-").replace(/\n/g,"<br>")}</td></tr>
+                </table>
+                <div>${(d.media||[]).map(src=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")}</div>`;
+            daysList.appendChild(div);
+        });
     }
 
     function handleShareLink() {
         const urlParams = new URLSearchParams(window.location.search);
-        const shareCode = urlParams.get('share');
-        if (shareCode) {
-            isShareMode = true;
-            const parts = shareCode.split('_');
-            if (parts.length === 2) {
-                const [uid, projectId] = parts;
-                loadSharedProject(uid, projectId);
-                return true;
-            }
+        const sharedProjectId = urlParams.get('share');
+        const sharedUserId = urlParams.get('uid');
+        const sharedDays = urlParams.get('days');
+
+        if (sharedProjectId && sharedUserId) {
+            hideAllPages();
+            // وضع مؤشر تحميل بسيط بدون تدمير الـ DOM بالكامل لمنع كسر الأحداث والستايلات
+            const mainContainer = document.getElementById("sharePage");
+            mainContainer.classList.remove("hidden");
+            mainContainer.innerHTML = `<h1>جاري تحميل المشروع المشارك...</h1>`;
+
+            database.ref(`projects/${sharedUserId}/${sharedProjectId}`).once('value').then(snapshot => {
+                const projectData = snapshot.val();
+                if (projectData) {
+                    projectData.id = sharedProjectId;
+                    if (sharedDays) {
+                        const indices = sharedDays.split(',').map(Number);
+                        let daysArr = projectData.days ? (Array.isArray(projectData.days) ? projectData.days : Object.values(projectData.days)) : [];
+                        projectData.days = daysArr.filter((_, idx) => indices.includes(idx));
+                    }
+                    // استعادة هيكل صفحة الشير الأساسي وثم الرندرة
+                    mainContainer.innerHTML = `
+                        <h2 id="shareProjTitle"></h2>
+                        <div class="progress-bar"><div class="progress" id="shareProjProgress"></div></div>
+                        <h3 id="shareDaysLeft"></h3>
+                        <h3 id="shareProjCost"></h3>
+                        <h3>💵 الدفعات</h3>
+                        <div id="sharePaymentsList"></div>
+                        <h2>📅 الأيام</h2>
+                        <div id="shareDaysList"></div>`;
+                    renderSharePage(projectData);
+                } else {
+                    mainContainer.innerHTML = '<h1>المشروع غير موجود أو تم حذفه.</h1>';
+                }
+            }).catch(() => {
+                mainContainer.innerHTML = '<h1>حدث خطأ أثناء تحميل المشروع.</h1>';
+            });
+            return true;
         }
         return false;
     }
 
-    function loadSharedProject(uid, projectId) {
-        hideAllPages();
-        sharePage.classList.remove('hidden');
-
-        database.ref(`projects/${uid}/${projectId}`).once('value', snapshot => {
-            const data = snapshot.val();
-            if (data) {
-                const p = { id: projectId, ...data };
-                projects = [p]; 
-                currentProjectIndex = 0; 
-                renderSharedProject(p);
-            } else {
-                alert("لم يتم العثور على المشروع المشترك.");
-                backToProjects(); // Go back to the initial state (login page)
-            }
-        }).catch(error => {
-            console.error("Error loading shared project:", error);
-            alert("حدث خطأ أثناء تحميل المشروع المشترك.");
-            backToProjects();
-        });
-    }
-
-    function renderSharedProject(p) {
-        document.getElementById("shareProjTitle").innerText = p.name;
-        let daysCount = p.days ? p.days.length : 0;
-        let progress = Math.round((daysCount / p.duration) * 100);
-        document.getElementById("shareProjProgress").style.width = progress + "%";
-        document.getElementById("shareProjProgress").innerText = progress + "%";
+    // 🌙 وظائف الوضع الليلي الموحدة
+    if (darkModeToggle) {
+        const currentTheme = localStorage.getItem("theme") || "dark";
+        if (currentTheme === "light") { document.body.classList.add("light-mode"); }
         
-        let start = new Date(p.startDate);
-        let end = new Date(start);
-        end.setDate(start.getDate() + p.duration);
-        let left = Math.max(0, Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)));
-        document.getElementById("shareDaysLeft").innerText = "⏳ متبقي " + left + " يوم";
-        document.getElementById("shareProjCost").innerText = "💰 التكلفة: " + p.cost.toLocaleString();
-
-        // Render Shared Payments
-        const paymentsList = document.getElementById("sharePaymentsList");
-        paymentsList.innerHTML = "";
-        (p.payments || []).forEach(pay => {
-            const div = document.createElement("div");
-            div.style.display = "flex";
-            div.style.justifyContent = "space-between";
-            div.style.alignItems = "center";
-            div.style.marginBottom = "5px";
-            div.innerHTML = `<span>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date}</span>`;
-            paymentsList.appendChild(div);
-        });
-
-        // Render Shared Days
-        const daysList = document.getElementById("shareDaysList");
-        daysList.innerHTML = "";
-        (p.days || []).forEach((d, i) => {
-            const div = document.createElement("div");
-            div.className = "day";
-            div.innerHTML = `
-                <div class="flex-between" onclick="toggleDayDetailsShared(${i})">
-                    <b>اليوم ${i+1} - 📅 ${d.date}</b>
-                    <span>تفاصيل</span>
-                </div>
-                <div class="day-details" id="sharedDayDetails${i}">
-                    <p><b>🔨 العمل:</b> ${d.workDescription || "لا يوجد"}</p>
-                    <p><b>👷 الكادر:</b> ${d.workersDetail || "لا يوجد"}</p>
-                    <p><b>💰 المبالغ:</b> ${d.costDetail || "لا يوجد"}</p>
-                    <h3>📸 المرفقات</h3>
-                    <div class="media-list" id="sharedMediaListDay${i}"></div>
-                </div>
-            `;
-            daysList.appendChild(div);
-            renderMedia(i, `sharedMediaListDay${i}`, d.media || []);
-        });
-
-        function toggleDayDetailsShared(i) {
-            const details = document.getElementById(`sharedDayDetails${i}`);
-            if(details) details.style.display = details.style.display === 'block' ? 'none' : 'block';
+        function updateIcon() {
+            darkModeToggle.innerHTML = document.body.classList.contains("light-mode") ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
         }
-    }
+        updateIcon();
 
-    function resetPassword() {
-        const email = document.getElementById('email').value;
-        if (!email) {
-            showError("يرجى إدخال البريد الإلكتروني في الحقل أولاً ❌");
-            return;
-        }
-        auth.sendPasswordResetEmail(email)
-            .then(() => {
-                showSuccess("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني! 📧");
-            })
-            .catch((error) => {
-                showError("حدث خطأ في الإرسال: " + error.message);
-                console.error("Password reset error: ", error);
-            });
-    }
-
-    // Theme Toggle Logic (Corrected to match previous dark mode logic)
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-
-        const currentTheme = localStorage.getItem("theme");
-        if (currentTheme === "dark") {
-            document.body.classList.remove("light-mode"); // Dark mode is default
-        } else if (currentTheme === "light") {
-            document.body.classList.add("light-mode");
-        } else if (prefersDarkScheme.matches) {
-            document.body.classList.remove("light-mode");
-        } else {
-            document.body.classList.add("light-mode"); // Default to light if no preference
-        }
-        
-        function updateDarkModeIcon() {
-            if (document.body.classList.contains("light-mode")) {
-                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-            }
-        }
-        
-        updateDarkModeIcon();
-
-        // تبديل الوضع الليلي
         darkModeToggle.addEventListener('click', () => {
             document.body.classList.toggle("light-mode");
-            if (document.body.classList.contains("light-mode")) {
-                localStorage.setItem("theme", "light");
-            } else {
-                localStorage.setItem("theme", "dark");
-            }
-            updateDarkModeIcon();
+            localStorage.setItem("theme", document.body.classList.contains("light-mode") ? "light" : "dark");
+            updateIcon();
         });
-
-        // Ensure toggleMode is called on load to set up initial state
-        toggleMode();
-    });
-
+    }
 </script>
+
 </body>
 </html>
