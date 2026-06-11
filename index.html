@@ -529,6 +529,47 @@
     }
 }
 
+/* 🖨️ تنسيق ستايل الـ PDF الخاص بالطباعة الرسمية للمقاولات والمشاريع */
+@media print {
+    body {
+        background: white !important;
+        color: black !important;
+        padding: 0 !important;
+    }
+    .container {
+        background: white !important;
+        box-shadow: none !important;
+        border: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    button, input, #darkModeToggle, .back, .theme-toggle, .user-header {
+        display: none !important; /* إخفاء الأزرار والأشياء غير الضرورية بالورق */
+    }
+    h1, h2, h3 {
+        color: black !important;
+        background: none !important;
+        -webkit-text-fill-color: initial !important;
+    }
+    .day {
+        background: white !important;
+        border: 1px solid #ccc !important;
+        page-break-inside: avoid; /* منع انقسام اليومية الواحدة عبر صفحتين */
+        margin-bottom: 20px !important;
+    }
+    table {
+        display: table !important;
+        width: 100% !important;
+    }
+    th, td {
+        border: 1px solid black !important;
+        color: black !important;
+        background: #f5f5f5 !important;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -624,7 +665,7 @@
     <div id="daysList"></div>
     <button onclick="addDay()">➕ إضافة يوم</button>
     <br><br>
-    <button onclick="shareProject()">🔗 مشاركة (عرض فقط)</button>
+    <button onclick="shareProject()">🔗 مشاركة وتصدير التقرير</button>
 </div>
 
 <div class="container hidden" id="dayPage">
@@ -787,7 +828,7 @@
 
     function signup(email, password, confirmPassword) {
         if (password !== confirmPassword) { showError('كلمات المرور غير متطابقة ❌'); return false; }
-        if (password.length < 6) { showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل ❌'); return false; }
+        if (password.length < 6) { showError('كلمة المرور يجب أن تكون 6 أحرف على الأثل ❌'); return false; }
         auth.createUserWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
@@ -1072,52 +1113,30 @@
     
     function backToProject(){ dayPage.classList.add("hidden"); projectPage.classList.remove("hidden"); renderDays(); }
     
-    // ⚙️ تم إرجاع الطريقة الأصلية المستقرة مع تشديد الضغط وتصغير الحجم البرمجي الفعلي للصور داخل المتصفح تلقائياً
     function saveDay(){ 
         if (isShareMode) return;
-        let p = projects[currentProjectIndex];
-        let d = p.days[currentDayIndex];
+        let p = projects[currentProjectIndex]; let d = p.days[currentDayIndex];
         d.workDescription = document.getElementById("workDescription").value; 
         d.workersDetail = document.getElementById("workersDetail").value; 
         d.costDetail = document.getElementById("costDetail").value; 
-        
         let files = document.getElementById("mediaInput").files;
-        if (files.length === 0) {
-            saveProject(p).then(() => { renderMedia(); showSuccess("تم حفظ التعديلات بنجاح! 💾"); }); return;
-        }
-
+        if (files.length === 0) { saveProject(p).then(() => { renderMedia(); showSuccess("تم حفظ التعديلات بنجاح! 💾"); }); return; }
         let filesProcessed = 0;
         showSuccess("جاري معالجة وضغط الصور لحفظها خفيفة... ⏳");
-
         for (let f of files) {
             let reader = new FileReader();
             reader.onload = function(e) {
                 let img = new Image();
                 img.onload = function() {
-                    let canvas = document.createElement('canvas');
-                    let ctx = canvas.getContext('2d');
-                    
-                    // تصغير دقة الصورة لتكون خفيفة جداً ومناسبة لقاعدة البيانات
-                    let maxWidth = 600; 
-                    let maxHeight = 450;
-                    let ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
-                    canvas.width = img.width * ratio;
-                    canvas.height = img.height * ratio;
-                    
+                    let canvas = document.createElement('canvas'); let ctx = canvas.getContext('2d');
+                    let maxWidth = 600; let maxHeight = 450; let ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
+                    canvas.width = img.width * ratio; canvas.height = img.height * ratio;
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    
-                    // خفض الجودة إلى 0.4 لتقليص الحجم البرمجي لـ Base64 بنسبة 80%
                     let compressedData = canvas.toDataURL('image/jpeg', 0.4);
-                    
-                    if (!d.media) d.media = [];
-                    d.media.push(compressedData);
-                    filesProcessed++;
-                    
+                    if (!d.media) d.media = []; d.media.push(compressedData); filesProcessed++;
                     if (filesProcessed === files.length) {
                         saveProject(p).then(() => {
-                            renderMedia();
-                            document.getElementById("mediaInput").value = ""; 
-                            showSuccess("تم حفظ الصور المضغوطة بنجاح! 🚀");
+                            renderMedia(); document.getElementById("mediaInput").value = ""; showSuccess("تم حفظ الصور المضغوطة بنجاح! 🚀");
                         });
                     }
                 };
@@ -1159,33 +1178,37 @@
     
    function shareProject() {
         if (isShareMode) return;
-        const shareOption = prompt("اختر نوع المشاركة:\n1. مشاركة جميع الأيام\n2. مشاركة أيام معينة");
+        const shareOption = prompt("اختر نوع التصدير والمشاركة:\n1. مشاركة جميع الأيام (رابط)\n2. مشاركة/طباعة أيام معينة");
         let projectToShare = projects[currentProjectIndex];
         let shareLink = window.location.origin + window.location.pathname + `?share=${projectToShare.id}&uid=${currentUser.uid}`;
         if (shareOption === "1") { prompt("انسخ الرابط لمشاركة جميع الأيام:", shareLink); } 
         else if (shareOption === "2") { showDaySelectionPopup(); }
     }
 
+    // 🔥 تعديل واجهة الاختيار لتدعم طباعة التقرير PDF للأيام المحددة أو توليد الرابط
     function showDaySelectionPopup() {
         if (isShareMode) return;
         let popupContainer = document.createElement("div");
         popupContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;";
         let popupContent = document.createElement("div");
-        popupContent.style.cssText = "background: #fff; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; text-align: right; direction: rtl;";
-        let title = document.createElement("h3"); title.innerText = "اختر الأيام للمشاركة:"; popupContent.appendChild(title);
+        popupContent.style.cssText = "background: #fff; padding: 20px; border-radius: 12px; width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto; text-align: right; direction: rtl; color: #333;";
+        let title = document.createElement("h3"); title.style.color = "#333"; title.innerText = "اختر الأيام للتقرير والمشاركة:"; popupContent.appendChild(title);
 
         let currentProject = projects[currentProjectIndex];
         if (currentProject && currentProject.days) {
             currentProject.days.forEach((day, index) => {
                 let dayDiv = document.createElement("div"); dayDiv.style.marginBottom = "10px";
-                let checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.id = "day-" + index; checkbox.style.marginLeft = "10px";
+                let checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.id = "day-" + index; checkbox.style.cssText = "width: auto; margin-left: 10px;";
                 let label = document.createElement("label"); label.htmlFor = "day-" + index; label.innerText = `اليوم ${index + 1} - ${day.date}`;
                 dayDiv.appendChild(checkbox); dayDiv.appendChild(label); popupContent.appendChild(dayDiv);
             });
         }
-        let buttonDiv = document.createElement("div"); buttonDiv.style.cssText = "display: flex; justify-content: space-around; margin-top: 20px;";
-        let shareBtn = document.createElement("button"); shareBtn.innerText = "إنشاء رابط المشاركة"; shareBtn.style.backgroundColor = "#2ecc71";
-        shareBtn.onclick = () => {
+        
+        let buttonDiv = document.createElement("div"); buttonDiv.style.cssText = "display: flex; flex-direction: column; gap: 8px; margin-top: 20px;";
+        
+        // خيار 1: توليد الرابط التقليدي
+        let linkBtn = document.createElement("button"); linkBtn.innerText = "🔗 إنشاء رابط ويب للأيام المحددة"; linkBtn.style.backgroundColor = "#3498db";
+        linkBtn.onclick = () => {
             let selectedIndices = [];
             popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => { if (checkbox.checked) selectedIndices.push(index); });
             if (selectedIndices.length > 0) {
@@ -1195,18 +1218,42 @@
             } else { alert("لم يتم اختيار أي يوم."); }
             popupContainer.remove();
         };
+
+        // خيار 2: طباعة وحفظ كتقرير رسمي PDF
+        let pdfBtn = document.createElement("button"); pdfBtn.innerText = "🖨️ تحميل وطباعة كتقرير رسمي PDF"; pdfBtn.style.backgroundColor = "#2ecc71";
+        pdfBtn.onclick = () => {
+            let selectedIndices = [];
+            popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => { if (checkbox.checked) selectedIndices.push(index); });
+            if (selectedIndices.length > 0) {
+                popupContainer.remove();
+                // فلترة وعرض الأيام المحددة فقط مؤقتاً في صفحة العرض المجهزة للطباعة
+                let originalDays = [...currentProject.days];
+                currentProject.days = currentProject.days.filter((day, index) => selectedIndices.includes(index));
+                
+                // فتح صفحة التقرير لتجهيز العناصر للطباعة
+                renderSharePage(currentProject);
+                
+                // تشغيل أمر الطباعة المباشر للمتصفح لحفظ الملف كـ PDF
+                setTimeout(() => {
+                    window.print();
+                    // إرجاع الأيام الأصلية بالكامل بعد إغلاق نافذة الطباعة للحفاظ على قاعدة البيانات
+                    currentProject.days = originalDays;
+                    backToProjectPageFromShare();
+                }, 500);
+            } else { alert("لم يتم اختيار أي يوم للطباعة."); }
+        };
+
         let cancelBtn = document.createElement("button"); cancelBtn.innerText = "إلغاء"; cancelBtn.style.backgroundColor = "#e74c3c";
         cancelBtn.onclick = () => popupContainer.remove();
-        buttonDiv.appendChild(shareBtn); buttonDiv.appendChild(cancelBtn); popupContent.appendChild(buttonDiv);
-        popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
+        
+        buttonDiv.appendChild(pdfBtn); buttonDiv.appendChild(linkBtn); buttonDiv.appendChild(cancelBtn);
+        popupContent.appendChild(buttonDiv); popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
     }
 
     function resetPassword() {
         const email = document.getElementById("email").value;
         if (email) {
-            auth.sendPasswordResetEmail(email).then(() => {
-                alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.");
-            }).catch((error) => { alert("حدث خطأ، تأكد من البريد الإلكتروني المكتوب."); });
+            auth.sendPasswordResetEmail(email).then(() => { alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."); });
         } else { alert("يرجى إدخال بريدك الإلكتروني أولاً في الحقل المخصص."); }
     }
 
