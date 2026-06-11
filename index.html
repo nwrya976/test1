@@ -594,7 +594,7 @@
         <input type="text" id="projectName" placeholder="اسم المشروع">
         <input type="number" id="projectDuration" placeholder="مدة المشروع (بالأيام)">
         <input type="number" id="projectCost" placeholder="تكلفة المشروع">
-        <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً؟ (أدخل 0 إذا كان جديداً)">
+        <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً؟ (أدخل 0 إذا كان جديداً)" value="0">
         <button onclick="addProject()">حفظ</button>
     </div>
 </div>
@@ -1285,20 +1285,32 @@
     // === تفاصيل اليوم + الصور
     function toggleDayDetails(i){ let el=document.getElementById("details-"+i); el.style.display=el.style.display==="block"?"none":"block"; }
     function getDayName(dateStr){ const days=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"]; return days[new Date(dateStr).getDay()]; }
+    
     function addDay(){ 
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
+        if (!p.days) p.days = [];
         
-        // حساب تاريخ اليوم التالي الصحيح بناءً على آخر يوم مسجل بالمشروع بدلاً من تاريخ اليوم الثابت دائماً لتجنب تكرار التاريخ
-        let nextDateStr = new Date().toISOString().split("T")[0];
-        if (p.days && p.days.length > 0) {
-            let lastDayDate = new Date(p.days[p.days.length - 1].date);
-            lastDayDate.setDate(lastDayDate.getDate() + 1);
-            nextDateStr = lastDayDate.toISOString().split("T")[0];
+        // جلب تاريخ اليوم بصيغة افتراضية
+        let defaultToday = new Date().toISOString().split("T")[0];
+        
+        // إظهار نافذة للمهندس يختار منها التاريخ يدوياً
+        let chosenDate = prompt("📅 أدخل تاريخ اليومية (YYYY-MM-DD):", defaultToday);
+        if (!chosenDate) return; // إلغاء العملية إذا لم يختر تاريخاً
+        
+        // فحص التحقق: منع تكرار نفس التاريخ في نفس المشروع هندسياً
+        let isDateExists = p.days.some(day => day.date === chosenDate);
+        if (isDateExists) {
+            alert("❌ هذا التاريخ مسجل مسبقاً في هذا المشروع! يرجى تعديل اليوم من القائمة بدلاً من تكراره.");
+            return;
         }
         
-        if (!p.days) p.days = [];
-        p.days.push({date:nextDateStr,workDescription:"",workersDetail:"",costDetail:"",media:[]}); 
+        // إضافة اليوم بالتاريخ المختار يدوياً بنجاح
+        p.days.push({date: chosenDate, workDescription: "", workersDetail: "", costDetail: "", media: []}); 
+        
+        // ترتيب الأيام تصاعدياً حسب التاريخ حتى تظهر اليوميات من الأقدم للأحدث تلقائياً
+        p.days.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
         saveProject(p).then(() => { renderDays(); });
     }
     
