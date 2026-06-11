@@ -153,6 +153,19 @@
         .card-stat small { color: #888; display: block; font-size: 0.8rem; margin-bottom: 4px; }
         .card-stat span { font-weight: bold; font-size: 1.1rem; }
         
+        /* صندوق مدمج لإدخال الدفعات */
+        .inline-form-box {
+            background: rgba(20, 24, 30, 0.5);
+            border: 1px dashed #555;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        body.light-mode .inline-form-box {
+            background: #fdfdfd;
+            border-color: #bbb;
+        }
+
         /* الأزرار */
         button {
             background: linear-gradient(135deg, #00b09b, #96c93d);
@@ -550,7 +563,7 @@
     <div id="addProjectForm" class="hidden">
         <input type="text" id="projectName" placeholder="اسم المشروع">
         <input type="number" id="projectDuration" placeholder="مدة المشروع (بالأيام)">
-        <input type="number" id="projectCost" placeholder="تكلفة المشروع">
+        <input type="text" id="projectCost" placeholder="تكلفة المشروع" oninput="formatNumberInput(this)">
         <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً؟" value="0">
         <button onclick="addProject()">حفظ</button>
     </div>
@@ -591,7 +604,16 @@
     <div id="paymentsSection">
         <h3>💵 الدفعات المستلمة من المالك</h3>
         <div id="paymentsList"></div>
-        <button onclick="addPayment()">➕ إضافة دفعة</button>
+        <button onclick="showAddPaymentForm()">➕ إضافة دفعة</button>
+        
+        <div id="addPaymentForm" class="inline-form-box hidden">
+            <h4>📥 تسجيل دفعة مالية جديدة</h4>
+            <input type="text" id="paymentAmountInput" placeholder="أدخل مبلغ الدفعة" oninput="formatNumberInput(this)">
+            <input type="date" id="paymentDateInput">
+            <button onclick="submitPaymentForm()">حفظ الدفعة</button>
+            <button onclick="hideAddPaymentForm()" style="background: #e74c3c;">إلغاء</button>
+        </div>
+        
         <h3 id="remainingCost"></h3>
     </div>
 
@@ -730,7 +752,7 @@
     }
 
     function signup(email, password, confirmPassword) {
-        if (password !== confirmPassword) { showError('كلمات المرور غير متطابقة ❌'); return false; }
+        if (password !== confirmPassword) { showError('كلمات الورور غير متطابقة ❌'); return false; }
         if (password.length < 6) { showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل ❌'); return false; }
         auth.createUserWithEmailAndPassword(email, password)
             .then((userCredential) => {
@@ -841,8 +863,11 @@
         if (isShareMode) return;
         let name = document.getElementById("projectName").value;
         let duration = parseInt(document.getElementById("projectDuration").value);
-        let cost = parseInt(document.getElementById("projectCost").value);
+        // إزالة الفواصل البرمجية لقراءة الرقم الصافي وحفظه كـ Int
+        let costRaw = document.getElementById("projectCost").value;
+        let cost = parseInt(costRaw.replace(/,/g, ''));
         let daysSinceStart = parseInt(document.getElementById("daysSinceStart").value) || 0;
+        
         if(!name || !duration || !cost){alert("أدخل الحقول كاملة");return;}
         let startDateObj = new Date();
         if(daysSinceStart > 0) { startDateObj.setDate(startDateObj.getDate() - daysSinceStart); }
@@ -853,17 +878,19 @@
             generatedDays.push({ date: dayDate.toISOString().split("T")[0], workDescription: "", workersDetail: "", costDetail: "", media: [] });
         }
         const newProject = { name, duration, cost, startDate: startDateStr, days: generatedDays, payments: [] };
-        saveProject(newProject);
+        saveProject(newProject).then(() => {
+            document.getElementById("projectCost").value = "";
+        });
         document.getElementById("addProjectForm").classList.add("hidden");
         document.getElementById("projectName").value = ""; document.getElementById("projectDuration").value = "";
-        document.getElementById("projectCost").value = ""; document.getElementById("daysSinceStart").value = "0";
+        document.getElementById("daysSinceStart").value = "0";
     }
     
     function editProject(){
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
         let newName = prompt("✏ تعديل اسم المشروع:", p.name); if(newName) p.name = newName;
-        let newCost = prompt("✏ تعديل تكلفة المشروع:", p.cost); if(newCost && !isNaN(newCost)) p.cost = parseInt(newCost);
+        let newCost = prompt("✏ تعديل تكلفة المشروع (أرقام فقط):", p.cost); if(newCost && !isNaN(newCost.replace(/,/g, ''))) p.cost = parseInt(newCost.replace(/,/g, ''));
         let newDuration = prompt("✏ تعديل مدة المشروع بالأيام:", p.duration); if(newDuration && !isNaN(newDuration)) p.duration = parseInt(newDuration);
         saveProject(p).then(() => { openProject(currentProjectIndex); });
     }
@@ -874,7 +901,6 @@
         projectsRef.child(projects[currentProjectIndex].id).remove().then(() => { showSuccess("تم الحذف بنجاح!"); backToProjects(); });
     }
     
-    // 🔥 تحديث دالة فتح المشروع لحساب وعرض خلاصة اللوحة المالية التلقائية
     function openProject(i){
         currentProjectIndex = i; mainPage.classList.add("hidden"); projectPage.classList.remove("hidden");
         let p = projects[i]; document.getElementById("projTitle").innerText = p.name;
@@ -885,7 +911,6 @@
         document.getElementById("daysLeft").innerText = "⏳ متبقي " + left + " يوم";
         document.getElementById("projCost").innerText = "💰 الميزانية المقدرة: " + p.cost.toLocaleString();
         
-        // 🧮 معادلات حساب أرقام اللوحة المالية (Dashboard)
         let totalDayCost = (p.days || []).reduce((sum, d) => {
             const numbers = (d.costDetail || "").match(/\d+/g);
             if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
@@ -895,7 +920,6 @@
         let financialBalance = totalPayments - totalDayCost;
         let budgetPercent = p.cost > 0 ? Math.round((totalDayCost / p.cost) * 100) : 0;
 
-        // عرض الأرقام المحسوبة في واجهة اللوحة
         document.getElementById("statTotalSpent").innerText = totalDayCost.toLocaleString() + " د.ع";
         document.getElementById("statBudgetPercent").innerText = budgetPercent + "%";
         
@@ -908,7 +932,7 @@
             finStatusEl.style.color = "#e74c3c";
         }
 
-        if (!isShareMode) { renderPayments(); }
+        if (!isShareMode) { renderPayments(); hideAddPaymentForm(); }
         renderDays();
     }
     
@@ -927,7 +951,7 @@
         (p.payments || []).forEach((pay, index) => {
             const div = document.createElement("div");
             div.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;";
-            div.innerHTML = `<span>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date}</span><button class="delete">✖</button>`;
+            div.innerHTML = `<span>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date} (${getDayName(pay.date)})</span><button class="delete">✖</button>`;
             div.querySelector("button").onclick = () => {
                 p.payments.splice(index, 1); saveProject(p).then(() => { openProject(currentProjectIndex); });
             };
@@ -938,13 +962,53 @@
         document.getElementById("remainingCost").innerText = "المتبقي من العقد: " + remaining.toLocaleString();
     }
     
-    function addPayment(){
+    // 🛠️ وظائف التحكم بالدفعات المدمجة الجديدة لمنع ظهور النوافذ المنبثقة الـ Prompt
+    function showAddPaymentForm() {
+        if (isShareMode) return;
+        let formBox = document.getElementById("addPaymentForm");
+        formBox.classList.remove("hidden");
+        // وضع تاريخ اليوم كخيار افتراضي بالتاريخ
+        document.getElementById("paymentDateInput").value = new Date().toISOString().split("T")[0];
+        document.getElementById("paymentAmountInput").value = "";
+    }
+    
+    function hideAddPaymentForm() {
+        document.getElementById("addPaymentForm").classList.add("hidden");
+    }
+    
+    function submitPaymentForm() {
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
-        let amount = parseInt(prompt("💵 مبلغ الدفعة المستلمة:")); if(!amount || isNaN(amount)) return;
+        let amountRaw = document.getElementById("paymentAmountInput").value;
+        let amount = parseInt(amountRaw.replace(/,/g, ''));
+        let chosenDate = document.getElementById("paymentDateInput").value;
+        
+        if(!amount || isNaN(amount) || !chosenDate) {
+            alert("❌ يرجى إدخال مبلغ الدفعة وتحديد التاريخ بشكل صحيح.");
+            return;
+        }
+        
         if(!p.payments) p.payments = [];
-        p.payments.push({amount, date: new Date().toISOString().split("T")[0]});
-        saveProject(p).then(() => { openProject(currentProjectIndex); });
+        p.payments.push({ amount: amount, date: chosenDate });
+        
+        // ترتيب الدفعات حسب التاريخ من الأقدم للأحدث تلقائياً لتثبيت التواريخ الفائتة
+        p.payments.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        saveProject(p).then(() => { 
+            openProject(currentProjectIndex); 
+        });
+    }
+
+    // ✨ دالة ذكية تقوم بوضع فارزة تلقائياً كل 3 أرقام أثناء كتابة المستخدم لكي لا يتلخبط بالحساب
+    function formatNumberInput(input) {
+        // إزالة أي فواصل سابقة لقراءة النص النقي
+        let value = input.value.replace(/,/g, '');
+        // التأكد من أن المدخلات أرقام فقط
+        if (!isNaN(value) && value.length > 0) {
+            input.value = Number(value).toLocaleString('en-US');
+        } else {
+            input.value = value.replace(/[^\d]/g, ''); // منع الحروف
+        }
     }
 
     function renderDays(){
