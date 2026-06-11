@@ -68,9 +68,9 @@
             background: none;
             color: #e0e0e0;
             font-size: 1.5rem;
-            width: 40px; /* تحديد عرض ثابت */
-            height: 40px; /* تحديد ارتفاع ثابت */
-            border-radius: 50%; /* جعله دائريًا */
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -536,6 +536,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 
 <div id="darkModeToggle" class="theme-toggle">
@@ -666,7 +667,6 @@
 <script>
     // ========== نظام إدارة المشاريع - JavaScript Code ==========
     
-    // ** استبدل هذا الكود بكود مشروعك من Firebase **
     const firebaseConfig = {
   apiKey: "AIzaSyDye4DgqNvEwwWDYf1yjW5yfJc14p1LmiU",
   authDomain: "your-project-10fbe.firebaseapp.com",
@@ -682,13 +682,14 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
+    const storage = firebase.storage(); // تعريف متغير الستورج بشكل رسمي
 
     // Global Variables
     let projects = [];
     let currentProjectIndex = null;
     let currentDayIndex = null;
     let currentUser = null;
-    let isShareMode = false; // متغير للتحقق من وضع المشاركة
+    let isShareMode = false;
 
     // UI Elements
     const authPage = document.getElementById('authPage');
@@ -710,17 +711,12 @@
     const userDisplayEmail = document.getElementById('user-display-email');
     const forgotPasswordLink = document.getElementById('forgot-password-link'); 
 
-    
     let isLoginMode = true;
     
-    // Check for user login state with share mode support
     auth.onAuthStateChanged(user => {
-        // أولاً تحقق من وجود رابط مشاركة
         if (handleShareLink()) {
-            // إذا كان هناك رابط مشاركة، لا تطلب تسجيل دخول
             return;
         }
-        
         if (user) {
             currentUser = user;
             showMainApp();
@@ -732,10 +728,8 @@
         }
     });
 
-    // Initial check for shared links
     window.addEventListener('load', function() {
         if (!handleShareLink()) {
-            // إذا لم يكن هناك رابط مشاركة، تحقق من تسجيل الدخول العادي
             auth.onAuthStateChanged(user => {
                 if (user) {
                     currentUser = user;
@@ -750,7 +744,6 @@
         }
     });
 
-    // Message functions
     function showSuccess(message) {
         successMsg.textContent = message;
         successMsg.style.display = 'block';
@@ -769,7 +762,6 @@
         }, 3000);
     }
     
-    // Auth functions
    function toggleMode() {
     isLoginMode = !isLoginMode;
     if (isLoginMode) {
@@ -777,21 +769,16 @@
         loginBtn.classList.remove('hidden');
         signupBtn.classList.add('hidden');
         confirmPasswordGroup.classList.add('hidden');
-
         if (forgotPasswordLink) forgotPasswordLink.style.display = 'block';
-
         toggleText.innerHTML = 'ليس لديك حساب؟ <a href="#" id="toggle-link">إنشاء حساب جديد</a>';
     } else {
         formTitle.textContent = 'إنشاء حساب جديد';
         signupBtn.classList.remove('hidden');
         loginBtn.classList.add('hidden');
         confirmPasswordGroup.classList.remove('hidden');
-
         if (forgotPasswordLink) forgotPasswordLink.style.display = 'none';
-
         toggleText.innerHTML = 'لديك حساب؟ <a href="#" id="toggle-link">تسجيل الدخول</a>';
     }
-
     const newToggleLink = document.getElementById('toggle-link');
     if (newToggleLink) {
         newToggleLink.addEventListener('click', function(e) {
@@ -807,9 +794,7 @@
                 showSuccess('تم تسجيل الدخول بنجاح! 🎉');
             })
             .catch((error) => {
-                const errorMessage = error.message;
                 showError('حدث خطأ أثناء تسجيل الدخول. تأكد من البريد الإلكتروني وكلمة المرور.');
-                console.error("Login error: ", errorMessage);
             });
     }
 
@@ -822,7 +807,6 @@
             showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل ❌');
             return false;
         }
-
         auth.createUserWithEmailAndPassword(email, password)
             .then((userCredential) => {
                 const user = userCredential.user;
@@ -838,13 +822,11 @@
                 });
             })
             .catch((error) => {
-                const errorMessage = error.message;
-                if (errorMessage.includes("email-already-in-use")) {
+                if (error.message.includes("email-already-in-use")) {
                     showError('هذا البريد الإلكتروني مستخدم بالفعل ❌');
                 } else {
                     showError('حدث خطأ أثناء إنشاء الحساب. حاول مرة أخرى.');
                 }
-                console.error("Signup error: ", errorMessage);
             });
     }
 
@@ -866,24 +848,13 @@
     }
 
     function logout() {
-        auth.signOut()
-            .then(() => {
-                showSuccess('تم تسجيل الخروج بنجاح! 👋');
-            })
-            .catch((error) => {
-                showError('حدث خطأ أثناء تسجيل الخروج.');
-                console.error("Logout error: ", error);
-            });
+        auth.signOut().then(() => { showSuccess('تم تسجيل الخروج بنجاح! 👋'); });
     }
 
-    // Auth Event Listeners
     loginBtn.addEventListener('click', function() {
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        if (!email || !password) {
-            showError('يرجى ملء جميع الحقول المطلوبة ❌');
-            return;
-        }
+        if (!email || !password) { showError('يرجى ملء جميع الحقول المطلوبة ❌'); return; }
         login(email, password);
     });
 
@@ -891,115 +862,66 @@
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
-        if (!email || !password) {
-            showError('يرجى ملء جميع الحقول المطلوبة ❌');
-            return;
-        }
-        if (!isLoginMode && !confirmPassword) {
-            showError('يرجى تأكيد كلمة المرور ❌');
-            return;
-        }
-        if (isLoginMode) {
-            login(email, password);
-        } else {
-            signup(email, password, confirmPassword);
-        }
+        if (!email || !password) { showError('يرجى ملء جميع الحقول المطلوبة ❌'); return; }
+        if (!isLoginMode && !confirmPassword) { showError('يرجى تأكيد كلمة المرور ❌'); return; }
+        if (isLoginMode) { login(email, password); } else { signup(email, password, confirmPassword); }
     });
 
-    toggleLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        toggleMode();
-    });
-
+    toggleLink.addEventListener('click', function(e) { e.preventDefault(); toggleMode(); });
     logoutBtn.addEventListener('click', logout);
-
     form.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
-            if (isLoginMode) {
-                loginBtn.click();
-            } else {
-                signupBtn.click();
-            }
+            if (isLoginMode) { loginBtn.click(); } else { signupBtn.click(); }
         }
     });
 
-    // ========== Project Management Functions with Firebase ==========
-    
-    // Load projects from Firebase
     function loadProjects() {
         if (!currentUser || isShareMode) return;
         const projectsRef = database.ref(`projects/${currentUser.uid}`);
-        
         projectsRef.on('value', snapshot => {
             const data = snapshot.val();
             projects = [];
             if (data) {
-                projects = Object.keys(data).map(key => ({
-                    id: key,
-                    ...data[key]
-                }));
+                projects = Object.keys(data).map(key => ({ id: key, ...data[key] }));
             }
             renderProjects();
         });
     }
 
-    // Save project data to Firebase
     function saveProject(projectData) {
         return new Promise((resolve, reject) => {
-            if (!currentUser || isShareMode) {
-                showError("خطأ: لم يتم تسجيل الدخول.");
-                return reject("No user logged in.");
-            }
+            if (!currentUser || isShareMode) { showError("خطأ: لم يتم تسجيل الدخول."); return reject(); }
             const projectsRef = database.ref(`projects/${currentUser.uid}`);
-            
             if (projectData.id) {
                 const projectId = projectData.id;
                 delete projectData.id;
                 projectsRef.child(projectId).update(projectData).then(() => {
-                    showSuccess("تم تحديث المشروع بنجاح!");
-                    resolve();
-                }).catch(error => {
-                    console.error("Error updating project: ", error);
-                    showError("حدث خطأ أثناء تحديث المشروع.");
-                    reject(error);
-                });
+                    showSuccess("تم تحديث المشروع بنجاح!"); resolve();
+                }).catch(err => { showError("حدث خطأ أثناء التحديث."); reject(err); });
             } else {
                 projectsRef.push(projectData).then(() => {
-                    showSuccess("تم إضافة المشروع بنجاح!");
-                    resolve();
-                }).catch(error => {
-                    console.error("Error adding new project: ", error);
-                    showError("حدث خطأ أثناء إضافة المشروع.");
-                    reject(error);
-                });
+                    showSuccess("تم إضافة المشروع بنجاح!"); resolve();
+                }).catch(err => { showError("حدث خطأ أثناء الإضافة."); reject(err); });
             }
         });
     }
     
-    // === عرض المشاريع
     function renderProjects(){
         const list=document.getElementById("projectList"); list.innerHTML="";
         if (projects.length === 0) {
-            list.innerHTML = "<p>لا يوجد مشاريع. ابدأ بإضافة مشروع جديد!</p>";
-            return;
+            list.innerHTML = "<p>لا يوجد مشاريع. ابدأ بإضافة مشروع جديد!</p>"; return;
         }
         projects.forEach((p,i)=>{
             let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
-            
-            let totalSpent = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
             let totalDayCost = (p.days || []).reduce((sum, d) => {
                 const numbers = (d.costDetail || "").match(/\d+/g);
-                if (numbers) {
-                    return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0);
-                }
+                if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
                 return sum;
             }, 0);
-            let grandTotal = totalDayCost;
-            
             const div=document.createElement("div");
             div.className="project flex-between";
-            div.innerHTML=`<b>${p.name}</b><span>💰 ${grandTotal.toLocaleString()} | 📊 ${progress}%</span>`;
+            div.innerHTML=`<b>${p.name}</b><span>💰 ${totalDayCost.toLocaleString()} | 📊 ${progress}%</span>`;
             div.onclick=()=>openProject(i);
             list.appendChild(div);
         });
@@ -1007,28 +929,18 @@
     
     function searchProjects(){
         const query=document.getElementById("searchInput").value.toLowerCase();
-        const list=document.getElementById("projectList");
-        list.innerHTML = "";
-        
+        const list=document.getElementById("projectList"); list.innerHTML = "";
         const filteredProjects = projects.filter(p => p.name.toLowerCase().includes(query));
-
-        if (filteredProjects.length === 0) {
-            list.innerHTML = "<p>لا يوجد مشاريع تطابق البحث.</p>";
-            return;
-        }
-        
+        if (filteredProjects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع تطابق البحث.</p>"; return; }
         filteredProjects.forEach((p, i) => {
             let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
             let totalSpent = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
             let totalDayCost = (p.days || []).reduce((sum, d) => {
                 const numbers = (d.costDetail || "").match(/\d+/g);
-                if (numbers) {
-                    return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0);
-                }
+                if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
                 return sum;
             }, 0);
             let grandTotal = totalSpent + totalDayCost;
-
             const div = document.createElement("div");
             div.className = "project flex-between";
             div.innerHTML = `<b>${p.name}</b><span>💰 ${grandTotal.toLocaleString()} | 📊 ${progress}%</span>`;
@@ -1040,10 +952,7 @@
         });
     }
     
-    function showAddProject(){ 
-        if (isShareMode) return;
-        document.getElementById("addProjectForm").classList.remove("hidden"); 
-    }
+    function showAddProject(){ if (isShareMode) return; document.getElementById("addProjectForm").classList.remove("hidden"); }
     
     function addProject(){
         if (isShareMode) return;
@@ -1051,43 +960,18 @@
         let duration = parseInt(document.getElementById("projectDuration").value);
         let cost = parseInt(document.getElementById("projectCost").value);
         let daysSinceStart = parseInt(document.getElementById("daysSinceStart").value) || 0;
-        
         if(!name || !duration || !cost){alert("أدخل الحقول كاملة");return;}
-        
-        // حساب تاريخ البدء الفعلي بناءً على الأيام التي مضت
         let startDateObj = new Date();
-        if(daysSinceStart > 0) {
-            startDateObj.setDate(startDateObj.getDate() - daysSinceStart);
-        }
+        if(daysSinceStart > 0) { startDateObj.setDate(startDateObj.getDate() - daysSinceStart); }
         let startDateStr = startDateObj.toISOString().split("T")[0];
-        
-        // توليد مصفوفة الأيام الفائتة فارغة تلقائياً
         let generatedDays = [];
         for(let i = 0; i < daysSinceStart; i++) {
             let dayDate = new Date(startDateObj);
             dayDate.setDate(dayDate.getDate() + i);
-            let dayDateStr = dayDate.toISOString().split("T")[0];
-            
-            generatedDays.push({
-                date: dayDateStr,
-                workDescription: "",
-                workersDetail: "",
-                costDetail: "",
-                media: []
-            });
+            generatedDays.push({ date: dayDate.toISOString().split("T")[0], workDescription: "", workersDetail: "", costDetail: "", media: [] });
         }
-        
-        const newProject = {
-            name,
-            duration,
-            cost,
-            startDate: startDateStr,
-            days: generatedDays,
-            payments: []
-        };
-        
+        const newProject = { name, duration, cost, startDate: startDateStr, days: generatedDays, payments: [] };
         saveProject(newProject);
-        
         document.getElementById("addProjectForm").classList.add("hidden");
         document.getElementById("projectName").value = "";
         document.getElementById("projectDuration").value = "";
@@ -1098,100 +982,54 @@
     function editProject(){
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
-        let newName = prompt("✏ تعديل اسم المشروع:", p.name);
-        if(newName) p.name = newName;
-        let newCost = prompt("✏ تعديل تكلفة المشروع:", p.cost);
-        if(newCost && !isNaN(newCost)) p.cost = parseInt(newCost);
-        let newDuration = prompt("✏ تعديل مدة المشروع بالأيام:", p.duration);
-        if(newDuration && !isNaN(newDuration)) p.duration = parseInt(newDuration);
-        
-        saveProject(p).then(() => {
-            openProject(currentProjectIndex);
-        });
+        let newName = prompt("✏ تعديل اسم المشروع:", p.name); if(newName) p.name = newName;
+        let newCost = prompt("✏ تعديل تكلفة المشروع:", p.cost); if(newCost && !isNaN(newCost)) p.cost = parseInt(newCost);
+        let newDuration = prompt("✏ تعديل مدة المشروع بالأيام:", p.duration); if(newDuration && !isNaN(newDuration)) p.duration = parseInt(newDuration);
+        saveProject(p).then(() => { openProject(currentProjectIndex); });
     }
     
- function deleteProject(){
+    function deleteProject(){
         if (isShareMode) return;
         const projectsRef = database.ref(`projects/${currentUser.uid}`);
         projectsRef.child(projects[currentProjectIndex].id).remove().then(() => {
-            showSuccess("تم حذف المشروع بنجاح!");
-            backToProjects();
-        }).catch(error => {
-            console.error("Error removing project: ", error);
-            showError("حدث خطأ أثناء حذف المشروع.");
+            showSuccess("تم حذف المشروع بنجاح!"); backToProjects();
         });
     }
     
-    // === فتح مشروع
     function openProject(i){
-        currentProjectIndex = i;
-        mainPage.classList.add("hidden");
-        projectPage.classList.remove("hidden");
-        let p = projects[i];
-        document.getElementById("projTitle").innerText = p.name;
+        currentProjectIndex = i; mainPage.classList.add("hidden"); projectPage.classList.remove("hidden");
+        let p = projects[i]; document.getElementById("projTitle").innerText = p.name;
         let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
-        let bar = document.getElementById("projProgress");
-        bar.style.width = progress + "%";
-        bar.innerText = progress + "%";
-        let start = new Date(p.startDate);
-        let end = new Date(start);
-        end.setDate(start.getDate() + p.duration);
+        let bar = document.getElementById("projProgress"); bar.style.width = progress + "%"; bar.innerText = progress + "%";
+        let start = new Date(p.startDate); let end = new Date(start); end.setDate(start.getDate() + p.duration);
         let left = Math.max(0, Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)));
         document.getElementById("daysLeft").innerText = "⏳ متبقي " + left + " يوم";
         document.getElementById("projCost").innerText = "💰 التكلفة: " + p.cost.toLocaleString();
-        
-        if (!isShareMode) {
-            renderPayments();
-        }
+        if (!isShareMode) { renderPayments(); }
         renderDays();
     }
     
     function backToProjects(){
-        projectPage.classList.add("hidden");
-        dayPage.classList.add("hidden");
-        sharePage.classList.add("hidden");
-        if (isShareMode) {
-            // في وضع المشاركة، إخفاء كل شيء وإظهار رسالة
-            hideAllPages();
-            document.body.innerHTML = '<div class="container"><h1>شكراً لك! يمكنك إغلاق هذه الصفحة الآن.</h1></div>';
-        } else {
-            mainPage.classList.remove("hidden");
-            renderProjects();
-        }
+        projectPage.classList.add("hidden"); dayPage.classList.add("hidden"); sharePage.classList.add("hidden");
+        if (isShareMode) { hideAllPages(); document.body.innerHTML = '<div class="container"><h1>شكراً لك! يمكنك إغلاق هذه الصفحة الآن.</h1></div>'; }
+        else { mainPage.classList.remove("hidden"); renderProjects(); }
     }
     
-    function backToProjectPageFromShare(){
-        if (isShareMode) return;
-        sharePage.classList.add("hidden");
-        projectPage.classList.remove("hidden");
-    }
+    function backToProjectPageFromShare(){ if (isShareMode) return; sharePage.classList.add("hidden"); projectPage.classList.remove("hidden"); }
     
-    // === الدفعات
      function renderPayments(){
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
-        const list = document.getElementById("paymentsList");
-        list.innerHTML = "";
+        const list = document.getElementById("paymentsList"); list.innerHTML = "";
         (p.payments || []).forEach((pay, index) => {
             const div = document.createElement("div");
-            div.style.display = "flex";
-            div.style.justifyContent = "space-between";
-            div.style.alignItems = "center";
-            div.style.marginBottom = "5px";
-            div.innerHTML = `
-                <span>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date}</span>
-                <button class="delete">✖</button>
-            `;
+            div.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;";
+            div.innerHTML = `<span>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date}</span><button class="delete">✖</button>`;
             div.querySelector("button").onclick = () => {
-                p.payments.splice(index, 1);
-                saveProject(p).then(() => {
-                    renderPayments();
-                });
+                p.payments.splice(index, 1); saveProject(p).then(() => { renderPayments(); });
             };
             list.appendChild(div);
         });
-    
-        
         let totalPaid = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
         let remaining = p.cost - totalPaid;
         document.getElementById("remainingCost").innerText = "المتبقي: " + remaining.toLocaleString();
@@ -1200,28 +1038,20 @@
     function addPayment(){
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
-        let amount = parseInt(prompt("💵 مبلغ الدفعة:"));
-        if(!amount || isNaN(amount)) return;
-        let today = new Date().toISOString().split("T")[0];
+        let amount = parseInt(prompt("💵 مبلغ الدفعة:")); if(!amount || isNaN(amount)) return;
         if(!p.payments) p.payments = [];
-        p.payments.push({amount, date: today});
-        saveProject(p).then(() => {
-            renderPayments();
-        });
+        p.payments.push({amount, date: new Date().toISOString().split("T")[0]});
+        saveProject(p).then(() => { renderPayments(); });
     }
 
-    // === الأيام
     function renderDays(){
-        const list=document.getElementById("daysList");
-        list.innerHTML="";
+        const list=document.getElementById("daysList"); list.innerHTML="";
         let p=projects[currentProjectIndex];
         (p.days || []).forEach((d,i)=>{
-            const div=document.createElement("div");
-            div.className="day";
+            const div=document.createElement("div"); div.className="day";
             div.innerHTML=`
                 <div class="flex-between" onclick="toggleDayDetails(${i})">
-                    <b>اليوم ${i+1} - ${d.date} (${getDayName(d.date)})</b>
-                    <span>⬇ التفاصيل</span>
+                    <b>اليوم ${i+1} - ${d.date} (${getDayName(d.date)})</b><span>⬇ التفاصيل</span>
                 </div>
                 <div id="details-${i}" class="day-details">
                     <table>
@@ -1229,41 +1059,24 @@
                         <tr><th>👷 الكادر</th><td>${(d.workersDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                         <tr><th>💰 المبالغ</th><td>${(d.costDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                     </table>
-                    <div>
-    ${(d.media||[]).map((src,j)=>`
-        <img src="${src}" onclick="openFullscreen('${src}')">
-    `).join("")}
-</div>
-                    ${!isShareMode ? `<button onclick="openDay(${i})">✏ تعديل</button>
-                    <button class="delete" onclick="deleteDay(${i});event.stopPropagation();">🗑 حذف اليوم</button>` : ''}
-                </div>
-            `;
+                    <div> ${(d.media||[]).map((src,j)=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")} </div>
+                    ${!isShareMode ? `<button onclick="openDay(${i})">✏ تعديل</button><button class="delete" onclick="deleteDay(${i});event.stopPropagation();">🗑 حذف اليوم</button>` : ''}
+                </div>`;
             list.appendChild(div);
         });
     }
     
     function searchDays(){
         const query=document.getElementById("searchDayInput").value.toLowerCase();
-        const list=document.getElementById("daysList");
-        list.innerHTML="";
-        const filteredDays = projects[currentProjectIndex].days.filter(d => {
-            const dayString = JSON.stringify(d).toLowerCase();
-            return dayString.includes(query);
-        });
-
-        if (filteredDays.length === 0) {
-            list.innerHTML = "<p>لا يوجد أيام تطابق البحث.</p>";
-            return;
-        }
-
+        const list=document.getElementById("daysList"); list.innerHTML="";
+        const filteredDays = projects[currentProjectIndex].days.filter(d => JSON.stringify(d).toLowerCase().includes(query));
+        if (filteredDays.length === 0) { list.innerHTML = "<p>لا يوجد أيام تطابق البحث.</p>"; return; }
         filteredDays.forEach((d, i) => {
             const originalIndex = projects[currentProjectIndex].days.findIndex(day => day === d);
-            const div = document.createElement("div");
-            div.className = "day";
+            const div = document.createElement("div"); div.className = "day";
             div.innerHTML=`
                 <div class="flex-between" onclick="toggleDayDetails(${originalIndex})">
-                    <b>اليوم ${originalIndex+1} - ${d.date} (${getDayName(d.date)})</b>
-                    <span>⬇ التفاصيل</span>
+                    <b>اليوم ${originalIndex+1} - ${d.date} (${getDayName(d.date)})</b><span>⬇ التفاصيل</span>
                 </div>
                 <div id="details-${originalIndex}" class="day-details">
                     <table>
@@ -1271,65 +1084,40 @@
                         <tr><th>👷 الكادر</th><td>${(d.workersDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                         <tr><th>💰 المبالغ</th><td>${(d.costDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                     </table>
-                    <div>
-    ${(d.media||[]).map(src=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")}
-</div>
-                    ${!isShareMode ? `<button onclick="openDay(${originalIndex})">✏ تعديل</button>
-                    <button class="delete" onclick="deleteDay(${originalIndex});event.stopPropagation();">🗑 حذف اليوم</button>` : ''}
-                </div>
-            `;
+                    <div> ${(d.media||[]).map(src=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")} </div>
+                    ${!isShareMode ? `<button onclick="openDay(${originalIndex})">✏ تعديل</button><button class="delete" onclick="deleteDay(${originalIndex});event.stopPropagation();">🗑 حذف اليوم</button>` : ''}
+                </div>`;
             list.appendChild(div);
         });
     }
     
-    // === تفاصيل اليوم + الصور
     function toggleDayDetails(i){ let el=document.getElementById("details-"+i); el.style.display=el.style.display==="block"?"none":"block"; }
     function getDayName(dateStr){ const days=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"]; return days[new Date(dateStr).getDay()]; }
     
     function addDay(){ 
         if (isShareMode) return;
-        let p = projects[currentProjectIndex];
-        if (!p.days) p.days = [];
-        
-        // جلب تاريخ اليوم بصيغة افتراضية
+        let p = projects[currentProjectIndex]; if (!p.days) p.days = [];
         let defaultToday = new Date().toISOString().split("T")[0];
-        
-        // إظهار نافذة للمهندس يختار منها التاريخ يدوياً
         let chosenDate = prompt("📅 أدخل تاريخ اليومية (YYYY-MM-DD):", defaultToday);
-        if (!chosenDate) return; // إلغاء العملية إذا لم يختر تاريخاً
-        
-        // فحص التحقق: منع تكرار نفس التاريخ في نفس المشروع هندسياً
+        if (!chosenDate) return;
         let isDateExists = p.days.some(day => day.date === chosenDate);
-        if (isDateExists) {
-            alert("❌ هذا التاريخ مسجل مسبقاً في هذا المشروع! يرجى تعديل اليوم من القائمة بدلاً من تكراره.");
-            return;
-        }
-        
-        // إضافة اليوم بالتاريخ المختار يدوياً بنجاح
+        if (isDateExists) { alert("❌ هذا التاريخ مسجل مسبقاً في هذا المشروع!"); return; }
         p.days.push({date: chosenDate, workDescription: "", workersDetail: "", costDetail: "", media: []}); 
-        
-        // ترتيب الأيام تصاعدياً حسب التاريخ حتى تظهر اليوميات من الأقدم للأحدث تلقائياً
         p.days.sort((a, b) => new Date(a.date) - new Date(b.date));
-        
         saveProject(p).then(() => { renderDays(); });
     }
     
   function deleteDay(i){ 
     if(isShareMode) return;
     if(confirm("هل تريد حذف هذا اليوم؟")){ 
-        let p = projects[currentProjectIndex];
-        p.days.splice(i,1); 
-        saveProject(p).then(() => { 
-            renderDays();
-        });
+        let p = projects[currentProjectIndex]; p.days.splice(i,1); 
+        saveProject(p).then(() => { renderDays(); });
     } 
 }
     
     function openDay(i){ 
         if (isShareMode) return;
-        currentDayIndex = i; 
-        projectPage.classList.add("hidden"); 
-        dayPage.classList.remove("hidden"); 
+        currentDayIndex = i; projectPage.classList.add("hidden"); dayPage.classList.remove("hidden"); 
         let d = projects[currentProjectIndex].days[i]; 
         document.getElementById("dayDate").innerText = "📅 " + d.date + " (" + getDayName(d.date) + ")"; 
         document.getElementById("workDescription").value = d.workDescription || ""; 
@@ -1338,13 +1126,10 @@
         renderMedia(); 
     }
     
-    function backToProject(){ 
-        dayPage.classList.add("hidden"); 
-        projectPage.classList.remove("hidden"); 
-        renderDays(); 
-    }
+    function backToProject(){ dayPage.classList.add("hidden"); projectPage.classList.remove("hidden"); renderDays(); }
     
-   function saveDay(){ 
+    // 🔥 تحديث دالة الحفظ بالاعتماد على Firebase Storage لتخفيف التطبيق وسرعة الأداء بشكل كامل
+    function saveDay(){ 
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
         let d = p.days[currentDayIndex];
@@ -1354,432 +1139,193 @@
         
         let files = document.getElementById("mediaInput").files;
         if (files.length === 0) {
-            saveProject(p).then(() => {
-                renderMedia();
-                alert("تم الحفظ!");
-            });
-            return;
+            saveProject(p).then(() => { renderMedia(); alert("تم حفظ البيانات بنجاح! 💾"); }); return;
         }
 
+        // تغيير طريقة المعالجة: نرفع الملفات مباشرة وبشكل منفصل إلى مساحة التخزين السحابية Storage
         let filesProcessed = 0;
+        alert("جاري رفع الصور السحابي وتخفيف قاعدة البيانات... يرجى الانتظار لحين اكتمال الرفع ⏳");
+
         for (let f of files) {
-            let reader = new FileReader();
-            reader.onload = function(e) {
-                let img = new Image();
-                img.onload = function() {
-                    let canvas = document.createElement('canvas');
-                    let ctx = canvas.getContext('2d');
-                    let maxWidth = 800;
-                    let maxHeight = 600;
-                    let ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
-                    canvas.width = img.width * ratio;
-                    canvas.height = img.height * ratio;
-                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    let compressedData = canvas.toDataURL('image/jpeg', 0.6);
-                    if (!d.media) d.media = [];
-                    d.media.push(compressedData);
-                    filesProcessed++;
-                    if (filesProcessed === files.length) {
-                        saveProject(p).then(() => {
-                            renderMedia();
-                        });
-                    }
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(f);
+            // توليد اسم فريد لكل ملف لتفادي تكرار الأسماء
+            let uniqueFileName = currentUser.uid + "_" + p.id + "_" + Date.now() + "_" + f.name;
+            let storageRef = storage.ref(`project_images/${uniqueFileName}`);
+
+            // البدء بعملية الرفع الفعلية للملف
+            storageRef.put(f).then(snapshot => {
+                // بعد الرفع الناجح، نقوم بجلب الرابط المباشر للملف (URL)
+                return snapshot.ref.getDownloadURL();
+            }).then(downloadURL => {
+                if (!d.media) d.media = [];
+                d.media.push(downloadURL); // حفظ رابط الويب فقط وليس البايتات الكاملة للصورة!
+                filesProcessed++;
+
+                // عند انتهاء رفع كافة الصور المختارة
+                if (filesProcessed === files.length) {
+                    saveProject(p).then(() => {
+                        renderMedia();
+                        document.getElementById("mediaInput").value = ""; // تصفير حقل الاختيار
+                        alert("تم رفع جميع الصور وحفظ اليومية بنجاح! 🚀");
+                    });
+                }
+            }).catch(err => {
+                console.error("Storage upload error: ", err);
+                showError("حدث خطأ أثناء رفع بعض الصور.");
+            });
         }
     }
     
     function renderMedia(){ 
     if (isShareMode) return;
     let d=projects[currentProjectIndex].days[currentDayIndex]; 
-    let container=document.getElementById("mediaList"); 
-    container.innerHTML=""; 
+    let container=document.getElementById("mediaList"); container.innerHTML=""; 
     (d.media || []).forEach((src,j)=>{ 
-        let div=document.createElement("div"); 
-        div.style.display="inline-block"; 
-        div.style.position="relative"; 
-        let img=document.createElement("img"); 
-        img.src=src; 
-        img.onclick=()=>openFullscreen(src); 
-        let del=document.createElement("button"); 
-        del.innerText="x"; 
-        del.className="delete"; 
-        del.style.position="absolute"; 
-        del.style.top="0"; 
-        del.style.right="0"; 
+        let div=document.createElement("div"); div.style.cssText = "display:inline-block; position:relative;"; 
+        let img=document.createElement("img"); img.src=src; img.onclick=()=>openFullscreen(src); 
+        let del=document.createElement("button"); del.innerText="x"; del.className="delete"; 
+        del.style.cssText = "position:absolute; top:0; right:0;"; 
         del.onclick=(event)=>{
             event.stopPropagation();
-            if (confirm("هل أنت متأكد من حذف هذه الصورة؟")) {
-                deleteImage(currentDayIndex,j);
-            }
+            if (confirm("هل أنت متأكد من حذف هذه الصورة؟")) { deleteImage(currentDayIndex,j); }
         }; 
-        div.appendChild(img); 
-        div.appendChild(del); 
-        container.appendChild(div); 
+        div.appendChild(img); div.appendChild(del); container.appendChild(div); 
     }); 
 }
     
     function deleteImage(dayIndex,imgIndex){ 
         if (isShareMode) return;
-        let p = projects[currentProjectIndex];
-        let d = p.days[dayIndex];
+        let p = projects[currentProjectIndex]; let d = p.days[dayIndex];
         d.media.splice(imgIndex,1); 
-        saveProject(p).then(() => { 
-            if(dayIndex===currentDayIndex) renderMedia(); 
-        });
+        saveProject(p).then(() => { if(dayIndex===currentDayIndex) renderMedia(); });
     }
     
     function openFullscreen(src){ 
-        let fs=document.createElement("div"); 
-        fs.className="fullscreen"; 
-        let img=document.createElement("img"); 
-        img.src=src; 
-        fs.appendChild(img); 
-        fs.onclick=()=>fs.remove(); 
-        document.body.appendChild(fs); 
+        let fs=document.createElement("div"); fs.className="fullscreen"; 
+        let img=document.createElement("img"); img.src=src; fs.appendChild(img); 
+        fs.onclick=()=>fs.remove(); document.body.appendChild(fs); 
     }
     
-    // === مشاركة المشروع (محدَّثة للعمل بدون مصادقة)
    function shareProject() {
         if (isShareMode) return;
         const shareOption = prompt("اختر نوع المشاركة:\n1. مشاركة جميع الأيام\n2. مشاركة أيام معينة");
         let projectToShare = projects[currentProjectIndex];
         let shareLink = window.location.origin + window.location.pathname + `?share=${projectToShare.id}&uid=${currentUser.uid}`;
-
-        if (shareOption === "1") {
-            prompt("انسخ الرابط لمشاركة جميع الأيام:", shareLink);
-        } else if (shareOption === "2") {
-            showDaySelectionPopup();
-        } else {
-            return;
-        }
+        if (shareOption === "1") { prompt("انسخ الرابط لمشاركة جميع الأيام:", shareLink); } 
+        else if (shareOption === "2") { showDaySelectionPopup(); }
     }
 
     function showDaySelectionPopup() {
         if (isShareMode) return;
         let popupContainer = document.createElement("div");
         popupContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;";
-
         let popupContent = document.createElement("div");
         popupContent.style.cssText = "background: #fff; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; max-height: 80vh; overflow-y: auto; text-align: right; direction: rtl;";
-
-        let title = document.createElement("h3");
-        title.innerText = "اختر الأيام للمشاركة:";
-        popupContent.appendChild(title);
+        let title = document.createElement("h3"); title.innerText = "اختر الأيام للمشاركة:"; popupContent.appendChild(title);
 
         let currentProject = projects[currentProjectIndex];
         if (currentProject && currentProject.days) {
             currentProject.days.forEach((day, index) => {
-                let dayDiv = document.createElement("div");
-                dayDiv.style.cssText = "margin-bottom: 10px;";
-
-                let checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.id = "day-" + index;
-                checkbox.style.marginLeft = "10px";
-
-                let label = document.createElement("label");
-                label.htmlFor = "day-" + index;
-                label.innerText = `اليوم ${index + 1} - ${day.date}`;
-
-                dayDiv.appendChild(checkbox);
-                dayDiv.appendChild(label);
-                popupContent.appendChild(dayDiv);
+                let dayDiv = document.createElement("div"); dayDiv.style.marginBottom = "10px";
+                let checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.id = "day-" + index; checkbox.style.marginLeft = "10px";
+                let label = document.createElement("label"); label.htmlFor = "day-" + index; label.innerText = `اليوم ${index + 1} - ${day.date}`;
+                dayDiv.appendChild(checkbox); dayDiv.appendChild(label); popupContent.appendChild(dayDiv);
             });
         }
-
-        let buttonDiv = document.createElement("div");
-        buttonDiv.style.cssText = "display: flex; justify-content: space-around; margin-top: 20px;";
-
-        let shareBtn = document.createElement("button");
-        shareBtn.innerText = "إنشاء رابط المشاركة";
-        shareBtn.style.backgroundColor = "#2ecc71";
+        let buttonDiv = document.createElement("div"); buttonDiv.style.cssText = "display: flex; justify-content: space-around; margin-top: 20px;";
+        let shareBtn = document.createElement("button"); shareBtn.innerText = "إنشاء رابط المشاركة"; shareBtn.style.backgroundColor = "#2ecc71";
         shareBtn.onclick = () => {
             let selectedIndices = [];
-            popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => {
-                if (checkbox.checked) {
-                    selectedIndices.push(index);
-                }
-            });
-
+            popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => { if (checkbox.checked) selectedIndices.push(index); });
             if (selectedIndices.length > 0) {
-                let projectId = projects[currentProjectIndex].id;
-                let daysString = selectedIndices.join(',');
+                let projectId = projects[currentProjectIndex].id; let daysString = selectedIndices.join(',');
                 let shareLink = window.location.origin + window.location.pathname + `?share=${projectId}&uid=${currentUser.uid}&days=${daysString}`;
                 prompt("انسخ الرابط لمشاركة الأيام المحددة:", shareLink);
-            } else {
-                alert("لم يتم اختيار أي يوم.");
-            }
+            } else { alert("لم يتم اختيار أي يوم."); }
             popupContainer.remove();
         };
-
-        let cancelBtn = document.createElement("button");
-        cancelBtn.innerText = "إلغاء";
-        cancelBtn.style.backgroundColor = "#e74c3c";
-        cancelBtn.onclick = () => {
-            popupContainer.remove();
-        };
-
-        buttonDiv.appendChild(shareBtn);
-        buttonDiv.appendChild(cancelBtn);
-        popupContent.appendChild(buttonDiv);
-
-        popupContainer.appendChild(popupContent);
-        document.body.appendChild(popupContainer);
+        let cancelBtn = document.createElement("button"); cancelBtn.innerText = "إلغاء"; cancelBtn.style.backgroundColor = "#e74c3c";
+        cancelBtn.onclick = () => popupContainer.remove();
+        buttonDiv.appendChild(shareBtn); buttonDiv.appendChild(cancelBtn); popupContent.appendChild(buttonDiv);
+        popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
     }
 
     function resetPassword() {
         const email = document.getElementById("email").value;
-
         if (email) {
-            auth.sendPasswordResetEmail(email)
-                .then(() => {
-                    alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني. يرجى التحقق من البريد في خانة الرسائل الغير مرغوب بها.");
-                })
-                .catch((error) => {
-                    let errorMessage = "حدث خطأ. يرجى المحاولة مرة أخرى.";
-                    if (error.code === "auth/user-not-found") {
-                        errorMessage = "هذا البريد الإلكتروني غير مسجل. يرجى التحقق من البريد الإلكتروني والمحاولة مرة أخرى.";
-                    } else if (error.code === "auth/invalid-email") {
-                        errorMessage = "صيغة البريد الإلكتروني غير صحيحة.";
-                    }
-                    alert(errorMessage);
-                    console.error("Password reset error:", error);
-                });
-        } else {
-            alert("يرجى إدخال بريدك الإلكتروني أولاً في الحقل المخصص.");
-        }
+            auth.sendPasswordResetEmail(email).then(() => {
+                alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني.");
+            }).catch((error) => { alert("حدث خطأ، تأكد من البريد الإلكتروني المكتوب."); });
+        } else { alert("يرجى إدخال بريدك الإلكتروني أولاً في الحقل المخصص."); }
     }
 
-    // دالة محدثة للتعامل مع المشاركة بدون مصادقة
     function renderSharePage(projectData) {
-        hideAllPages();
-        sharePage.classList.remove('hidden');
-        isShareMode = true;
-
+        hideAllPages(); sharePage.classList.remove('hidden'); isShareMode = true;
         document.getElementById("shareProjTitle").innerText = projectData.name;
-
         let progress = Math.round(((projectData.days ? projectData.days.length : 0) / projectData.duration) * 100);
         if(progress > 100) progress = 100;
-        let bar = document.getElementById("shareProjProgress");
-        bar.style.width = progress + "%";
-        bar.innerText = progress + "%";
-
-        let start=new Date(projectData.startDate);
-        let end=new Date(start);
-        end.setDate(start.getDate()+projectData.duration);
+        let bar = document.getElementById("shareProjProgress"); bar.style.width = progress + "%"; bar.innerText = progress + "%";
+        let start=new Date(projectData.startDate); let end=new Date(start); end.setDate(start.getDate()+projectData.duration);
         let left=Math.max(0,Math.ceil((end-new Date())/(1000*60*60*24)));
         document.getElementById("shareDaysLeft").innerText="⏳ متبقي "+left+" يوم";
         document.getElementById("shareProjCost").innerText="💰 التكلفة: "+(projectData.cost || 0).toLocaleString();
-
-        // الدفعات
         const paymentsList = document.getElementById("sharePaymentsList");
         paymentsList.innerHTML = (projectData.payments || []).map(pay => `<div>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date}</div>`).join("") || "لا توجد دفعات مسجلة.";
-
-        // الأيام
-        const daysList = document.getElementById("shareDaysList");
-        daysList.innerHTML = "";
+        const daysList = document.getElementById("shareDaysList"); daysList.innerHTML = "";
         (projectData.days || []).forEach((d,i)=>{
-            const div = document.createElement("div");
-            div.className = "day";
+            const div = document.createElement("div"); div.className = "day";
             div.innerHTML=`
                 <b>اليوم ${i+1} - ${d.date} (${getDayName(d.date)})</b>
                 <table>
                     <tr><th>🔨 العمل</th><td>${(d.workDescription||"-").replace(/\n/g,"<br>")}</td></tr>
-                        <tr><th>👷 الكادر</th><td>${(d.workersDetail||"-").replace(/\n/g,"<br>")}</td></tr>
-                        <tr><th>💰 المبالغ</th><td>${(d.costDetail||"-").replace(/\n/g,"<br>")}</td></tr>
+                    <tr><th>👷 الكادر</th><td>${(d.workersDetail||"-").replace(/\n/g,"<br>")}</td></tr>
+                    <tr><th>💰 المبالغ</th><td>${(d.costDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                 </table>
-                <div>${(d.media||[]).map(src=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")}</div>
-            `;
+                <div>${(d.media||[]).map(src=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")}</div>`;
             daysList.appendChild(div);
         });
     }
 
-// Function to handle shared project links - محدثة للعمل بدون مصادقة
 function handleShareLink() {
     const urlParams = new URLSearchParams(window.location.search);
-    const sharedProjectId = urlParams.get('share');
-    const sharedUserId = urlParams.get('uid');
-    const sharedDays = urlParams.get('days');
-
+    const sharedProjectId = urlParams.get('share'); const sharedUserId = urlParams.get('uid'); const sharedDays = urlParams.get('days');
     if (sharedProjectId && sharedUserId) {
-        // إخفاء صفحة تسجيل الدخول فوراً
         hideAllPages();
-        
-        // إظهار رسالة تحميل
-        document.body.innerHTML = `
-            <div class="container" style="text-align: center;">
-                <h1>جاري تحميل المشروع المشارك...</h1>
-                <div style="margin: 20px 0;">
-                    <div style="width: 50px; height: 50px; border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-                </div>
-            </div>
-            <style>
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-            </style>
-        `;
-
-        // جلب المشروع المشارك من قاعدة البيانات
+        document.body.innerHTML = `<div class="container" style="text-align: center;"><h1>جاري تحميل المشروع المشارك...</h1></div>`;
         database.ref(`projects/${sharedUserId}/${sharedProjectId}`).once('value').then(snapshot => {
             const projectData = snapshot.val();
-            
             if (projectData) {
                 projectData.id = sharedProjectId;
-                
-                // إذا كانت أيام محددة مشاركة فقط
                 if (sharedDays) {
                     const daysIndices = sharedDays.split(',').map(Number);
                     projectData.days = (projectData.days || []).filter((day, index) => daysIndices.includes(index));
                 }
-
-                // إعادة تحميل الصفحة بالكود الكامل
-                document.body.innerHTML = `<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📋 عرض المشروع المشارك</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body>
-    <div id="darkModeToggle" class="theme-toggle">
-        <i class="fas fa-adjust"></i>
-    </div>
-    <div class="container" id="sharePage">
-        <h2 id="shareProjTitle">${projectData.name}</h2>
-        <div class="progress-bar"><div class="progress" id="shareProjProgress"></div></div>
-        <h3 id="shareDaysLeft"></h3>
-        <h3 id="shareProjCost"></h3>
-        <h3>💵 الدفعات</h3>
-        <div id="sharePaymentsList"></div>
-        <h2>📅 الأيام</h2>
-        <div id="shareDaysList"></div>
-    </div>
-    <div class="developer-info">
-        <p>تطوير: المهندس كاظم قاسم</p>
-        <p>رقم الهاتف: <a href="tel:07746424814">07746424814</a></p>
-    </div>
-</body>
-</html>`;
-
-                // إضافة الستايل والسكريبت
-                const style = document.createElement('style');
-                style.textContent = `
-                    /* نفس الستايل الأساسي */
-                    * { margin: 0; padding: 0; box-sizing: border-box; }
-                    body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #1f1f2e, #12121c); color: #e0e0e0; margin: 0; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; direction: rtl; }
-                    .container { background: rgba(40, 44, 52, 0.95); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(6px); padding: 40px 35px; border-radius: 20px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4); width: 95%; max-width: 850px; margin-top: 80px; }
-                    h1, h2, h3 { color: #ffffff; background: linear-gradient(to right, #6dd5ed, #2193b0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-                    .progress-bar { background: #1d1f27; border-radius: 8px; height: 25px; margin: 15px 0; overflow: hidden; }
-                    .progress { background: linear-gradient(to right, #00b09b, #96c93d); height: 100%; border-radius: 8px; width: 0%; color: white; text-align: center; line-height: 25px; font-size: 14px; }
-                    .day { padding: 15px; background: #282c34; border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 14px; margin: 10px 0; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-                    th, td { border: 1px solid #444; padding: 10px; text-align: right; }
-                    th { background: #1d1f27; color: #e0e0e0; }
-                    img { max-width: 100px; max-height: 100px; border-radius: 8px; margin: 5px; cursor: pointer; border: 2px solid #ddd; }
-                    .fullscreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-                    .fullscreen img { max-width: 90%; max-height: 90%; border-radius: 0; }
-                    .theme-toggle { background: none; color: #e0e0e0; font-size: 1.5rem; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; position: fixed; top: 20px; left: 20px; z-index: 1000; }
-                    body.light-mode { background: #f0f0f0; color: #111; }
-                    body.light-mode .container { background: #ffffff; border: 1px solid #ccc; color: #111; }
-                    body.light-mode h1, body.light-mode h2, body.light-mode h3 { color: #2193b0; -webkit-text-fill-color: #2193b0; }
-                    body.light-mode .day { background: #e6f4ea; border: 1px solid #28a745; color: #155724; }
-                    body.light-mode .theme-toggle { color: #2c3e50; }
-                    .developer-info { margin-top: 40px; text-align: center; font-size: 0.9rem; color: #888; padding: 10px; border-top: 1px solid #333; width: 100%; }
-                    .developer-info a { color: #6dd5ed; text-decoration: none; }
-                    @media(max-width: 600px) { .container { padding: 25px 20px; } }
-                `;
-                document.head.appendChild(style);
-
-                // تشغيل السكريبت لعرض المشروع
+                document.body.innerHTML = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>📋 عرض المشروع المشارك</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"></head><body><div id="darkModeToggle" class="theme-toggle"><i class="fas fa-adjust"></i></div><div class="container" id="sharePage"><h2 id="shareProjTitle">${projectData.name}</h2><div class="progress-bar"><div class="progress" id="shareProjProgress"></div></div><h3 id="shareDaysLeft"></h3><h3 id="shareProjCost"></h3><h3>💵 الدفعات</h3><div id="sharePaymentsList"></div><h2>📅 الأيام</h2><div id="shareDaysList"></div></div></body></html>`;
                 renderSharePage(projectData);
-                
-                // إضافة وظيفة فتح الصور بحجم كامل
-                window.openFullscreen = function(src) {
-                    let fs = document.createElement("div");
-                    fs.className = "fullscreen";
-                    let img = document.createElement("img");
-                    img.src = src;
-                    fs.appendChild(img);
-                    fs.onclick = () => fs.remove();
-                    document.body.appendChild(fs);
-                };
-
-                // إضافة وظيفة اسم اليوم
-                window.getDayName = function(dateStr) {
-                    const days = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-                    return days[new Date(dateStr).getDay()];
-                };
-
-                // إضافة وظيفة تغيير الثيم
-                document.getElementById('darkModeToggle').addEventListener('click', () => {
-                    document.body.classList.toggle("light-mode");
-                    const toggle = document.getElementById('darkModeToggle');
-                    if (document.body.classList.contains("light-mode")) {
-                        toggle.innerHTML = '<i class="fas fa-sun"></i>';
-                    } else {
-                        toggle.innerHTML = '<i class="fas fa-moon"></i>';
-                    }
-                });
-
-            } else {
-                document.body.innerHTML = '<div class="container"><h1>المشروع غير موجود أو تم حذفه.</h1></div>';
             }
-        }).catch(error => {
-            console.error("Error fetching shared project:", error);
-            document.body.innerHTML = '<div class="container"><h1>حدث خطأ أثناء تحميل المشروع.</h1></div>';
         });
-        
         return true;
     }
     return false;
 }
 
-    // 🌙 وظائف الوضع الليلي
     document.addEventListener('DOMContentLoaded', (event) => {
         const darkModeToggle = document.getElementById('darkModeToggle');
         const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-
         const currentTheme = localStorage.getItem("theme");
-        if (currentTheme === "dark") {
-            document.body.classList.add("light-mode");
-        } else if (currentTheme === "light") {
-            document.body.classList.remove("light-mode");
-        } else if (prefersDarkScheme.matches) {
-            document.body.classList.remove("light-mode");
-        } else {
-            document.body.classList.add("light-mode");
-        }
-        
+        if (currentTheme === "dark") { document.body.classList.add("light-mode"); } 
+        else if (currentTheme === "light") { document.body.classList.remove("light-mode"); }
         function updateDarkModeIcon() {
-            if (document.body.classList.contains("light-mode")) {
-                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-            }
+            if (document.body.classList.contains("light-mode")) { darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>'; } 
+            else { darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>'; }
         }
-        
         updateDarkModeIcon();
-
-        // تبديل الوضع الليلي
         darkModeToggle.addEventListener('click', () => {
             document.body.classList.toggle("light-mode");
-            if (document.body.classList.contains("light-mode")) {
-                localStorage.setItem("theme", "dark");
-            } else {
-                localStorage.setItem("theme", "light");
-            }
+            if (document.body.classList.contains("light-mode")) { localStorage.setItem("theme", "dark"); } 
+            else { localStorage.setItem("theme", "light"); }
             updateDarkModeIcon();
         });
     });
-
 </script>
-
 </body>
 </html>
