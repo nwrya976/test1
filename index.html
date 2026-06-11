@@ -50,7 +50,7 @@
         body.light-mode button.delete, body.light-mode button.action-btn.del-btn {
             background: #e74c3c;
         }
-        body.light-mode .project, body.light-mode .day {
+        body.light-mode .project, body.light-mode .day, body.light-mode .subcon-card {
             background: #e6f4ea;
             border: 1px solid #28a745;
             color: #155724;
@@ -58,12 +58,12 @@
         body.light-mode .project:hover, body.light-mode .day:hover {
             background: #d4e9da;
         }
-        body.light-mode input, body.light-mode textarea {
+        body.light-mode input, body.light-mode textarea, body.light-mode select {
             background-color: #fff;
             color: #000;
             border-color: #bbb;
         }
-        /* زر تغيير الوضع */
+        /* زر تغيير الوضع (Mode Toggle) */
         .theme-toggle {
             background: none;
             color: #e0e0e0;
@@ -153,7 +153,47 @@
         .card-stat small { color: #888; display: block; font-size: 0.8rem; margin-bottom: 4px; }
         .card-stat span { font-weight: bold; font-size: 1.1rem; }
         
-        /* صندوق مدمج لإدخال الدفعات */
+        /* 🗂️ أزرار نظام التبويبات الثلاثي (Tabs) */
+        .tabs-container {
+            display: flex;
+            gap: 10px;
+            margin: 25px 0 15px 0;
+            border-bottom: 2px solid #444;
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        body.light-mode .tabs-container {
+            border-color: #ccc;
+        }
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px;
+            background: #282c34;
+            border: 1px solid #444;
+            border-radius: 10px;
+            color: #aaa;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            transition: all 0.3s;
+            margin: 0;
+            box-shadow: none;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #2193b0, #6dd5ed);
+            color: #fff;
+            border-color: #6dd5ed;
+        }
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* صندوق مدمج لإدخال البيانات والدفعات */
         .inline-form-box {
             background: rgba(20, 24, 30, 0.5);
             border: 1px dashed #555;
@@ -194,11 +234,10 @@
             transition: all 0.3s ease;
             margin-top: 10px;
             margin-right: 5px;
-            box-shadow: 0 5px 166px rgba(0, 255, 180, 0.3);
+            box-shadow: 0 5px 16px rgba(0, 255, 180, 0.3);
         }
         button:hover {
             background: linear-gradient(135deg, #00816a, #7db515);
-            box-shadow: 0 8px 22px rgba(0, 255, 180, 0.4);
             transform: translateY(-1px);
         }
         button.delete {
@@ -207,7 +246,6 @@
         }
         button.delete:hover {
             background: #c0392b;
-            box-shadow: 0 8px 22px rgba(231, 76, 60, 0.4);
         }
         button.back {
             background: linear-gradient(135deg, #8e44ad, #9b59b6);
@@ -216,7 +254,7 @@
         button.back:hover {
             background: linear-gradient(135deg, #6c3483, #8e44ad);
         }
-        .project, .day {
+        .project, .day, .subcon-card {
             padding: 15px;
             background: #282c34;
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -250,7 +288,7 @@
         .hidden {
             display: none;
         }
-        input, textarea {
+        input, textarea, select {
             width: 100%;
             padding: 12px;
             margin: 8px 0;
@@ -261,7 +299,7 @@
             font-size: 1rem;
             box-sizing: border-box;
         }
-        input:focus, textarea:focus {
+        input:focus, textarea:focus, select:focus {
             border-color: #6dd5ed;
             outline: none;
         }
@@ -290,12 +328,13 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        .day-details {
+        .day-details, .subcon-details {
             margin-top: 15px;
             display: none;
             background: #22262b;
-            padding: 10px;
+            padding: 15px;
             border-radius: 8px;
+            border: 1px solid #444;
         }
         img, video {
             max-width: 100px;
@@ -502,6 +541,10 @@
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
         @media (max-width: 768px) {
             .container { padding: 15px 10px; margin-top: 40px; }
             h1 { font-size: 22px; }
@@ -517,8 +560,9 @@
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; }
             .container { background: white !important; box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            button, input, #darkModeToggle, .back, .theme-toggle, .user-header { display: none !important; }
+            button, input, select, #darkModeToggle, .back, .theme-toggle, .user-header, .tabs-container { display: none !important; }
             h1, h2, h3 { color: black !important; background: none !important; -webkit-text-fill-color: initial !important; }
+            .tab-content { display: block !important; }
             .day { background: white !important; border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px !important; }
             table { display: table !important; width: 100% !important; }
             th, td { border: 1px solid black !important; color: black !important; background: #f5f5f5 !important; }
@@ -543,17 +587,17 @@
     <div id="error-msg" class="error-message"></div>
     <form id="auth-form">
         <div class="form-group">
-            <label for="email">البريد الإلكتروني:</label>
-            <input type="email" id="email" name="email" placeholder="Your-Name@gmail.com" required>
+            <label>البريد الإلكتروني:</label>
+            <input type="email" id="email" placeholder="Your-Name@gmail.com" required>
         </div>
         <div class="form-group">
-            <label for="password">كلمة المرور:</label>
-            <input type="password" id="password" name="password" placeholder="••••••••" required>
+            <label>كلمة المرور:</label>
+            <input type="password" id="password" placeholder="••••••••" required>
             <a href="#" style="font-size: 0.9rem; color: #667eea; text-decoration: underline; display: block; text-align: right; margin-top: 10px;" onclick="resetPassword(); return false;" id="forgot-password-link">هل نسيت كلمة المرور؟</a>
         </div>
         <div class="form-group hidden" id="confirm-password-group">
-            <label for="confirm-password">تأكيد كلمة المرور:</label>
-            <input type="password" id="confirm-password" name="confirm-password" placeholder="••••••••">
+            <label>تأكيد كلمة المرور:</label>
+            <input type="password" id="confirm-password" placeholder="••••••••">
         </div>
         <div class="button-group">
             <button type="button" id="login-btn" class="btn-primary">تسجيل دخول</button>
@@ -590,10 +634,10 @@
     <div class="flex-between">
         <button class="back" onclick="backToProjects()">⬅ رجوع للمشاريع</button>
     </div>
-    <h2 id="projTitle"></h2>
+    <h2 id="projTitle" style="margin-top: 10px;"></h2>
     
     <div class="dashboard-box" id="projectDashboard">
-        <h3>📊 الخلاصة المالية والزمنية</h3>
+        <h3>📊 الخلاصة المالية والموقف المالي للموقع</h3>
         <div class="dashboard-grid">
             <div class="card-stat">
                 <small>إجمالي المصاريف الفعلي</small>
@@ -614,7 +658,13 @@
     <h3 id="daysLeft"></h3>
     <h3 id="projCost"></h3>
 
-    <div id="paymentsSection">
+    <div class="tabs-container">
+        <button class="tab-btn active" id="btn-paymentsTab" onclick="switchTab('paymentsTab')">💵 دفعات المالك</button>
+        <button class="tab-btn" id="btn-daysTab" onclick="switchTab('daysTab')">📅 يوميات الموقع</button>
+        <button class="tab-btn" id="btn-subcontractorsTab" onclick="switchTab('subcontractorsTab')">👥 المقاولون والمجهزون</button>
+    </div>
+
+    <div id="paymentsTab" class="tab-content active">
         <h3>💵 الدفعات المستلمة من المالك</h3>
         <div id="paymentsList"></div>
         <button onclick="showAddPaymentForm()">➕ إضافة دفعة</button>
@@ -626,16 +676,37 @@
             <button onclick="submitPaymentForm()">حفظ الدفعة</button>
             <button onclick="hideAddPaymentForm()" style="background: #e74c3c;">إلغاء</button>
         </div>
-        
-        <h3 id="remainingCost"></h3>
+        <h3 id="remainingCost" style="margin-top: 15px;"></h3>
     </div>
 
-    <h2>📅 الأيام واليوميات</h2>
-    <input type="date" id="searchDayInput" onchange="searchDays()">
-    <div id="daysList"></div>
-    <button onclick="addDay()">➕ إضافة يوم</button>
-    <br><br>
-    <button onclick="shareProject()">🔗 مشاركة وتصدير التقرير</button>
+    <div id="daysTab" class="tab-content">
+        <h3>📅 الأيام واليوميات</h3>
+        <input type="date" id="searchDayInput" onchange="searchDays()">
+        <div id="daysList"></div>
+        <button onclick="addDay()">➕ إضافة يوم</button>
+    </div>
+
+    <div id="subcontractorsTab" class="tab-content">
+        <h3>👥 حسابات المقاولين الثانويين ومجهزي المواد</h3>
+        <div id="subcontractorsList"></div>
+        <button onclick="showAddSubconForm()">➕ إضافة مقاول / مجهز</button>
+        
+        <div id="addSubconForm" class="inline-form-box hidden">
+            <h4>👤 إضافة جهة تعامل جديدة داخل الموقع</h4>
+            <input type="text" id="subconNameInput" placeholder="اسم المقاول أو الشركة المجهزة">
+            <select id="subconTypeInput">
+                <option value="مقاول ثانوي">مقاول ثانوي (بالقطعة / عمل محدد / لبخ ...)</option>
+                <option value="مجهز مواد">مجهز مواد إنشائية (حديد / رمل / سمنت ...)</option>
+            </select>
+            <input type="text" id="subconAgreementInput" placeholder="مبلغ العقد أو الاتفاق الأولي (اختياري)" oninput="formatNumberInput(this)">
+            <button onclick="submitSubconForm()">حفظ الجهة</button>
+            <button onclick="hideAddSubconForm()" style="background: #e74c3c;">إلغاء</button>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px; padding-top: 15px; border-top: 1px dashed #555; text-align: center;">
+        <button onclick="shareProject()" style="background: linear-gradient(135deg, #3498db, #2980b9); width: 100%; max-width: 350px;">🔗 مشاركة وتصدير التقرير</button>
+    </div>
 </div>
 
 <div class="container hidden" id="dayPage">
@@ -662,9 +733,11 @@
     <div class="progress-bar"><div class="progress" id="shareProjProgress"></div></div>
     <h3 id="shareDaysLeft"></h3>
     <h3 id="shareProjCost"></h3>
-    <h3>💵 الدفعات</h3>
+    <h3>💵 الدفعات المستلمة</h3>
     <div id="sharePaymentsList"></div>
-    <h2>📅 الأيام</h2>
+    <h3>👥 حسابات المقاولين والمجهزين</h3>
+    <div id="shareSubconList"></div>
+    <h2>📅 الأيام واليوميات</h2>
     <div id="shareDaysList"></div>
 </div>
 
@@ -677,15 +750,15 @@
     // ========== نظام إدارة المشاريع - JavaScript Code ==========
     
     const firebaseConfig = {
-  apiKey: "AIzaSyDye4DgqNvEwwWDYf1yjW5yfJc14p1LmiU",
-  authDomain: "your-project-10fbe.firebaseapp.com",
-  databaseURL: "https://your-project-10fbe-default-rtdb.firebaseio.com",
-  projectId: "your-project-10fbe",
-  storageBucket: "your-project-10fbe.firebasestorage.app",
-  messagingSenderId: "715972050011",
-  appId: "1:715972050011:web:d5a4507dcfc30fa779d37e",
-  measurementId: "G-D1FRL391R4"
-};
+        apiKey: "AIzaSyDye4DgqNvEwwWDYf1yjW5yfJc14p1LmiU",
+        authDomain: "your-project-10fbe.firebaseapp.com",
+        databaseURL: "https://your-project-10fbe-default-rtdb.firebaseio.com",
+        projectId: "your-project-10fbe",
+        storageBucket: "your-project-10fbe.firebasestorage.app",
+        messagingSenderId: "715972050011",
+        appId: "1:715972050011:web:d5a4507dcfc30fa779d37e",
+        measurementId: "G-D1FRL391R4"
+    };
     
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -778,6 +851,14 @@
             .catch((error) => { showError('حدث خطأ أثناء إنشاء الحساب.'); });
     }
 
+    // الـ Tabs البرمجية للتنقل السلس والذكي
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        document.getElementById('btn-' + tabId).classList.add('active');
+    }
+
     function hideAllPages() {
         authPage.classList.add('hidden'); mainPage.classList.add('hidden');
         projectPage.classList.add('hidden'); dayPage.classList.add('hidden'); sharePage.classList.add('hidden');
@@ -839,7 +920,6 @@
         projects.forEach((p,i)=>{
             let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
             
-            // 🔥 تصحيح احتساب المبالغ الإجمالية من حقول نصوص اليومية بعد تنظيف الفواصل
             let totalDayCost = (p.days || []).reduce((sum, d) => {
                 let cleanText = (d.costDetail || "").replace(/,/g, '');
                 const numbers = cleanText.match(/\d+/g);
@@ -914,7 +994,7 @@
             let dayDate = new Date(startDateObj); dayDate.setDate(dayDate.getDate() + i);
             generatedDays.push({ date: dayDate.toISOString().split("T")[0], workDescription: "", workersDetail: "", costDetail: "", media: [] });
         }
-        const newProject = { name, duration, cost, startDate: startDateStr, days: generatedDays, payments: [] };
+        const newProject = { name, duration, cost, startDate: startDateStr, days: generatedDays, payments: [], subcontractors: [] };
         saveProject(newProject).then(() => { document.getElementById("projectCost").value = ""; });
         document.getElementById("addProjectForm").classList.add("hidden");
         document.getElementById("projectName").value = ""; document.getElementById("projectDuration").value = "";
@@ -941,7 +1021,7 @@
     
     function openProject(i){
         currentProjectIndex = i; 
-        hideAllPages(); // ضمان تنظيف وإخفاء جميع الصفحات الأخرى لمنع تداخل الشاشات 🚀
+        hideAllPages(); 
         projectPage.classList.remove("hidden");
         
         let p = projects[i]; document.getElementById("projTitle").innerText = p.name;
@@ -952,18 +1032,25 @@
         document.getElementById("daysLeft").innerText = "⏳ متبقي " + left + " يوم";
         document.getElementById("projCost").innerText = "💰 الميزانية المقدرة الكلية: " + p.cost.toLocaleString() + " د.ع";
         
-        // 🔥 تصحيح خوارزمية الحساب البرمجي بالـ Dashboard لتنظيف فواصل نصوص اليوميات وحساب الرقم كاملاً
+        // احتساب مبالغ اليوميات
         let totalDayCost = (p.days || []).reduce((sum, d) => {
             let cleanText = (d.costDetail || "").replace(/,/g, '');
             const numbers = cleanText.match(/\d+/g);
             if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
             return sum;
         }, 0);
-        let totalPayments = (p.payments || []).reduce((sum, pay) => sum + pay.amount, 0);
-        let financialBalance = totalPayments - totalDayCost;
-        let budgetPercent = p.cost > 0 ? Math.round((totalDayCost / p.cost) * 100) : 0;
 
-        document.getElementById("statTotalSpent").innerText = totalDayCost.toLocaleString() + " د.ع";
+        // احتساب استحقاق مبالغ المقاولين والمجهزين لإدخالها بالـ Dashboard
+        let totalSubconCost = (p.subcontractors || []).reduce((sum, sub) => {
+            return sum + ((sub.logs || []).filter(l => l.type === "استحقاق").reduce((s, l) => s + l.amount, 0));
+        }, 0);
+
+        let grandTotalSpent = totalDayCost + totalSubconCost;
+        let totalPayments = (p.payments || []).reduce((sum, pay) => sum + pay.amount, 0);
+        let financialBalance = totalPayments - grandTotalSpent;
+        let budgetPercent = p.cost > 0 ? Math.round((grandTotalSpent / p.cost) * 100) : 0;
+
+        document.getElementById("statTotalSpent").innerText = grandTotalSpent.toLocaleString() + " د.ع";
         document.getElementById("statBudgetPercent").innerText = budgetPercent + "%";
         
         let finStatusEl = document.getElementById("statFinancialStatus");
@@ -975,8 +1062,10 @@
             finStatusEl.style.color = "#e74c3c";
         }
 
-        if (!isShareMode) { renderPayments(); hideAddPaymentForm(); }
+        if (!isShareMode) { renderPayments(); hideAddPaymentForm(); hideAddSubconForm(); }
         renderDays();
+        renderSubcontractors();
+        switchTab('paymentsTab'); // فتح التبويب الأول تلقائياً عند الدخول
     }
     
     function backToProjects(){
@@ -993,7 +1082,7 @@
         (p.payments || []).forEach((pay, index) => {
             const div = document.createElement("div");
             div.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;";
-            div.innerHTML = `<span>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date} (${getDayName(pay.date)})</span><button class="delete">✖</button>`;
+            div.innerHTML = `<span>💵 ${pay.amount.toLocaleString()} د.ع | 📅 ${pay.date} (${getDayName(pay.date)})</span><button class="delete">✖</button>`;
             div.querySelector("button").onclick = () => {
                 p.payments.splice(index, 1); saveProject(p).then(() => { openProject(currentProjectIndex); });
             };
@@ -1038,12 +1127,87 @@
         saveProject(p).then(() => { openProject(currentProjectIndex); });
     }
 
+    // 👤 برمجيات إدارة وعرض المقاولين والمجهزين مدمجة بالكامل Inline
+    function showAddSubconForm() { document.getElementById("addSubconForm").classList.remove("hidden"); }
+    function hideAddSubconForm() { document.getElementById("addSubconForm").classList.add("hidden"); }
+    function submitSubconForm() {
+        if (isShareMode) return;
+        let p = projects[currentProjectIndex];
+        let name = document.getElementById("subconNameInput").value;
+        let type = document.getElementById("subconTypeInput").value;
+        let agreementRaw = document.getElementById("subconAgreementInput").value;
+        let agreement = parseInt(agreementRaw.replace(/,/g, '')) || 0;
+        
+        if(!name) { alert("❌ يرجى كتابة اسم المقاول أو المجهز"); return; }
+        if(!p.subcontractors) p.subcontractors = [];
+        p.subcontractors.push({ name, type, agreement, logs: [] });
+        
+        saveProject(p).then(() => { hideAddSubconForm(); openProject(currentProjectIndex); });
+    }
+
+    function renderSubcontractors() {
+        let p = projects[currentProjectIndex]; const list = document.getElementById("subcontractorsList"); list.innerHTML = "";
+        if(!p.subcontractors || p.subcontractors.length === 0) { list.innerHTML = "<p>لا يوجد مقاولين أو مجهزين مضافين حالياً.</p>"; return; }
+        
+        p.subcontractors.forEach((sub, idx) => {
+            let totalRequired = (sub.logs || []).filter(l => l.type === "استحقاق").reduce((sum, l) => sum + l.amount, 0);
+            let totalPaid = (sub.logs || []).filter(l => l.type === "دفعة").reduce((sum, l) => sum + l.amount, 0);
+            let balance = totalRequired - totalPaid;
+
+            const div = document.createElement("div"); div.className = "subcon-card";
+            div.innerHTML = `
+                <div class="flex-between" onclick="toggleSubconDetails(${idx})" style="cursor:pointer;">
+                    <div><strong>👤 ${sub.name}</strong> <small>(${sub.type})</small><br>
+                    <small>الاتفاق الأولي: ${sub.agreement.toLocaleString()} | استحقاق: ${totalRequired.toLocaleString()} | واصل: ${totalPaid.toLocaleString()}</small></div>
+                    <div><span style="color:${balance > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">متبقي له: ${balance.toLocaleString()} د.ع</span> ⬇</div>
+                </div>
+                <div id="subcon-details-${idx}" class="subcon-details">
+                    <div class="inline-form-box">
+                        <h5>➕ تسجيل حركة حسابية فائتة أو جديدة</h5>
+                        <select id="logType-${idx}"><option value="استحقاق">استحقاق (عمل منجز / مواد مستلمة)</option><option value="دفعة">دفعة واصلة (سلفة مالية مدفوعة)</option></select>
+                        <input type="text" id="logAmount-${idx}" placeholder="أدخل المبلغ د.ع" oninput="formatNumberInput(this)">
+                        <input type="text" id="logNote-${idx}" placeholder="بيان الحركة (مثال: وجبة طابوق، سلفة كاش)">
+                        <button onclick="addSubconLog(${idx})" style="padding:6px 12px; font-size:13px;">حفظ الحركة</button>
+                    </div>
+                    <table>
+                        <thead><tr><th>النوع</th><th>المبلغ</th><th>البيان والتاريخ</th><th>إجراء</th></tr></thead>
+                        <tbody>
+                            ${(sub.logs || []).map((l, lIdx) => `<tr><td>${l.type}</td><td>${l.amount.toLocaleString()}</td><td>${l.note}</td><td><button class="delete" style="padding:2px 6px; font-size:11px;" onclick="deleteSubconLog(${idx}, ${lIdx})">✖</button></td></tr>`).join("")}
+                        </tbody>
+                    </table>
+                    <button class="delete" style="margin-top:10px; padding:6px 12px; font-size:13px;" onclick="deleteSubcontractor(${idx})">🗑 حذف ملف المقاول بالكامل</button>
+                </div>`;
+            list.appendChild(div);
+        });
+    }
+    function toggleSubconDetails(idx) { let el = document.getElementById("subcon-details-"+idx); el.style.display = el.style.display === "block" ? "none" : "block"; }
+    function addSubconLog(idx) {
+        let p = projects[currentProjectIndex]; let sub = p.subcontractors[idx];
+        let type = document.getElementById(`logType-${idx}`).value;
+        let amt = parseInt(document.getElementById(`logAmount-${idx}`).value.replace(/,/g, ''));
+        let note = document.getElementById(`logNote-${idx}`).value || "-";
+        if(!amt) return alert("أدخل المبلغ");
+        if(!sub.logs) sub.logs = []; sub.logs.push({ type, amount: amt, note: note + " | " + new Date().toISOString().split("T")[0] });
+        saveProject(p).then(() => openProject(currentProjectIndex));
+    }
+    function deleteSubconLog(subIdx, logIdx) {
+        let p = projects[currentProjectIndex]; p.subcontractors[subIdx].logs.splice(logIdx, 1);
+        saveProject(p).then(() => openProject(currentProjectIndex));
+    }
+    function deleteSubcontractor(idx) {
+        if(confirm("هل تريد حذف حساب هذا المقاول/المجهز بالكامل من المشروع؟")) {
+            let p = projects[currentProjectIndex]; p.subcontractors.splice(idx, 1);
+            saveProject(p).then(() => openProject(currentProjectIndex));
+        }
+    }
+
     function formatNumberInput(input) {
         let value = input.value.replace(/,/g, '');
         if (!isNaN(value) && value.length > 0) {
             input.value = Number(value).toLocaleString('en-US');
         } else {
-            input.value = value.replace(/[^\d]/g, '');
+            value = value.replace(/[^\d]/g, '');
+            input.value = value ? Number(value).toLocaleString('en-US') : '';
         }
     }
 
@@ -1136,7 +1300,7 @@
     function openDay(i){ 
         if (isShareMode) return;
         currentDayIndex = i; 
-        hideAllPages(); // تنظيف الواجهة لمنع تداخل الشاشات 🚀
+        hideAllPages(); 
         dayPage.classList.remove("hidden"); 
         
         let d = projects[currentProjectIndex].days[i]; 
@@ -1147,7 +1311,7 @@
         renderMedia(); 
     }
     
-    function backToProject(){ openProject(currentProjectIndex); } // استخدام العودة المباشرة لتنظيف الصفحات وتحديث الـ Dashboard
+    function backToProject(){ openProject(currentProjectIndex); } 
     
     function saveDay(){ 
         if (isShareMode) return;
@@ -1277,12 +1441,6 @@
         popupContent.appendChild(buttonDiv); popupContent.appendChild(buttonDiv); popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
     }
 
-    function resetPassword() {
-        const email = document.getElementById("email").value;
-        if (email) { auth.sendPasswordResetEmail(email).then(() => { alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."); }); } 
-        else { alert("يرجى إدخال بريدك الإلكتروني أولاً في الحقل المخصص."); }
-    }
-
     function renderSharePage(projectData) {
         hideAllPages(); sharePage.classList.remove('hidden'); isShareMode = true;
         document.getElementById("shareProjTitle").innerText = projectData.name;
@@ -1295,24 +1453,31 @@
         document.getElementById("shareProjCost").innerText="💰 التكلفة: "+(projectData.cost || 0).toLocaleString();
         const paymentsList = document.getElementById("sharePaymentsList");
         paymentsList.innerHTML = (projectData.payments || []).map(pay => `<div>💵 ${pay.amount.toLocaleString()} | 📅 ${pay.date}</div>`).join("") || "لا توجد دفعات مسجلة.";
+        
+        document.getElementById("shareSubconList").innerHTML = (projectData.subcontractors || []).map(sub => {
+            let req = (sub.logs || []).filter(l => l.type === "استحقاق").reduce((s,l)=> s+l.amount, 0);
+            let pd = (sub.logs || []).filter(l => l.type === "دفعة").reduce((s,l)=> s+l.amount, 0);
+            return `<div>👤 ${sub.name} (${sub.type}) - متبقي له: ${(req-pd).toLocaleString()} د.ع</div>`;
+        }).join("") || "لا توجد حسابات مقاولين.";
+
         const daysList = document.getElementById("shareDaysList"); daysList.innerHTML = "";
         (projectData.days || []).forEach((d,i)=>{
             const div = document.createElement("div"); div.className = "day";
             div.innerHTML=`
-                <b>اليوم ${i+1} - ${d.date} (${getDayName(d.date)})</b>
+                <b>اليوم ${i+1} - ${d.date}</b>
                 <table>
                     <tr><th>🔨 العمل</th><td>${(d.workDescription||"-").replace(/\n/g,"<br>")}</td></tr>
                     <tr><th>👷 الكادر</th><td>${(d.workersDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                     <tr><th>💰 المبالغ</th><td>${(d.costDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                 </table>
-                <div>${(d.media||[]).map(src=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")}</div>`;
+                <div>${(d.media||[]).map(src=>`<img src="${src}">`).join("")}</div>`;
             daysList.appendChild(div);
         });
     }
 
 function handleShareLink() {
     const urlParams = new URLSearchParams(window.location.search);
-    const sharedProjectId = urlParams.get('share'); const sharedUserId = urlParams.get('uid'); const sharedDays = urlParams.get('days');
+    const sharedProjectId = urlParams.get('share'); const sharedUserId = urlParams.get('uid');
     if (sharedProjectId && sharedUserId) {
         hideAllPages();
         document.body.innerHTML = `<div class="container" style="text-align: center;"><h1>جاري تحميل المشروع المشارك...</h1></div>`;
@@ -1320,11 +1485,7 @@ function handleShareLink() {
             const projectData = snapshot.val();
             if (projectData) {
                 projectData.id = sharedProjectId;
-                if (sharedDays) {
-                    const daysIndices = sharedDays.split(',').map(Number);
-                    projectData.days = (projectData.days || []).filter((day, index) => daysIndices.includes(index));
-                }
-                document.body.innerHTML = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>📋 عرض المشروع المشارك</title><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"></head><body><div id="darkModeToggle" class="theme-toggle"><i class="fas fa-adjust"></i></div><div class="container" id="sharePage"><h2 id="shareProjTitle">${projectData.name}</h2><div class="progress-bar"><div class="progress" id="shareProjProgress"></div></div><h3 id="shareDaysLeft"></h3><h3 id="shareProjCost"></h3><h3>💵 الدفعات</h3><div id="sharePaymentsList"></div><h2>📅 الأيام</h2><div id="shareDaysList"></div></div></body></html>`;
+                document.body.innerHTML = `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>📋 عرض المشروع المشارك</title></head><body><div id="darkModeToggle" class="theme-toggle"><i class="fas fa-adjust"></i></div><div class="container" id="sharePage"><h2 id="shareProjTitle"></h2><div class="progress-bar"><div class="progress" id="shareProjProgress"></div></div><h3 id="shareDaysLeft"></h3><h3 id="shareProjCost"></h3><h3>💵 الدفعات</h3><div id="sharePaymentsList"></div><h3>👥 المقاولون</h3><div id="shareSubconList"></div><h2>📅 الأيام</h2><div id="shareDaysList"></div></div></body></html>`;
                 renderSharePage(projectData);
             }
         });
@@ -1335,7 +1496,6 @@ function handleShareLink() {
 
     document.addEventListener('DOMContentLoaded', (event) => {
         const darkModeToggle = document.getElementById('darkModeToggle');
-        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
         const currentTheme = localStorage.getItem("theme");
         if (currentTheme === "dark") { document.body.classList.add("light-mode"); } 
         else if (currentTheme === "light") { document.body.classList.remove("light-mode"); }
