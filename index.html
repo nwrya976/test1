@@ -63,7 +63,7 @@
             color: #000;
             border-color: #bbb;
         }
-        /* زر تغيير الوضع (Mode Toggle) */
+        /* زر تغيير الوضع */
         .theme-toggle {
             background: none;
             color: #e0e0e0;
@@ -513,7 +513,7 @@
             .project-actions { justify-content: flex-end; }
         }
         
-        /* 🖨️ تنسيق ستايل الـ PDF */
+        /* 🖨️ ستايل الـ PDF */
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; }
             .container { background: white !important; box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
@@ -589,7 +589,7 @@
 <div class="container hidden" id="projectPage">
     <div class="flex-between">
         <button class="back" onclick="backToProjects()">⬅ رجوع للمشاريع</button>
-        </div>
+    </div>
     <h2 id="projTitle"></h2>
     
     <div class="dashboard-box" id="projectDashboard">
@@ -646,7 +646,7 @@
     <label>👷 الكادر</label>
     <textarea id="workersDetail"></textarea>
     <label>💰 المبالغ والتكاليف</label>
-    <textarea id="costDetail"></textarea>
+    <textarea id="costDetail" placeholder="اكتب المبالغ هنا وسيتم تشكيل الفوارز تلقائياً..." oninput="formatTextareaNumbers(this)"></textarea>
     <h3>📸 الصور </h3>
     <input type="file" id="mediaInput" multiple accept="image/*,video/*">
     <div id="mediaList"></div>
@@ -833,14 +833,16 @@
         });
     }
     
-    // 🔥 تم تحديث واجهة عرض المشاريع لتشمل أزرار التعديل والحذف مباشرة بجانب كل مشروع
     function renderProjects(){
         const list=document.getElementById("projectList"); list.innerHTML="";
         if (projects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع.</p>"; return; }
         projects.forEach((p,i)=>{
             let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
+            
+            // 🔥 تصحيح احتساب المبالغ الإجمالية من حقول نصوص اليومية بعد تنظيف الفواصل
             let totalDayCost = (p.days || []).reduce((sum, d) => {
-                const numbers = (d.costDetail || "").match(/\d+/g);
+                let cleanText = (d.costDetail || "").replace(/,/g, '');
+                const numbers = cleanText.match(/\d+/g);
                 if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
                 return sum;
             }, 0);
@@ -868,8 +870,10 @@
         filteredProjects.forEach((p, i) => {
             let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
             let totalSpent = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
+            
             let totalDayCost = (p.days || []).reduce((sum, d) => {
-                const numbers = (d.costDetail || "").match(/\d+/g);
+                let cleanText = (d.costDetail || "").replace(/,/g, '');
+                const numbers = cleanText.match(/\d+/g);
                 if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
                 return sum;
             }, 0);
@@ -917,7 +921,6 @@
         document.getElementById("daysSinceStart").value = "0";
     }
     
-    // دالات التعديل والحذف المباشرة والمحسنة للعمل من الواجهة الرئيسية
     function editProjectDirect(index) {
         if (isShareMode) return;
         let p = projects[index];
@@ -937,7 +940,10 @@
     }
     
     function openProject(i){
-        currentProjectIndex = i; mainPage.classList.add("hidden"); projectPage.classList.remove("hidden");
+        currentProjectIndex = i; 
+        hideAllPages(); // ضمان تنظيف وإخفاء جميع الصفحات الأخرى لمنع تداخل الشاشات 🚀
+        projectPage.classList.remove("hidden");
+        
         let p = projects[i]; document.getElementById("projTitle").innerText = p.name;
         let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
         let bar = document.getElementById("projProgress"); bar.style.width = progress + "%"; bar.innerText = progress + "%";
@@ -946,8 +952,10 @@
         document.getElementById("daysLeft").innerText = "⏳ متبقي " + left + " يوم";
         document.getElementById("projCost").innerText = "💰 الميزانية المقدرة الكلية: " + p.cost.toLocaleString() + " د.ع";
         
+        // 🔥 تصحيح خوارزمية الحساب البرمجي بالـ Dashboard لتنظيف فواصل نصوص اليوميات وحساب الرقم كاملاً
         let totalDayCost = (p.days || []).reduce((sum, d) => {
-            const numbers = (d.costDetail || "").match(/\d+/g);
+            let cleanText = (d.costDetail || "").replace(/,/g, '');
+            const numbers = cleanText.match(/\d+/g);
             if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
             return sum;
         }, 0);
@@ -972,9 +980,8 @@
     }
     
     function backToProjects(){
-        projectPage.classList.add("hidden"); dayPage.classList.add("hidden"); sharePage.classList.add("hidden");
-        if (isShareMode) { hideAllPages(); document.body.innerHTML = '<div class="container"><h1>شكراً لك! يمكنك إغلاق هذه الصفحة الآن.</h1></div>'; }
-        else { mainPage.classList.remove("hidden"); loadProjects(); }
+        hideAllPages();
+        mainPage.classList.remove("hidden"); loadProjects();
     }
     
     function backToProjectPageFromShare(){ if (isShareMode) return; sharePage.classList.add("hidden"); projectPage.classList.remove("hidden"); }
@@ -1007,7 +1014,6 @@
     
     function hideAddPaymentForm() { document.getElementById("addPaymentForm").classList.add("hidden"); }
     
-    // 🔥 تم وضع آلية الحماية الفولاذية لمنع تجاوز الدفعات قيمة العقد الكلية للمشروع
     function submitPaymentForm() {
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
@@ -1019,9 +1025,7 @@
             alert("❌ يرجى إدخال مبلغ الدفعة وتحديد التاريخ بشكل صحيح."); return;
         }
         
-        // حساب مجموع الدفعات السابقة للتأكد من الميزانية
         let totalPreviousPayments = (p.payments || []).reduce((sum, pay) => sum + pay.amount, 0);
-        
         if ((totalPreviousPayments + amount) > p.cost) {
             alert(`❌ خطأ مالي: لا يمكن حفظ الدفعة! مجموع الدفعات المستلمة (${(totalPreviousPayments + amount).toLocaleString()}) سيتجاوز مبلغ عقد المشروع الكلي الفعلي (${p.cost.toLocaleString()}).`);
             return;
@@ -1034,7 +1038,6 @@
         saveProject(p).then(() => { openProject(currentProjectIndex); });
     }
 
-    // دالة وضع فارزة تلقائياً كل 3 أرقام في حقول الـ Inputs المباشرة
     function formatNumberInput(input) {
         let value = input.value.replace(/,/g, '');
         if (!isNaN(value) && value.length > 0) {
@@ -1044,18 +1047,19 @@
         }
     }
 
-    // ✨ دالة جديدة وذكية تقوم بتنسيق ووضع الفوارز للأرقام تلقائياً داخل مساحات حقول النصوص الطويلة (Textarea)
     function formatTextareaNumbers(textarea) {
-        let cursorPosition = textarea.selectionStart; // حفظ موضع مؤشر الكتابة
+        let cursorPosition = textarea.selectionStart; 
         let text = textarea.value;
         
-        // استبدال الأرقام فقط وتشكيل فواصلها تلقائياً بدون تخريب بقية النصوص
-        let formattedText = text.replace(/\d+/g, function(match) {
-            return Number(match.replace(/,/g, '')).toLocaleString('en-US');
+        let formattedText = text.replace(/[\d,]+/g, function(match) {
+            let cleanNum = match.replace(/,/g, '');
+            if(cleanNum === "") return "";
+            return Number(cleanNum).toLocaleString('en-US');
         });
         
+        let lengthDiff = formattedText.length - text.length;
         textarea.value = formattedText;
-        textarea.setSelectionRange(cursorPosition, cursorPosition); // إرجاع المؤشر لمكانه لمنع القفز أثناء الكتابة
+        textarea.setSelectionRange(cursorPosition + lengthDiff, cursorPosition + lengthDiff);
     }
 
     function renderDays(){
@@ -1131,7 +1135,10 @@
     
     function openDay(i){ 
         if (isShareMode) return;
-        currentDayIndex = i; projectPage.classList.add("hidden"); dayPage.classList.remove("hidden"); 
+        currentDayIndex = i; 
+        hideAllPages(); // تنظيف الواجهة لمنع تداخل الشاشات 🚀
+        dayPage.classList.remove("hidden"); 
+        
         let d = projects[currentProjectIndex].days[i]; 
         document.getElementById("dayDate").innerText = "📅 " + d.date + " (" + getDayName(d.date) + ")"; 
         document.getElementById("workDescription").value = d.workDescription || ""; 
@@ -1140,7 +1147,7 @@
         renderMedia(); 
     }
     
-    function backToProject(){ dayPage.classList.add("hidden"); projectPage.classList.remove("hidden"); openProject(currentProjectIndex); }
+    function backToProject(){ openProject(currentProjectIndex); } // استخدام العودة المباشرة لتنظيف الصفحات وتحديث الـ Dashboard
     
     function saveDay(){ 
         if (isShareMode) return;
