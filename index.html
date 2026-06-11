@@ -47,7 +47,7 @@
             background: linear-gradient(135deg, #00b09b, #96c93d);
             color: #fff;
         }
-        body.light-mode button.delete {
+        body.light-mode button.delete, body.light-mode button.action-btn.del-btn {
             background: #e74c3c;
         }
         body.light-mode .project, body.light-mode .day {
@@ -165,6 +165,21 @@
             background: #fdfdfd;
             border-color: #bbb;
         }
+
+        /* تنسيق أزرار الأكشن لقائمة المشاريع الرئيسية */
+        .project-actions {
+            display: flex;
+            gap: 5px;
+        }
+        .action-btn {
+            padding: 6px 12px !important;
+            font-size: 13px !important;
+            border-radius: 6px !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+        }
+        .edit-btn { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .del-btn { background: #e74c3c; }
 
         /* الأزرار */
         button {
@@ -494,9 +509,11 @@
             input, select, textarea, button { font-size: 0.9rem; padding: 8px 10px; }
             table { display: block; overflow-x: auto; white-space: nowrap; }
             th, td { font-size: 0.85rem; padding: 6px; }
+            .project { flex-direction: column; align-items: stretch; gap: 10px; }
+            .project-actions { justify-content: flex-end; }
         }
         
-        /* 🖨️ تنسيق ستايل الـ PDF الخاص بالطباعة الرسمية */
+        /* 🖨️ تنسيق ستايل الـ PDF */
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; }
             .container { background: white !important; box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
@@ -563,7 +580,7 @@
     <div id="addProjectForm" class="hidden">
         <input type="text" id="projectName" placeholder="اسم المشروع">
         <input type="number" id="projectDuration" placeholder="مدة المشروع (بالأيام)">
-        <input type="text" id="projectCost" placeholder="تكلفة المشروع" oninput="formatNumberInput(this)">
+        <input type="text" id="projectCost" placeholder="تكلفة المشروع الكلية" oninput="formatNumberInput(this)">
         <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً؟" value="0">
         <button onclick="addProject()">حفظ</button>
     </div>
@@ -571,12 +588,8 @@
 
 <div class="container hidden" id="projectPage">
     <div class="flex-between">
-        <button class="back" onclick="backToProjects()">⬅ رجوع</button>
-        <div class="button-group">
-            <button onclick="editProject()">✏ تعديل</button>
-            <button class="delete" onclick="deleteProject()">🗑 حذف</button>
+        <button class="back" onclick="backToProjects()">⬅ رجوع للمشاريع</button>
         </div>
-    </div>
     <h2 id="projTitle"></h2>
     
     <div class="dashboard-box" id="projectDashboard">
@@ -632,8 +645,8 @@
     <textarea id="workDescription"></textarea>
     <label>👷 الكادر</label>
     <textarea id="workersDetail"></textarea>
-    <label>💰 المبالغ</label>
-    <textarea id="costDetail"></textarea>
+    <label>💰 المبالغ والتكاليف</label>
+    <textarea id="costDetail" placeholder="اكتب المبالغ هنا وسيتم تشكيل الفوارز تلقائياً..." oninput="formatTextareaNumbers(this)"></textarea>
     <h3>📸 الصور </h3>
     <input type="file" id="mediaInput" multiple accept="image/*,video/*">
     <div id="mediaList"></div>
@@ -752,7 +765,7 @@
     }
 
     function signup(email, password, confirmPassword) {
-        if (password !== confirmPassword) { showError('كلمات الورور غير متطابقة ❌'); return false; }
+        if (password !== confirmPassword) { showError('كلمات المرور غير متطابقة ❌'); return false; }
         if (password.length < 6) { showError('كلمة المرور يجب أن تكون 6 أحرف على الأقل ❌'); return false; }
         auth.createUserWithEmailAndPassword(email, password)
             .then((userCredential) => {
@@ -813,13 +826,14 @@
             const projectsRef = database.ref(`projects/${currentUser.uid}`);
             if (projectData.id) {
                 const projectId = projectData.id; delete projectData.id;
-                projectsRef.child(projectId).update(projectData).then(() => { showSuccess("تم التحديث بنجاح!"); resolve(); }).catch(err => reject(err));
+                projectsRef.child(projectId).update(projectData).then(() => { showSuccess("تم الحفظ بنجاح!"); resolve(); }).catch(err => reject(err));
             } else {
                 projectsRef.push(projectData).then(() => { showSuccess("تم الإضافة بنجاح!"); resolve(); }).catch(err => reject(err));
             }
         });
     }
     
+    // 🔥 تم تحديث واجهة عرض المشاريع لتشمل أزرار التعديل والحذف مباشرة بجانب كل مشروع
     function renderProjects(){
         const list=document.getElementById("projectList"); list.innerHTML="";
         if (projects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع.</p>"; return; }
@@ -830,9 +844,19 @@
                 if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
                 return sum;
             }, 0);
+            
             const div=document.createElement("div"); div.className="project flex-between";
-            div.innerHTML=`<b>${p.name}</b><span>💰 ${totalDayCost.toLocaleString()} | 📊 ${progress}%</span>`;
-            div.onclick=()=>openProject(i); list.appendChild(div);
+            div.innerHTML=`
+                <div style="flex: 1;" onclick="openProject(${i})">
+                    <b>${p.name}</b><br>
+                    <small>💰 ${totalDayCost.toLocaleString()} | 📊 ${progress}%</small>
+                </div>
+                <div class="project-actions">
+                    <button class="action-btn edit-btn" onclick="event.stopPropagation(); editProjectDirect(${i})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn del-btn delete" onclick="event.stopPropagation(); deleteProjectDirect(${i})"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+            list.appendChild(div);
         });
     }
     
@@ -850,9 +874,19 @@
                 return sum;
             }, 0);
             let grandTotal = totalSpent + totalDayCost;
+            
+            const originalIndex = projects.findIndex(proj => proj.id === p.id);
             const div = document.createElement("div"); div.className = "project flex-between";
-            div.innerHTML = `<b>${p.name}</b><span>💰 ${grandTotal.toLocaleString()} | 📊 ${progress}%</span>`;
-            div.onclick = () => { const originalIndex = projects.findIndex(proj => proj.id === p.id); openProject(originalIndex); };
+            div.innerHTML = `
+                <div style="flex: 1;" onclick="openProject(${originalIndex})">
+                    <b>${p.name}</b><br>
+                    <small>💰 ${grandTotal.toLocaleString()} | 📊 ${progress}%</small>
+                </div>
+                <div class="project-actions">
+                    <button class="action-btn edit-btn" onclick="event.stopPropagation(); editProjectDirect(${originalIndex})"><i class="fas fa-edit"></i></button>
+                    <button class="action-btn del-btn delete" onclick="event.stopPropagation(); deleteProjectDirect(${originalIndex})"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
             list.appendChild(div);
         });
     }
@@ -863,7 +897,6 @@
         if (isShareMode) return;
         let name = document.getElementById("projectName").value;
         let duration = parseInt(document.getElementById("projectDuration").value);
-        // إزالة الفواصل البرمجية لقراءة الرقم الصافي وحفظه كـ Int
         let costRaw = document.getElementById("projectCost").value;
         let cost = parseInt(costRaw.replace(/,/g, ''));
         let daysSinceStart = parseInt(document.getElementById("daysSinceStart").value) || 0;
@@ -878,27 +911,29 @@
             generatedDays.push({ date: dayDate.toISOString().split("T")[0], workDescription: "", workersDetail: "", costDetail: "", media: [] });
         }
         const newProject = { name, duration, cost, startDate: startDateStr, days: generatedDays, payments: [] };
-        saveProject(newProject).then(() => {
-            document.getElementById("projectCost").value = "";
-        });
+        saveProject(newProject).then(() => { document.getElementById("projectCost").value = ""; });
         document.getElementById("addProjectForm").classList.add("hidden");
         document.getElementById("projectName").value = ""; document.getElementById("projectDuration").value = "";
         document.getElementById("daysSinceStart").value = "0";
     }
     
-    function editProject(){
+    // دالات التعديل والحذف المباشرة والمحسنة للعمل من الواجهة الرئيسية
+    function editProjectDirect(index) {
         if (isShareMode) return;
-        let p = projects[currentProjectIndex];
+        let p = projects[index];
         let newName = prompt("✏ تعديل اسم المشروع:", p.name); if(newName) p.name = newName;
-        let newCost = prompt("✏ تعديل تكلفة المشروع (أرقام فقط):", p.cost); if(newCost && !isNaN(newCost.replace(/,/g, ''))) p.cost = parseInt(newCost.replace(/,/g, ''));
+        let newCost = prompt("✏ تعديل تكلفة المشروع (أرقام فقط):", p.cost.toLocaleString()); 
+        if(newCost && !isNaN(newCost.replace(/,/g, ''))) p.cost = parseInt(newCost.replace(/,/g, ''));
         let newDuration = prompt("✏ تعديل مدة المشروع بالأيام:", p.duration); if(newDuration && !isNaN(newDuration)) p.duration = parseInt(newDuration);
-        saveProject(p).then(() => { openProject(currentProjectIndex); });
+        saveProject(p).then(() => { loadProjects(); });
     }
-    
-    function deleteProject(){
+
+    function deleteProjectDirect(index) {
         if (isShareMode) return;
-        const projectsRef = database.ref(`projects/${currentUser.uid}`);
-        projectsRef.child(projects[currentProjectIndex].id).remove().then(() => { showSuccess("تم الحذف بنجاح!"); backToProjects(); });
+        if(confirm(`هل أنت متأكد من حذف مشروع "${projects[index].name}" نهائياً بالكامل؟`)) {
+            const projectsRef = database.ref(`projects/${currentUser.uid}`);
+            projectsRef.child(projects[index].id).remove().then(() => { showSuccess("تم الحذف بنجاح!"); loadProjects(); });
+        }
     }
     
     function openProject(i){
@@ -909,7 +944,7 @@
         let start = new Date(p.startDate); let end = new Date(start); end.setDate(start.getDate() + p.duration);
         let left = Math.max(0, Math.ceil((end - new Date()) / (1000 * 60 * 60 * 24)));
         document.getElementById("daysLeft").innerText = "⏳ متبقي " + left + " يوم";
-        document.getElementById("projCost").innerText = "💰 الميزانية المقدرة: " + p.cost.toLocaleString();
+        document.getElementById("projCost").innerText = "💰 الميزانية المقدرة الكلية: " + p.cost.toLocaleString() + " د.ع";
         
         let totalDayCost = (p.days || []).reduce((sum, d) => {
             const numbers = (d.costDetail || "").match(/\d+/g);
@@ -939,7 +974,7 @@
     function backToProjects(){
         projectPage.classList.add("hidden"); dayPage.classList.add("hidden"); sharePage.classList.add("hidden");
         if (isShareMode) { hideAllPages(); document.body.innerHTML = '<div class="container"><h1>شكراً لك! يمكنك إغلاق هذه الصفحة الآن.</h1></div>'; }
-        else { mainPage.classList.remove("hidden"); renderProjects(); }
+        else { mainPage.classList.remove("hidden"); loadProjects(); }
     }
     
     function backToProjectPageFromShare(){ if (isShareMode) return; sharePage.classList.add("hidden"); projectPage.classList.remove("hidden"); }
@@ -959,23 +994,20 @@
         });
         let totalPaid = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
         let remaining = p.cost - totalPaid;
-        document.getElementById("remainingCost").innerText = "المتبقي من العقد: " + remaining.toLocaleString();
+        document.getElementById("remainingCost").innerText = "المتبقي من العقد الكلي: " + remaining.toLocaleString() + " د.ع";
     }
     
-    // 🛠️ وظائف التحكم بالدفعات المدمجة الجديدة لمنع ظهور النوافذ المنبثقة الـ Prompt
     function showAddPaymentForm() {
         if (isShareMode) return;
         let formBox = document.getElementById("addPaymentForm");
         formBox.classList.remove("hidden");
-        // وضع تاريخ اليوم كخيار افتراضي بالتاريخ
         document.getElementById("paymentDateInput").value = new Date().toISOString().split("T")[0];
         document.getElementById("paymentAmountInput").value = "";
     }
     
-    function hideAddPaymentForm() {
-        document.getElementById("addPaymentForm").classList.add("hidden");
-    }
+    function hideAddPaymentForm() { document.getElementById("addPaymentForm").classList.add("hidden"); }
     
+    // 🔥 تم وضع آلية الحماية الفولاذية لمنع تجاوز الدفعات قيمة العقد الكلية للمشروع
     function submitPaymentForm() {
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
@@ -984,31 +1016,46 @@
         let chosenDate = document.getElementById("paymentDateInput").value;
         
         if(!amount || isNaN(amount) || !chosenDate) {
-            alert("❌ يرجى إدخال مبلغ الدفعة وتحديد التاريخ بشكل صحيح.");
+            alert("❌ يرجى إدخال مبلغ الدفعة وتحديد التاريخ بشكل صحيح."); return;
+        }
+        
+        // حساب مجموع الدفعات السابقة للتأكد من الميزانية
+        let totalPreviousPayments = (p.payments || []).reduce((sum, pay) => sum + pay.amount, 0);
+        
+        if ((totalPreviousPayments + amount) > p.cost) {
+            alert(`❌ خطأ مالي: لا يمكن حفظ الدفعة! مجموع الدفعات المستلمة (${(totalPreviousPayments + amount).toLocaleString()}) سيتجاوز مبلغ عقد المشروع الكلي الفعلي (${p.cost.toLocaleString()}).`);
             return;
         }
         
         if(!p.payments) p.payments = [];
         p.payments.push({ amount: amount, date: chosenDate });
-        
-        // ترتيب الدفعات حسب التاريخ من الأقدم للأحدث تلقائياً لتثبيت التواريخ الفائتة
         p.payments.sort((a, b) => new Date(a.date) - new Date(b.date));
         
-        saveProject(p).then(() => { 
-            openProject(currentProjectIndex); 
-        });
+        saveProject(p).then(() => { openProject(currentProjectIndex); });
     }
 
-    // ✨ دالة ذكية تقوم بوضع فارزة تلقائياً كل 3 أرقام أثناء كتابة المستخدم لكي لا يتلخبط بالحساب
+    // دالة وضع فارزة تلقائياً كل 3 أرقام في حقول الـ Inputs المباشرة
     function formatNumberInput(input) {
-        // إزالة أي فواصل سابقة لقراءة النص النقي
         let value = input.value.replace(/,/g, '');
-        // التأكد من أن المدخلات أرقام فقط
         if (!isNaN(value) && value.length > 0) {
             input.value = Number(value).toLocaleString('en-US');
         } else {
-            input.value = value.replace(/[^\d]/g, ''); // منع الحروف
+            input.value = value.replace(/[^\d]/g, '');
         }
+    }
+
+    // ✨ دالة جديدة وذكية تقوم بتنسيق ووضع الفوارز للأرقام تلقائياً داخل مساحات حقول النصوص الطويلة (Textarea)
+    function formatTextareaNumbers(textarea) {
+        let cursorPosition = textarea.selectionStart; // حفظ موضع مؤشر الكتابة
+        let text = textarea.value;
+        
+        // استبدال الأرقام فقط وتشكيل فواصلها تلقائياً بدون تخريب بقية النصوص
+        let formattedText = text.replace(/\d+/g, function(match) {
+            return Number(match.replace(/,/g, '')).toLocaleString('en-US');
+        });
+        
+        textarea.value = formattedText;
+        textarea.setSelectionRange(cursorPosition, cursorPosition); // إرجاع المؤشر لمكانه لمنع القفز أثناء الكتابة
     }
 
     function renderDays(){
