@@ -513,7 +513,7 @@
             .project-actions { justify-content: flex-end; }
         }
         
-        /* 🖨️ ستايل الـ PDF */
+        /* 🖨️ تنسيق ستايل الـ PDF */
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; }
             .container { background: white !important; box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
@@ -589,7 +589,7 @@
 <div class="container hidden" id="projectPage">
     <div class="flex-between">
         <button class="back" onclick="backToProjects()">⬅ رجوع للمشاريع</button>
-    </div>
+        </div>
     <h2 id="projTitle"></h2>
     
     <div class="dashboard-box" id="projectDashboard">
@@ -646,7 +646,7 @@
     <label>👷 الكادر</label>
     <textarea id="workersDetail"></textarea>
     <label>💰 المبالغ والتكاليف</label>
-    <textarea id="costDetail" placeholder="اكتب المبالغ هنا وسيتم تشكيل الفوارز تلقائياً..." oninput="formatTextareaNumbers(this)"></textarea>
+    <textarea id="costDetail"></textarea>
     <h3>📸 الصور </h3>
     <input type="file" id="mediaInput" multiple accept="image/*,video/*">
     <div id="mediaList"></div>
@@ -833,6 +833,7 @@
         });
     }
     
+    // 🔥 تم تحديث واجهة عرض المشاريع لتشمل أزرار التعديل والحذف مباشرة بجانب كل مشروع
     function renderProjects(){
         const list=document.getElementById("projectList"); list.innerHTML="";
         if (projects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع.</p>"; return; }
@@ -916,6 +917,7 @@
         document.getElementById("daysSinceStart").value = "0";
     }
     
+    // دالات التعديل والحذف المباشرة والمحسنة للعمل من الواجهة الرئيسية
     function editProjectDirect(index) {
         if (isShareMode) return;
         let p = projects[index];
@@ -1005,6 +1007,7 @@
     
     function hideAddPaymentForm() { document.getElementById("addPaymentForm").classList.add("hidden"); }
     
+    // 🔥 تم وضع آلية الحماية الفولاذية لمنع تجاوز الدفعات قيمة العقد الكلية للمشروع
     function submitPaymentForm() {
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
@@ -1016,7 +1019,9 @@
             alert("❌ يرجى إدخال مبلغ الدفعة وتحديد التاريخ بشكل صحيح."); return;
         }
         
+        // حساب مجموع الدفعات السابقة للتأكد من الميزانية
         let totalPreviousPayments = (p.payments || []).reduce((sum, pay) => sum + pay.amount, 0);
+        
         if ((totalPreviousPayments + amount) > p.cost) {
             alert(`❌ خطأ مالي: لا يمكن حفظ الدفعة! مجموع الدفعات المستلمة (${(totalPreviousPayments + amount).toLocaleString()}) سيتجاوز مبلغ عقد المشروع الكلي الفعلي (${p.cost.toLocaleString()}).`);
             return;
@@ -1029,6 +1034,7 @@
         saveProject(p).then(() => { openProject(currentProjectIndex); });
     }
 
+    // دالة وضع فارزة تلقائياً كل 3 أرقام في حقول الـ Inputs المباشرة
     function formatNumberInput(input) {
         let value = input.value.replace(/,/g, '');
         if (!isNaN(value) && value.length > 0) {
@@ -1038,23 +1044,18 @@
         }
     }
 
-    // 🔥 تم تحديث وتصحيح خوارزمية التشكيل داخل الـ Textarea لتقرأ الأرقام من اليمين إلى اليسار بدقة المراتب الثلاثية
+    // ✨ دالة جديدة وذكية تقوم بتنسيق ووضع الفوارز للأرقام تلقائياً داخل مساحات حقول النصوص الطويلة (Textarea)
     function formatTextareaNumbers(textarea) {
-        let cursorPosition = textarea.selectionStart; 
+        let cursorPosition = textarea.selectionStart; // حفظ موضع مؤشر الكتابة
         let text = textarea.value;
         
-        // مسح الفواصل القديمة داخل كتل الأرقام فقط وإعادة بنائها تصاعدياً ثلاثياً من اليمين
-        let formattedText = text.replace(/[\d,]+/g, function(match) {
-            let cleanNum = match.replace(/,/g, '');
-            if(cleanNum === "") return "";
-            // تحويل النص النقي لرقم وتشكيل فواصل أمريكية قياسية صحيحة
-            return Number(cleanNum).toLocaleString('en-US');
+        // استبدال الأرقام فقط وتشكيل فواصلها تلقائياً بدون تخريب بقية النصوص
+        let formattedText = text.replace(/\d+/g, function(match) {
+            return Number(match.replace(/,/g, '')).toLocaleString('en-US');
         });
         
-        // حساب الفارق في الطول لضبط موضع مؤشر الكتابة (Cursor) دون إرباك المستخدم
-        let lengthDiff = formattedText.length - text.length;
         textarea.value = formattedText;
-        textarea.setSelectionRange(cursorPosition + lengthDiff, cursorPosition + lengthDiff);
+        textarea.setSelectionRange(cursorPosition, cursorPosition); // إرجاع المؤشر لمكانه لمنع القفز أثناء الكتابة
     }
 
     function renderDays(){
