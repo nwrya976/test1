@@ -1359,7 +1359,7 @@
         }, 0);
 
         let totalSubconCost = (p.subcontractors || []).reduce((sum, sub) => {
-            return sum + ((sub.logs || []).filter(l => l.type === "استحقاق").reduce((s, l) => s + l.amount, 0));
+            return sum + ((sub.logs || []).filter(l => l.type === "استحقاق").reduce((sum, l) => sum + l.amount, 0));
         }, 0);
 
         let grandTotalSpent = totalDayCost + totalSubconCost;
@@ -1523,20 +1523,36 @@
         const list = document.getElementById("inventoryList"); list.innerHTML = "";
         if(!p.inventory || p.inventory.length === 0) { list.innerHTML = "<p>المخزن فارغ. لا توجد مواد إنشائية موردة لهذا الموقع حالياً.</p>"; return; }
 
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>نوع المادة</th>
+                        <th>الكمية المستلمة</th>
+                        <th>تاريخ الاستلام</th>
+                        <th>المبلغ المسجل</th>
+                        <th>إجراء</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
         p.inventory.forEach((item, index) => {
-            const div = document.createElement("div"); div.className = "inventory-card flex-between";
-            div.innerHTML = `
-                <div>
-                    <strong>🧱 مادة واصلة: ${item.type}</strong><br>
-                    <small>الكمية المستلمة: ${item.qty} | التاريخ: ${item.date}</small>
-                </div>
-                <div style="text-align: left;">
-                    <span style="font-weight:bold; color:#3498db; display:block;">القيمة المسجلة: ${item.cost.toLocaleString()} د.ع</span>
-                    <button class="delete" style="padding:3px 8px; font-size:11px; margin-top:5px;" onclick="deleteInventoryItem(${index})">✖ حذف</button>
-                </div>
+            tableHtml += `
+                <tr>
+                    <td><strong>🧱 ${item.type}</strong></td>
+                    <td>${item.qty}</td>
+                    <td>${item.date}</td>
+                    <td style="font-weight:bold; color:#3498db;">${item.cost.toLocaleString()} د.ع</td>
+                    <td>
+                        <button class="delete" style="padding:4px 8px; font-size:11px; margin:0;" onclick="deleteInventoryItem(${index})">✖ حذف</button>
+                    </td>
+                </tr>
             `;
-            list.appendChild(div);
         });
+
+        tableHtml += `</tbody></table>`;
+        list.innerHTML = tableHtml;
     }
 
     function deleteInventoryItem(idx) {
