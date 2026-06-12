@@ -153,41 +153,66 @@
         .card-stat small { color: #888; display: block; font-size: 0.8rem; margin-bottom: 4px; }
         .card-stat span { font-weight: bold; font-size: 1.1rem; }
         
-        /* 🗂️ أزرار نظام التبويبات الثلاثي (Tabs) */
-        .tabs-container {
+        /* 🗂️ نظام شريط التبويبات العمودي والاحترافي الجدید المتتالي تحت بعضه */
+        .tabs-vertical-container {
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 12px;
             margin: 25px 0 15px 0;
-            border-bottom: 2px solid #444;
-            padding-bottom: 12px;
-            flex-wrap: wrap;
         }
-        body.light-mode .tabs-container {
-            border-color: #ccc;
-        }
-        .tab-btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 12px;
+        .tab-accordion-btn {
+            width: 100%;
+            padding: 15px 20px;
             background: #282c34;
             border: 1px solid #444;
-            border-radius: 10px;
-            color: #aaa;
+            border-radius: 12px;
+            color: #e0e0e0;
             cursor: pointer;
-            text-align: center;
+            text-align: right;
             font-weight: bold;
-            transition: all 0.3s;
+            font-size: 16px;
+            transition: all 0.3s ease;
             margin: 0;
             box-shadow: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .tab-btn.active {
+        body.light-mode .tab-accordion-btn {
+            background: #fdfdfd;
+            border-color: #ccc;
+            color: #333;
+        }
+        .tab-accordion-btn:hover {
+            background: #343a40;
+        }
+        .tab-accordion-btn.active {
             background: linear-gradient(135deg, #2193b0, #6dd5ed);
             color: #fff;
             border-color: #6dd5ed;
         }
+        .tab-accordion-btn i.arrow-icon {
+            transition: transform 0.3s ease;
+        }
+        .tab-accordion-btn.active i.arrow-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* محتويات التبويب المنسدل */
         .tab-content {
             display: none;
-            animation: fadeIn 0.4s ease;
+            background: rgba(30, 34, 42, 0.4);
+            border: 1px solid #3a3f4d;
+            border-top: none;
+            padding: 20px;
+            border-radius: 0 0 12px 12px;
+            margin-top: -13px;
+            margin-bottom: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+        body.light-mode .tab-content {
+            background: #fcfcfc;
+            border-color: #ccc;
         }
         .tab-content.active {
             display: block;
@@ -467,6 +492,11 @@
             border-radius: 8px;
             margin: 1rem 0;
             border: 1px solid #c3e6cb;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10002;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         .error-message {
             display: none;
@@ -560,7 +590,7 @@
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; }
             .container { background: white !important; box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            button, input, select, #darkModeToggle, .back, .theme-toggle, .user-header, .tabs-container { display: none !important; }
+            button, input, select, #darkModeToggle, .back, .theme-toggle, .user-header, .tabs-vertical-container { display: none !important; }
             h1, h2, h3 { color: black !important; background: none !important; -webkit-text-fill-color: initial !important; }
             .tab-content { display: block !important; }
             .day { background: white !important; border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px !important; }
@@ -580,10 +610,11 @@
     <i class="fas fa-adjust"></i>
 </div>
 
+<div id="success-msg" class="success-message"></div>
+
 <div class="auth-container" id="authPage">
     <div class="icon">📋</div>
     <h1 id="form-title">تسجيل الدخول</h1>
-    <div id="success-msg" class="success-message"></div>
     <div id="error-msg" class="error-message"></div>
     <form id="auth-form">
         <div class="form-group">
@@ -634,7 +665,7 @@
     <div class="flex-between">
         <button class="back" onclick="backToProjects()">⬅ رجوع للمشاريع</button>
     </div>
-    <h2 id="projTitle" style="margin-top: 10px;"></h2>
+    <h2 id="projTitle"></h2>
     
     <div class="dashboard-box" id="projectDashboard">
         <h3>📊 الخلاصة المالية والموقف المالي للموقع</h3>
@@ -658,50 +689,57 @@
     <h3 id="daysLeft"></h3>
     <h3 id="projCost"></h3>
 
-    <div class="tabs-container">
-        <button class="tab-btn active" id="btn-paymentsTab" onclick="switchTab('paymentsTab')">💵 دفعات المالك</button>
-        <button class="tab-btn" id="btn-daysTab" onclick="switchTab('daysTab')">📅 يوميات الموقع</button>
-        <button class="tab-btn" id="btn-subcontractorsTab" onclick="switchTab('subcontractorsTab')">👥 المقاولون والمجهزون</button>
-    </div>
-
-    <div id="paymentsTab" class="tab-content active">
-        <h3>💵 الدفعات المستلمة من المالك</h3>
-        <div id="paymentsList"></div>
-        <button onclick="showAddPaymentForm()">➕ إضافة دفعة</button>
+    <div class="tabs-vertical-container">
         
-        <div id="addPaymentForm" class="inline-form-box hidden">
-            <h4>📥 تسجيل دفعة مالية جديدة</h4>
-            <input type="text" id="paymentAmountInput" placeholder="أدخل مبلغ الدفعة" oninput="formatNumberInput(this)">
-            <input type="date" id="paymentDateInput">
-            <button onclick="submitPaymentForm()">حفظ الدفعة</button>
-            <button onclick="hideAddPaymentForm()" style="background: #e74c3c;">إلغاء</button>
+        <button class="tab-accordion-btn" id="btn-paymentsTab" onclick="toggleAccordionTab('paymentsTab')">
+            <span>💵 التبويب الأول: دفعات المالك المستلمة</span>
+            <i class="fas fa-chevron-down arrow-icon"></i>
+        </button>
+        <div id="paymentsTab" class="tab-content">
+            <div id="paymentsList"></div>
+            <button onclick="showAddPaymentForm()">➕ إضافة دفعة مالية</button>
+            
+            <div id="addPaymentForm" class="inline-form-box hidden">
+                <h4>📥 تسجيل دفعة مالية جديدة</h4>
+                <input type="text" id="paymentAmountInput" placeholder="أدخل مبلغ الدفعة" oninput="formatNumberInput(this)">
+                <input type="date" id="paymentDateInput">
+                <button onclick="submitPaymentForm()">حفظ الدفعة</button>
+                <button onclick="hideAddPaymentForm()" style="background: #e74c3c;">إلغاء</button>
+            </div>
+            <h3 id="remainingCost" style="margin-top: 15px;"></h3>
         </div>
-        <h3 id="remainingCost" style="margin-top: 15px;"></h3>
-    </div>
 
-    <div id="daysTab" class="tab-content">
-        <h3>📅 الأيام واليوميات</h3>
-        <input type="date" id="searchDayInput" onchange="searchDays()">
-        <div id="daysList"></div>
-        <button onclick="addDay()">➕ إضافة يوم</button>
-    </div>
-
-    <div id="subcontractorsTab" class="tab-content">
-        <h3>👥 حسابات المقاولين الثانويين ومجهزي المواد</h3>
-        <div id="subcontractorsList"></div>
-        <button onclick="showAddSubconForm()">➕ إضافة مقاول / مجهز</button>
-        
-        <div id="addSubconForm" class="inline-form-box hidden">
-            <h4>👤 إضافة جهة تعامل جديدة داخل الموقع</h4>
-            <input type="text" id="subconNameInput" placeholder="اسم المقاول أو الشركة المجهزة">
-            <select id="subconTypeInput">
-                <option value="مقاول ثانوي">مقاول ثانوي (بالقطعة / عمل محدد / لبخ ...)</option>
-                <option value="مجهز مواد">مجهز مواد إنشائية (حديد / رمل / سمنت ...)</option>
-            </select>
-            <input type="text" id="subconAgreementInput" placeholder="مبلغ العقد أو الاتفاق الأولي (اختياري)" oninput="formatNumberInput(this)">
-            <button onclick="submitSubconForm()">حفظ الجهة</button>
-            <button onclick="hideAddSubconForm()" style="background: #e74c3c;">إلغاء</button>
+        <button class="tab-accordion-btn" id="btn-daysTab" onclick="toggleAccordionTab('daysTab')">
+            <span>📅 التبويب الثاني: يوميات الموقع والتقارير</span>
+            <i class="fas fa-chevron-down arrow-icon"></i>
+        </button>
+        <div id="daysTab" class="tab-content">
+            <input type="date" id="searchDayInput" onchange="searchDays()">
+            <div id="daysList"></div>
+            <button onclick="addDay()">➕ إضافة يومية جديدة</button>
         </div>
+
+        <button class="tab-accordion-btn" id="btn-subcontractorsTab" onclick="toggleAccordionTab('subcontractorsTab')">
+            <span>👥 التبويب الثالث: المقاولون والمجهزون الثانويون</span>
+            <i class="fas fa-chevron-down arrow-icon"></i>
+        </button>
+        <div id="subcontractorsTab" class="tab-content">
+            <div id="subcontractorsList"></div>
+            <button onclick="showAddSubconForm()">➕ إضافة مقاول / مجهز جديد</button>
+            
+            <div id="addSubconForm" class="inline-form-box hidden">
+                <h4>👤 إضافة جهة تعامل جديدة داخل الموقع</h4>
+                <input type="text" id="subconNameInput" placeholder="اسم المقاول أو الشركة المجهزة">
+                <select id="subconTypeInput">
+                    <option value="مقاول ثانوي">مقاول ثانوي (بالقطعة / عمل محدد / لبخ ...)</option>
+                    <option value="مجهز مواد">مجهز مواد إنشائية (حديد / رمل / سمنت ...)</option>
+                </select>
+                <input type="text" id="subconAgreementInput" placeholder="مبلغ العقد أو الاتفاق الأولي (اختياري)" oninput="formatNumberInput(this)">
+                <button onclick="submitSubconForm()">حفظ الجهة</button>
+                <button onclick="hideAddSubconForm()" style="background: #e74c3c;">إلغاء</button>
+            </div>
+        </div>
+
     </div>
 
     <div style="margin-top: 30px; padding-top: 15px; border-top: 1px dashed #555; text-align: center;">
@@ -768,6 +806,7 @@
     let currentProjectIndex = null;
     let currentDayIndex = null;
     let currentUser = null;
+    let poolActiveTabId = null; // الاحتفاظ بهوية القسم المفتوح حالياً لضمان البقاء فيه عند الحفظ التلقائي
     let isShareMode = false;
 
     const authPage = document.getElementById('authPage');
@@ -807,12 +846,12 @@
     });
 
     function showSuccess(message) {
-        successMsg.textContent = message; successMsg.style.display = 'block'; errorMsg.style.display = 'none';
-        setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
+        successMsg.textContent = message; successMsg.style.display = 'block';
+        setTimeout(() => { successMsg.style.display = 'none'; }, 2500);
     }
 
     function showError(message) {
-        errorMsg.textContent = message; errorMsg.style.display = 'block'; successMsg.style.display = 'none';
+        errorMsg.textContent = message; errorMsg.style.display = 'block';
         setTimeout(() => { errorMsg.style.display = 'none'; }, 3000);
     }
     
@@ -851,12 +890,26 @@
             .catch((error) => { showError('حدث خطأ أثناء إنشاء الحساب.'); });
     }
 
-    // الـ Tabs البرمجية للتنقل السلس والذكي
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        document.getElementById('btn-' + tabId).classList.add('active');
+    // 🔥 الخوارزمية الهندسية الجدیدة لنظام القوائم المنسدلة العمودية (Accordion System) للفتح والإغلاق التبادلي والكامل
+    function toggleAccordionTab(tabId) {
+        const targetContent = document.getElementById(tabId);
+        const targetBtn = document.getElementById('btn-' + tabId);
+        
+        if (targetContent.classList.contains('active')) {
+            // إذا كان مفتوحاً مسبقاً، يتم إغلاقه الحين
+            targetContent.classList.remove('active');
+            targetBtn.classList.remove('active');
+            poolActiveTabId = null;
+        } else {
+            // إغلاق كل الأقسام المفتوحة لتجنب الازدحام والتشتت بالموقع
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.tab-accordion-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // فتح القسم المطلوب فوراً
+            targetContent.classList.add('active');
+            targetBtn.classList.add('active');
+            poolActiveTabId = tabId; // حفظ الهوية للبقاء داخلها عند عمليات الحفظ
+        }
     }
 
     function hideAllPages() {
@@ -907,9 +960,9 @@
             const projectsRef = database.ref(`projects/${currentUser.uid}`);
             if (projectData.id) {
                 const projectId = projectData.id; delete projectData.id;
-                projectsRef.child(projectId).update(projectData).then(() => { showSuccess("تم الحفظ بنجاح!"); resolve(); }).catch(err => reject(err));
+                projectsRef.child(projectId).update(projectData).then(() => { showSuccess("تم الحفظ بنجاح! 💾"); resolve(); }).catch(err => reject(err));
             } else {
-                projectsRef.push(projectData).then(() => { showSuccess("تم الإضافة بنجاح!"); resolve(); }).catch(err => reject(err));
+                projectsRef.push(projectData).then(() => { showSuccess("تم الإضافة بنجاح! 🎉"); resolve(); }).catch(err => reject(err));
             }
         });
     }
@@ -1019,7 +1072,7 @@
         }
     }
     
-    function openProject(i){
+    function openProject(i, preserveOpenTab = false){
         currentProjectIndex = i; 
         hideAllPages(); 
         projectPage.classList.remove("hidden");
@@ -1040,7 +1093,7 @@
             return sum;
         }, 0);
 
-        // احتساب استحقاق مبالغ المقاولين والمجهزين لإدخالها بالـ Dashboard
+        // احتساب استحقاقات المقاولين والمجهزين
         let totalSubconCost = (p.subcontractors || []).reduce((sum, sub) => {
             return sum + ((sub.logs || []).filter(l => l.type === "استحقاق").reduce((s, l) => s + l.amount, 0));
         }, 0);
@@ -1065,7 +1118,16 @@
         if (!isShareMode) { renderPayments(); hideAddPaymentForm(); hideAddSubconForm(); }
         renderDays();
         renderSubcontractors();
-        switchTab('paymentsTab'); // فتح التبويب الأول تلقائياً عند الدخول
+
+        // 🔥 تعديل هندسي ذكي: أول ما يفتح المشروع تبدأ التبويبات مغلقة (مخفية) تماماً إلا إذا كنا نحدث بيانات داخل تبويب معين
+        if (preserveOpenTab && poolActiveTabId) {
+            document.getElementById(poolActiveTabId).classList.add('active');
+            document.getElementById('btn-' + poolActiveTabId).classList.add('active');
+        } else {
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.tab-accordion-btn').forEach(btn => btn.classList.remove('active'));
+            poolActiveTabId = null;
+        }
     }
     
     function backToProjects(){
@@ -1084,7 +1146,7 @@
             div.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;";
             div.innerHTML = `<span>💵 ${pay.amount.toLocaleString()} د.ع | 📅 ${pay.date} (${getDayName(pay.date)})</span><button class="delete">✖</button>`;
             div.querySelector("button").onclick = () => {
-                p.payments.splice(index, 1); saveProject(p).then(() => { openProject(currentProjectIndex); });
+                p.payments.splice(index, 1); saveProject(p).then(() => { openProject(currentProjectIndex, true); });
             };
             list.appendChild(div);
         });
@@ -1124,10 +1186,10 @@
         p.payments.push({ amount: amount, date: chosenDate });
         p.payments.sort((a, b) => new Date(a.date) - new Date(b.date));
         
-        saveProject(p).then(() => { openProject(currentProjectIndex); });
+        // الحفظ التلقائي مع البقاء في نفس الصفحة ونفس التبويب المفتوح
+        saveProject(p).then(() => { openProject(currentProjectIndex, true); });
     }
 
-    // 👤 برمجيات إدارة وعرض المقاولين والمجهزين مدمجة بالكامل Inline
     function showAddSubconForm() { document.getElementById("addSubconForm").classList.remove("hidden"); }
     function hideAddSubconForm() { document.getElementById("addSubconForm").classList.add("hidden"); }
     function submitSubconForm() {
@@ -1142,7 +1204,7 @@
         if(!p.subcontractors) p.subcontractors = [];
         p.subcontractors.push({ name, type, agreement, logs: [] });
         
-        saveProject(p).then(() => { hideAddSubconForm(); openProject(currentProjectIndex); });
+        saveProject(p).then(() => { hideAddSubconForm(); openProject(currentProjectIndex, true); });
     }
 
     function renderSubcontractors() {
@@ -1163,8 +1225,8 @@
                 </div>
                 <div id="subcon-details-${idx}" class="subcon-details">
                     <div class="inline-form-box">
-                        <h5>➕ تسجيل حركة حسابية فائتة أو جديدة</h5>
-                        <select id="logType-${idx}"><option value="استحقاق">استحقاق (عمل منجز / مواد مستلمة)</option><option value="دفعة">دفعة واصلة (سلفة مالية مدفوعة)</option></select>
+                        <h5>➕ تسجيل حركة حسابية جديدة</h5>
+                        <select id="logType-${idx}"><option value="استحقاق">استحقاق (عمل منجز / مواد واصلة)</option><option value="دفعة">دفعة واصلة (سلفة مالية مدفوعة)</option></select>
                         <input type="text" id="logAmount-${idx}" placeholder="أدخل المبلغ د.ع" oninput="formatNumberInput(this)">
                         <input type="text" id="logNote-${idx}" placeholder="بيان الحركة (مثال: وجبة طابوق، سلفة كاش)">
                         <button onclick="addSubconLog(${idx})" style="padding:6px 12px; font-size:13px;">حفظ الحركة</button>
@@ -1180,7 +1242,9 @@
             list.appendChild(div);
         });
     }
+    
     function toggleSubconDetails(idx) { let el = document.getElementById("subcon-details-"+idx); el.style.display = el.style.display === "block" ? "none" : "block"; }
+    
     function addSubconLog(idx) {
         let p = projects[currentProjectIndex]; let sub = p.subcontractors[idx];
         let type = document.getElementById(`logType-${idx}`).value;
@@ -1188,16 +1252,18 @@
         let note = document.getElementById(`logNote-${idx}`).value || "-";
         if(!amt) return alert("أدخل المبلغ");
         if(!sub.logs) sub.logs = []; sub.logs.push({ type, amount: amt, note: note + " | " + new Date().toISOString().split("T")[0] });
-        saveProject(p).then(() => openProject(currentProjectIndex));
+        saveProject(p).then(() => openProject(currentProjectIndex, true));
     }
+    
     function deleteSubconLog(subIdx, logIdx) {
         let p = projects[currentProjectIndex]; p.subcontractors[subIdx].logs.splice(logIdx, 1);
-        saveProject(p).then(() => openProject(currentProjectIndex));
+        saveProject(p).then(() => openProject(currentProjectIndex, true));
     }
+    
     function deleteSubcontractor(idx) {
         if(confirm("هل تريد حذف حساب هذا المقاول/المجهز بالكامل من المشروع؟")) {
             let p = projects[currentProjectIndex]; p.subcontractors.splice(idx, 1);
-            saveProject(p).then(() => openProject(currentProjectIndex));
+            saveProject(p).then(() => openProject(currentProjectIndex, true));
         }
     }
 
@@ -1286,14 +1352,14 @@
         if (isDateExists) { alert("❌ هذا التاريخ مسجل مسبقاً في هذا المشروع!"); return; }
         p.days.push({date: chosenDate, workDescription: "", workersDetail: "", costDetail: "", media: []}); 
         p.days.sort((a, b) => new Date(a.date) - new Date(b.date));
-        saveProject(p).then(() => { openProject(currentProjectIndex); });
+        saveProject(p).then(() => { openProject(currentProjectIndex, true); });
     }
     
   function deleteDay(i){ 
     if(isShareMode) return;
     if(confirm("هل تريد حذف هذا اليوم؟")){ 
         let p = projects[currentProjectIndex]; p.days.splice(i,1); 
-        saveProject(p).then(() => { openProject(currentProjectIndex); });
+        saveProject(p).then(() => { openProject(currentProjectIndex, true); });
     } 
 }
     
@@ -1311,7 +1377,7 @@
         renderMedia(); 
     }
     
-    function backToProject(){ openProject(currentProjectIndex); } 
+    function backToProject(){ openProject(currentProjectIndex, true); } 
     
     function saveDay(){ 
         if (isShareMode) return;
@@ -1320,7 +1386,7 @@
         d.workersDetail = document.getElementById("workersDetail").value; 
         d.costDetail = document.getElementById("costDetail").value; 
         let files = document.getElementById("mediaInput").files;
-        if (files.length === 0) { saveProject(p).then(() => { renderMedia(); openProject(currentProjectIndex); }); return; }
+        if (files.length === 0) { saveProject(p).then(() => { renderMedia(); openProject(currentProjectIndex, true); }); return; }
         let filesProcessed = 0;
         showSuccess("جاري معالجة وضغط الصور لحفظها خفيفة... ⏳");
         for (let f of files) {
@@ -1336,7 +1402,7 @@
                     if (!d.media) d.media = []; d.media.push(compressedData); filesProcessed++;
                     if (filesProcessed === files.length) {
                         saveProject(p).then(() => {
-                            renderMedia(); document.getElementById("mediaInput").value = ""; openProject(currentProjectIndex);
+                            renderMedia(); document.getElementById("mediaInput").value = ""; openProject(currentProjectIndex, true);
                         });
                     }
                 };
@@ -1378,67 +1444,11 @@
     
    function shareProject() {
         if (isShareMode) return;
-        const shareOption = prompt("اختر نوع التصدير والمشاركة:\n1. مشاركة جميع الأيام (رابط)\n2. مشاركة/طباعة أيام معينة");
+        const shareOption = prompt("اختر نوع التصدير والمشاركة:\n1. مشاركة التقرير كاملاً (رابط ويب زبائن)\n2. طباعة كتقرير رسمي PDF");
         let projectToShare = projects[currentProjectIndex];
         let shareLink = window.location.origin + window.location.pathname + `?share=${projectToShare.id}&uid=${currentUser.uid}`;
         if (shareOption === "1") { prompt("انسخ الرابط لمشاركة جميع الأيام:", shareLink); } 
-        else if (shareOption === "2") { showDaySelectionPopup(); }
-    }
-
-    function showDaySelectionPopup() {
-        if (isShareMode) return;
-        let popupContainer = document.createElement("div");
-        popupContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;";
-        let popupContent = document.createElement("div");
-        popupContent.style.cssText = "background: #fff; padding: 20px; border-radius: 12px; width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto; text-align: right; direction: rtl; color: #333;";
-        let title = document.createElement("h3"); title.style.color = "#333"; title.innerText = "اختر الأيام للتقرير والمشاركة:"; popupContent.appendChild(title);
-
-        let currentProject = projects[currentProjectIndex];
-        if (currentProject && currentProject.days) {
-            currentProject.days.forEach((day, index) => {
-                let dayDiv = document.createElement("div"); dayDiv.style.marginBottom = "10px";
-                let checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.id = "day-" + index; checkbox.style.cssText = "width: auto; margin-left: 10px;";
-                let label = document.createElement("label"); label.htmlFor = "day-" + index; label.innerText = `اليوم ${index + 1} - ${day.date}`;
-                dayDiv.appendChild(checkbox); dayDiv.appendChild(label); popupContent.appendChild(dayDiv);
-            });
-        }
-        
-        let buttonDiv = document.createElement("div"); buttonDiv.style.cssText = "display: flex; flex-direction: column; gap: 8px; margin-top: 20px;";
-        
-        let linkBtn = document.createElement("button"); linkBtn.innerText = "🔗 إنشاء رابط ويب للأيام المحددة"; linkBtn.style.backgroundColor = "#3498db";
-        linkBtn.onclick = () => {
-            let selectedIndices = [];
-            popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => { if (checkbox.checked) selectedIndices.push(index); });
-            if (selectedIndices.length > 0) {
-                let projectId = projects[currentProjectIndex].id; let daysString = selectedIndices.join(',');
-                let shareLink = window.location.origin + window.location.pathname + `?share=${projectId}&uid=${currentUser.uid}&days=${daysString}`;
-                prompt("انسخ الرابط لمشاركة الأيام المحددة:", shareLink);
-            } else { alert("لم يتم اختيار أي يوم."); }
-            popupContainer.remove();
-        };
-
-        let pdfBtn = document.createElement("button"); pdfBtn.innerText = "🖨️ تحميل وطباعة كتقرير رسمي PDF"; pdfBtn.style.backgroundColor = "#2ecc71";
-        pdfBtn.onclick = () => {
-            let selectedIndices = [];
-            popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => { if (checkbox.checked) selectedIndices.push(index); });
-            if (selectedIndices.length > 0) {
-                popupContainer.remove();
-                let originalDays = [...currentProject.days];
-                currentProject.days = currentProject.days.filter((day, index) => selectedIndices.includes(index));
-                renderSharePage(currentProject);
-                setTimeout(() => {
-                    window.print();
-                    currentProject.days = originalDays;
-                    openProject(currentProjectIndex);
-                }, 500);
-            } else { alert("لم يتم اختيار أي يوم للطباعة."); }
-        };
-
-        let cancelBtn = document.createElement("button"); cancelBtn.innerText = "إلغاء"; cancelBtn.style.backgroundColor = "#e74c3c";
-        cancelBtn.onclick = () => popupContainer.remove();
-        
-        buttonDiv.appendChild(pdfBtn); buttonDiv.appendChild(linkBtn); buttonDiv.appendChild(cancelBtn);
-        popupContent.appendChild(buttonDiv); popupContent.appendChild(buttonDiv); popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
+        else if (shareOption === "2") { window.print(); }
     }
 
     function renderSharePage(projectData) {
