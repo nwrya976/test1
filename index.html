@@ -29,63 +29,227 @@
             scroll-behavior: smooth;
             transition: background 0.5s ease, color 0.5s ease;
         }
-        /* 🌙 وضع الإضاءة (Light Mode) */
+        /* 🌙 وضع الإضاءة المحسن بالكامل (Light Mode Dynamic Contrast) */
         body.light-mode {
-            background: #f0f0f0;
+            background: #f0f2f5;
             color: #111;
         }
         body.light-mode .container {
             background: #ffffff;
-            border: 1px solid #ccc;
+            border: 1px solid #c8ced3;
             color: #111;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
         }
-        body.light-mode h1, body.light-mode h2, body.light-mode h3 {
-            color: #2193b0;
-            -webkit-text-fill-color: #2193b0;
+        body.light-mode h1, body.light-mode h2, body.light-mode h3, body.light-mode h4 {
+            color: #1a73e8;
+            -webkit-text-fill-color: #1a73e8;
         }
         body.light-mode button {
-            background: linear-gradient(135deg, #00b09b, #96c93d);
+            background: linear-gradient(135deg, #1a73e8, #34a853);
             color: #fff;
         }
         body.light-mode button.delete, body.light-mode button.action-btn.del-btn {
-            background: #e74c3c;
+            background: #d93025;
         }
-        body.light-mode .project, body.light-mode .day, body.light-mode .subcon-card {
-            background: #e6f4ea;
-            border: 1px solid #28a745;
-            color: #155724;
+        body.light-mode .project, body.light-mode .day, body.light-mode .subcon-card, body.light-mode .inventory-card {
+            background: #f1f3f4;
+            border: 1px solid #dadce0;
+            color: #202124;
         }
         body.light-mode .project:hover, body.light-mode .day:hover {
-            background: #d4e9da;
+            background: #e8eaed;
         }
         body.light-mode input, body.light-mode textarea, body.light-mode select {
-            background-color: #fff;
-            color: #000;
-            border-color: #bbb;
+            background-color: #ffffff;
+            color: #202124;
+            border-color: #bdc1c6;
         }
-        /* زر تغيير الوضع (Mode Toggle) */
-        .theme-toggle {
-            background: none;
+        body.light-mode .dashboard-box {
+            background: #f8f9fa;
+            border-color: #dadce0;
+        }
+        body.light-mode .card-stat {
+            background: #ffffff;
+            border-color: #e8eaed;
+        }
+        body.light-mode .tab-accordion-btn {
+            background: #ffffff;
+            border-color: #dadce0;
+            color: #202124;
+        }
+        body.light-mode .tab-content {
+            background: #ffffff;
+            border-color: #dadce0;
+        }
+        body.light-mode table {
+            background: #ffffff;
+        }
+        body.light-mode th {
+            background: #f1f3f4;
+            color: #202124;
+            border-color: #dadce0;
+        }
+        body.light-mode td {
+            background: #ffffff;
+            color: #202124;
+            border-color: #e8eaed;
+        }
+        body.light-mode .inline-form-box {
+            background: #f8f9fa;
+            border-color: #bdc1c6;
+        }
+        body.light-mode .day-details, body.light-mode .subcon-details {
+            background: #ffffff;
+            border-color: #dadce0;
+        }
+        
+        /* ⚙️ زر الترس العلوي للقائمة الجانبية */
+        .settings-toggle {
+            background: rgba(40, 44, 52, 0.9);
             color: #e0e0e0;
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            font-size: 1.4rem;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            border: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             position: fixed;
             top: 20px;
-            left: 20px;
-            z-index: 1000;
-            transition: color 0.3s, background 0.3s;
+            right: 20px;
+            z-index: 999;
+            transition: all 0.3s ease;
         }
-        body.light-mode .theme-toggle {
+        body.light-mode .settings-toggle {
+            background: #ffffff;
             color: #2c3e50;
+            border-color: #ccc;
         }
-        /* صندوق الكونتينر */
+        .settings-toggle:hover {
+            transform: rotate(45deg);
+        }
+
+        /* 🧭 القائمة الجانبية الاحترافية من جهة اليمين */
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100vh;
+            background: #1a1a24;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+            z-index: 10000;
+            transition: right 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+            overflow-y: auto;
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        body.light-mode .sidebar-drawer {
+            background: #ffffff;
+            border-left: 1px solid #ddd;
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+        }
+        .sidebar-drawer.open {
+            right: 0;
+        }
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 9999;
+            display: none;
+        }
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* 👤 حساب المستخدم داخل السايدبار */
+        .user-profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+            position: relative;
+        }
+        body.light-mode .user-profile-section {
+            border-bottom-color: #eee;
+        }
+        .avatar-wrapper {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin-bottom: 10px;
+        }
+        .user-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #2193b0;
+            background: #282c34;
+        }
+        .add-avatar-btn {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 28px;
+            height: 28px;
+            background: #00b09b;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            border: 2px solid #1a1a24;
+            transition: transform 0.2s;
+        }
+        body.light-mode .add-avatar-btn { border-color: #fff; }
+        .add-avatar-btn:hover { transform: scale(1.1); }
+        .sidebar-username {
+            font-weight: bold;
+            font-size: 16px;
+            color: #fff;
+        }
+        body.light-mode .sidebar-username { color: #111; }
+
+        /* 📋 روابط أزرار السايدبار */
+        .sidebar-menu-btn {
+            width: 100%;
+            padding: 12px 15px;
+            background: #252533;
+            border: 1px solid #333;
+            color: #e0e0e0;
+            border-radius: 10px;
+            text-align: right;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: none;
+            margin: 0;
+        }
+        body.light-mode .sidebar-menu-btn {
+            background: #f7f9fa;
+            border-color: #e1e4e6;
+            color: #333;
+        }
+        .sidebar-menu-btn:hover { background: #2e2e40; }
+        body.light-mode .sidebar-menu-btn:hover { background: #eef1f2; }
+
+        /* صندوق الكونتينر الرئيسي للتطبيق */
         .container {
             background: rgba(40, 44, 52, 0.95);
             border: 1px solid rgba(255, 255, 255, 0.05);
@@ -121,17 +285,13 @@
             font-size: 1.5rem;
             margin-top: 0;
         }
-        /* لوحة التحكم المالية والتحليليّة */
+        /* لوحة التحكم المالية داخل المشروع */
         .dashboard-box {
             background: rgba(30, 34, 42, 0.8);
             border: 1px solid #444;
             border-radius: 12px;
             padding: 15px;
             margin: 15px 0;
-        }
-        body.light-mode .dashboard-box {
-            background: #f9f9f9;
-            border-color: #ddd;
         }
         .dashboard-grid {
             display: grid;
@@ -146,14 +306,10 @@
             text-align: center;
             border: 1px solid #333;
         }
-        body.light-mode .card-stat {
-            background: #fff;
-            border-color: #eee;
-        }
         .card-stat small { color: #888; display: block; font-size: 0.8rem; margin-bottom: 4px; }
         .card-stat span { font-weight: bold; font-size: 1.1rem; }
         
-        /* 🗂️ نظام شريط التبويبات العمودي والاحترافي الجدید (Accordion Style) */
+        /* 🗂️ نظام شريط التبويبات العمودي والمنسدل (Accordion Style) */
         .tabs-vertical-container {
             display: flex;
             flex-direction: column;
@@ -178,27 +334,15 @@
             justify-content: space-between;
             align-items: center;
         }
-        body.light-mode .tab-accordion-btn {
-            background: #fdfdfd;
-            border-color: #ccc;
-            color: #333;
-        }
-        .tab-accordion-btn:hover {
-            background: #343a40;
-        }
+        .tab-accordion-btn:hover { background: #343a40; }
         .tab-accordion-btn.active {
             background: linear-gradient(135deg, #2193b0, #6dd5ed);
             color: #fff;
             border-color: #6dd5ed;
         }
-        .tab-accordion-btn i.arrow-icon {
-            transition: transform 0.3s ease;
-        }
-        .tab-accordion-btn.active i.arrow-icon {
-            transform: rotate(180deg);
-        }
+        .tab-accordion-btn i.arrow-icon { transition: transform 0.3s ease; }
+        .tab-accordion-btn.active i.arrow-icon { transform: rotate(180deg); }
         
-        /* محتويات التبويب المنسدل */
         .tab-content {
             display: none;
             background: rgba(30, 34, 42, 0.4);
@@ -210,15 +354,59 @@
             margin-bottom: 10px;
             animation: fadeIn 0.3s ease;
         }
-        body.light-mode .tab-content {
-            background: #fcfcfc;
-            border-color: #ccc;
-        }
-        .tab-content.active {
-            display: block;
+        .tab-content.active { display: block; }
+
+        /* كروت المخزن التوريدي */
+        .inventory-card {
+            padding: 12px;
+            background: #282c34;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 10px;
+            margin-bottom: 8px;
         }
 
-        /* صندوق مدمج لإدخال البيانات والدفعات */
+        .custom-popup-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100005 !important;
+        }
+        .custom-popup-content {
+            background: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 440px;
+            max-height: 75vh;
+            overflow-y: auto;
+            text-align: right;
+            direction: rtl;
+            color: #222 !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .custom-popup-content h3 {
+            color: #111 !important;
+            margin-bottom: 15px;
+            background: none !important;
+            -webkit-text-fill-color: initial !important;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .custom-popup-content label { color: #333 !important; font-weight: bold; cursor: pointer; }
+        .custom-popup-content input[type="checkbox"] {
+            width: 18px !important;
+            height: 18px !important;
+            margin-left: 10px !important;
+            cursor: pointer;
+            accent-color: #2193b0;
+        }
+
         .inline-form-box {
             background: rgba(20, 24, 30, 0.5);
             border: 1px dashed #555;
@@ -226,16 +414,8 @@
             padding: 15px;
             margin: 10px 0;
         }
-        body.light-mode .inline-form-box {
-            background: #fdfdfd;
-            border-color: #bbb;
-        }
 
-        /* تنسيق أزرار الأكشن لقائمة المشاريع الرئيسية */
-        .project-actions {
-            display: flex;
-            gap: 5px;
-        }
+        .project-actions { display: flex; gap: 5px; }
         .action-btn {
             padding: 6px 12px !important;
             font-size: 13px !important;
@@ -246,7 +426,6 @@
         .edit-btn { background: linear-gradient(135deg, #3498db, #2980b9); }
         .del-btn { background: #e74c3c; }
 
-        /* الأزرار */
         button {
             background: linear-gradient(135deg, #00b09b, #96c93d);
             color: #fff;
@@ -265,20 +444,11 @@
             background: linear-gradient(135deg, #00816a, #7db515);
             transform: translateY(-1px);
         }
-        button.delete {
-            background: #e74c3c;
-            box-shadow: 0 5px 16px rgba(231, 76, 60, 0.3);
-        }
-        button.delete:hover {
-            background: #c0392b;
-        }
-        button.back {
-            background: linear-gradient(135deg, #8e44ad, #9b59b6);
-            box-shadow: 0 5px 16px rgba(155, 89, 182, 0.3);
-        }
-        button.back:hover {
-            background: linear-gradient(135deg, #6c3483, #8e44ad);
-        }
+        button.delete { background: #e74c3c; box-shadow: 0 5px 16px rgba(231, 76, 60, 0.3); }
+        button.delete:hover { background: #c0392b; }
+        button.back { background: linear-gradient(135deg, #8e44ad, #9b59b6); box-shadow: 0 5px 16px rgba(155, 89, 182, 0.3); }
+        button.back:hover { background: linear-gradient(135deg, #6c3483, #8e44ad); }
+
         .project, .day, .subcon-card {
             padding: 15px;
             background: #282c34;
@@ -288,17 +458,9 @@
             transition: background 0.3s;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .project:hover, .day:hover {
-            background: #343a40;
-            cursor: pointer;
-        }
-        .progress-bar {
-            background: #1d1f27;
-            border-radius: 8px;
-            height: 25px;
-            margin: 15px 0;
-            overflow: hidden;
-        }
+        .project:hover, .day:hover { background: #343a40; cursor: pointer; }
+
+        .progress-bar { background: #1d1f27; border-radius: 8px; height: 25px; margin: 15px 0; overflow: hidden; }
         .progress {
             background: linear-gradient(to right, #00b09b, #96c93d);
             height: 100%;
@@ -310,9 +472,7 @@
             font-size: 14px;
             transition: width 0.5s ease-in-out;
         }
-        .hidden {
-            display: none;
-        }
+        .hidden { display: none; }
         input, textarea, select {
             width: 100%;
             padding: 12px;
@@ -324,10 +484,8 @@
             font-size: 1rem;
             box-sizing: border-box;
         }
-        input:focus, textarea:focus, select:focus {
-            border-color: #6dd5ed;
-            outline: none;
-        }
+        input:focus, textarea:focus, select:focus { border-color: #6dd5ed; outline: none; }
+        
         table {
             width: 100%;
             border-collapse: collapse;
@@ -335,24 +493,12 @@
             font-size: 0.9rem;
             overflow-x: auto;
             display: block;
-        }
-        th, td {
-            border: 1px solid #444;
-            padding: 10px;
-            text-align: right;
-            white-space: nowrap;
-        }
-        th {
             background: #1d1f27;
-            color: #e0e0e0;
         }
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+        th, td { border: 1px solid #444; padding: 10px; text-align: right; white-space: nowrap; }
+        th { background: #15171e; color: #e0e0e0; }
+
+        .flex-between { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
         .day-details, .subcon-details {
             margin-top: 15px;
             display: none;
@@ -370,10 +516,8 @@
             border: 2px solid #ddd;
             transition: transform 0.2s, border-color 0.2s;
         }
-        img:hover, video:hover {
-            transform: scale(1.05);
-            border-color: #3498db;
-        }
+        img:hover, video:hover { transform: scale(1.05); border-color: #3498db; }
+
         .fullscreen {
             position: fixed;
             top: 0;
@@ -386,17 +530,9 @@
             justify-content: center;
             z-index: 1000;
         }
-        .fullscreen img, .fullscreen video {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 0;
-        }
-        #searchInput, #searchDayInput {
-            padding: 12px;
-            width: 100%;
-            margin-bottom: 15px;
-        }
-        /* Auth Page Styles */
+        .fullscreen img, .fullscreen video { max-width: 90%; max-height: 90%; border-radius: 0; }
+        #searchInput, #searchDayInput { padding: 12px; width: 100%; margin-bottom: 15px; }
+
         .auth-container {
             background: white;
             padding: 2rem;
@@ -408,173 +544,31 @@
             color: #333;
             margin-top: 50px;
         }
-        .icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #667eea;
-        }
-        .auth-container h1 {
-            color: #333;
-            margin-bottom: 2rem;
-            font-size: 1.5rem;
-            background: none;
-            -webkit-text-fill-color: #333;
-        }
-        .form-group {
-            margin-bottom: 1.5rem;
-            text-align: right;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #555;
-            font-weight: 500;
-        }
+        .icon { font-size: 3rem; margin-bottom: 1rem; color: #667eea; }
+        .auth-container h1 { color: #333; margin-bottom: 2rem; font-size: 1.5rem; background: none; -webkit-text-fill-color: #333; }
+        
+        .form-group { margin-bottom: 1.5rem; text-align: right; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: #555; font-weight: 500; }
         .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-            text-align: right;
-            background: white;
-            color: #333;
+            width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px;
+            font-size: 1rem; transition: border-color 0.3s; text-align: right; background: white; color: #333;
         }
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 2rem;
-        }
-        .btn-primary {
-            background: #667eea;
-            color: white;
-            flex: 1;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn-primary:hover {
-            background: #5a67d8;
-            transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background: #f7f7f7;
-            color: #333;
-            border: 2px solid #ddd;
-            flex: 1;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .btn-secondary:hover {
-            background: #e7e7e7;
-            transform: translateY(-2px);
-        }
+        .form-group input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .button-group { display: flex; flex-direction: column; gap: 10px; margin-top: 2rem; }
+        .btn-primary { background: #667eea; color: white; flex: 1; padding: 12px 20px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-primary:hover { background: #5a67d8; transform: translateY(-2px); }
+        .btn-secondary { background: #f7f7f7; color: #333; border: 2px solid #ddd; flex: 1; padding: 12px 20px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .btn-secondary:hover { background: #e7e7e7; transform: translateY(-2px); }
+        
         .success-message {
-            display: none;
-            background: #d4edda;
-            color: #155724;
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            border: 1px solid #c3e6cb;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10002;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: none; background: #d4edda; color: #155724; padding: 1rem; border-radius: 8px; margin: 1rem 0;
+            border: 1px solid #c3e6cb; position: fixed; top: 20px; right: 20px; z-index: 10002; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .error-message {
-            display: none;
-            background: #f8d7da;
-            color: #721c24;
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            border: 1px solid #f5c6cb;
-        }
-        .form-toggle {
-            margin-top: 1rem;
-            color: #666;
-        }
-        .form-toggle a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .form-toggle a:hover {
-            text-decoration: underline;
-        }
-        .user-info {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            margin: 1rem 0;
-            text-align: right;
-            color: #333;
-        }
-        .user-header {
-            background: rgba(40, 44, 52, 0.95);
-            color: #e0e0e0;
-            padding: 10px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        body.light-mode .user-header {
-            background: #ffffff;
-            color: #333;
-            border: 1px solid #ddd;
-        }
-        /* Developer Info Footer */
-        .developer-info {
-            margin-top: 40px;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #888;
-            padding: 10px;
-            border-top: 1px solid #333;
-            width: 100%;
-        }
-        body.light-mode .developer-info {
-            color: #555;
-            border-top: 1px solid #ccc;
-        }
-        .developer-info a {
-            color: #6dd5ed;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-        .developer-info a:hover {
-            color: #2193b0;
-            text-decoration: underline;
-        }
-        /* 📱 تنسيقات الهواتف */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        .error-message { display: none; background: #f8d7da; color: #721c24; padding: 1rem; border-radius: 8px; margin: 1rem 0; border: 1px solid #f5c6cb; }
+        .form-toggle { margin-top: 1rem; color: #666; }
+        .form-toggle a { color: #667eea; text-decoration: none; font-weight: 600; }
+        .form-toggle a:hover { text-decoration: underline; }
+        
         @media (max-width: 768px) {
             .container { padding: 15px 10px; margin-top: 40px; }
             h1 { font-size: 22px; }
@@ -586,14 +580,12 @@
             .project-actions { justify-content: flex-end; }
         }
         
-        /* 🖨️ ستايل الـ PDF */
         @media print {
             body { background: white !important; color: black !important; padding: 0 !important; }
             .container { background: white !important; box-shadow: none !important; border: none !important; width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            button, input, select, #darkModeToggle, .back, .theme-toggle, .user-header, .tabs-vertical-container { display: none !important; }
+            button, input, select, .back, .settings-toggle, .sidebar-drawer, .sidebar-overlay, .tabs-vertical-container { display: none !important; }
             h1, h2, h3 { color: black !important; background: none !important; -webkit-text-fill-color: initial !important; }
-            .tab-content { display: block !important; }
-            .day { background: white !important; border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px !important; }
+            .tab-content { display: block !important; background: none !important; border: none !important; padding: 0 !important; margin: 0 !important; }
             table { display: table !important; width: 100% !important; }
             th, td { border: 1px solid black !important; color: black !important; background: #f5f5f5 !important; }
         }
@@ -606,8 +598,58 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
 
-<div id="darkModeToggle" class="theme-toggle">
-    <i class="fas fa-adjust"></i>
+<div id="sidebarToggleBtn" class="settings-toggle" onclick="toggleSidebar(true)">
+    <i class="fas fa-cog"></i>
+</div>
+
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+
+<div id="sidebarDrawer" class="sidebar-drawer">
+    
+    <div class="user-profile-section">
+        <div class="avatar-wrapper">
+            <img id="userAvatarImg" src="https://www.w3schools.com/howto/img_avatar.png" class="user-avatar" alt="Avatar">
+            <label class="add-avatar-btn" for="avatarFileInput">
+                <i class="fas fa-plus"></i>
+            </label>
+            <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="uploadAvatarImage()">
+        </div>
+        <div id="sidebarUserEmail" class="sidebar-username">جاري التحميل...</div>
+    </div>
+
+    <button class="sidebar-menu-btn" onclick="goToProjectsFromSidebar()">
+        <i class="fas fa-folder-open" style="color:#3498db;"></i> قائمة المشاريع الحالية
+    </button>
+
+    <button class="sidebar-menu-btn" onclick="openGlobalFinancePage()">
+        <i class="fas fa-chart-bar" style="color:#2ecc71;"></i> صفحة الموقف المالي الكلي
+    </button>
+
+    <button class="sidebar-menu-btn" onclick="openGlobalSubcontractorsPage()">
+        <i class="fas fa-users-cog" style="color:#e67e22;"></i> كشف حسابات المقاولين والمجهزين
+    </button>
+
+    <button class="sidebar-menu-btn" id="sidebarThemeBtn">
+        <i class="fas fa-adjust" style="color:#96c93d;"></i> وضع الإضاءة (ليلي/نهاري)
+    </button>
+
+    <button class="sidebar-menu-btn" onclick="resetPasswordDirect()">
+        <i class="fas fa-key" style="color:#f1c40f;"></i> تغيير كلمة السر الحالية
+    </button>
+
+    <div style="margin-top:auto; padding-top:15px; border-top:1px solid #333; font-size:12px;">
+        <p style="color:#888; margin-bottom:5px;">👨‍💻 الدعم الفني وتطوير البرمجيات:</p>
+        <a href="tel:07838987839" style="color:#6dd5ed; text-decoration:none; display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+            <i class="fas fa-phone-alt"></i> 07838987839
+        </a>
+        <a href="mailto:nwrya976@gmail.com" style="color:#6dd5ed; text-decoration:none; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-envelope"></i> nwrya976@gmail.com
+        </a>
+    </div>
+
+    <button class="sidebar-menu-btn" onclick="logout()" style="background:#e74c3c; color:#fff; border:none;">
+        <i class="fas fa-sign-out-alt"></i> تسجيل خروج من النظام
+    </button>
 </div>
 
 <div id="success-msg" class="success-message"></div>
@@ -641,31 +683,36 @@
 </div>
 
 <div class="container hidden" id="mainPage">
-    <div class="user-header">
-        <div>
-            <h2 style="margin: 0;">مرحباً، <span id="user-display-name"></span>! 🙋‍♂️</h2>
-            <small id="user-display-email"></small>
-        </div>
-        <button id="logout-btn" class="btn-secondary" style="margin: 0;">تسجيل الخروج</button>
-    </div>
-    <h1>📋 قائمة المشاريع</h1>
-    <input type="text" id="searchInput" placeholder="🔍 بحث عن مشروع..." onkeyup="searchProjects()">
+    <h1>📋 قائمة المشاريع لبنايات المقاولات</h1>
+    <input type="text" id="searchInput" placeholder="🔍 بحث عن مشروع معين..." onkeyup="searchProjects()">
     <div id="projectList"></div>
-    <button onclick="showAddProject()">➕ إضافة مشروع</button>
+    <button onclick="showAddProject()">➕ إضافة مشروع جديد</button>
     <div id="addProjectForm" class="hidden">
         <input type="text" id="projectName" placeholder="اسم المشروع">
         <input type="number" id="projectDuration" placeholder="مدة المشروع (بالأيام)">
-        <input type="text" id="projectCost" placeholder="تكلفة المشروع الكلية" oninput="formatNumberInput(this)">
+        <input type="text" id="projectCost" placeholder="تكلفة المشروع الكلية المقدرة" oninput="formatNumberInput(this)">
         <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً؟" value="0">
         <button onclick="addProject()">حفظ</button>
     </div>
+</div>
+
+<div class="container hidden" id="globalFinancePage">
+    <button class="back" onclick="backToProjects()">⬅ رجوع لقائمة المشاريع</button>
+    <h2 style="margin-top:20px; margin-bottom:15px;"><i class="fas fa-chart-bar"></i> كشف الموقف المالي الكلي لجميع المواقع</h2>
+    <div id="globalFinanceTableContainer"></div>
+</div>
+
+<div class="container hidden" id="globalSubcontractorsPage">
+    <button class="back" onclick="backToProjects()">⬅ رجوع لقائمة المشاريع</button>
+    <h2 style="margin-top:20px; margin-bottom:15px;"><i class="fas fa-users-cog"></i> تصفية الحسابات الكلية للمقاولين والمجهزين</h2>
+    <div id="globalSubcontractorsContainer"></div>
 </div>
 
 <div class="container hidden" id="projectPage">
     <div class="flex-between">
         <button class="back" onclick="backToProjects()">⬅ رجوع للمشاريع</button>
     </div>
-    <h2 id="projTitle"></h2>
+    <h2 id="projTitle" style="margin-top: 10px;"></h2>
     
     <div class="dashboard-box" id="projectDashboard">
         <h3>📊 الخلاصة المالية والموقف المالي للموقع</h3>
@@ -696,8 +743,9 @@
             <i class="fas fa-chevron-down arrow-icon"></i>
         </button>
         <div id="paymentsTab" class="tab-content">
+            <h3>💵 الدفعات المستلمة من المالك</h3>
             <div id="paymentsList"></div>
-            <button onclick="showAddPaymentForm()">➕ إضافة دفعة مالية</button>
+            <button onclick="showAddPaymentForm()">➕ إضافة دفعة</button>
             
             <div id="addPaymentForm" class="inline-form-box hidden">
                 <h4>📥 تسجيل دفعة مالية جديدة</h4>
@@ -714,9 +762,10 @@
             <i class="fas fa-chevron-down arrow-icon"></i>
         </button>
         <div id="daysTab" class="tab-content">
+            <h3>📅 الأيام واليوميات</h3>
             <input type="date" id="searchDayInput" onchange="searchDays()">
             <div id="daysList"></div>
-            <button onclick="addDay()">➕ إضافة يومية جديدة</button>
+            <button onclick="addDay()">➕ إضافة يوم</button>
         </div>
 
         <button class="tab-accordion-btn" id="btn-subcontractorsTab" onclick="toggleAccordionTab('subcontractorsTab')">
@@ -724,8 +773,9 @@
             <i class="fas fa-chevron-down arrow-icon"></i>
         </button>
         <div id="subcontractorsTab" class="tab-content">
+            <h3>👥 حسابات المقاولين الثانويين ومجهزي المواد</h3>
             <div id="subcontractorsList"></div>
-            <button onclick="showAddSubconForm()">➕ إضافة مقاول / مجهز جديد</button>
+            <button onclick="showAddSubconForm()">➕ إضافة مقاول / مجهز</button>
             
             <div id="addSubconForm" class="inline-form-box hidden">
                 <h4>👤 إضافة جهة تعامل جديدة داخل الموقع</h4>
@@ -737,6 +787,33 @@
                 <input type="text" id="subconAgreementInput" placeholder="مبلغ العقد أو الاتفاق الأولي (اختياري)" oninput="formatNumberInput(this)">
                 <button onclick="submitSubconForm()">حفظ الجهة</button>
                 <button onclick="hideAddSubconForm()" style="background: #e74c3c;">إلغاء</button>
+            </div>
+        </div>
+
+        <button class="tab-accordion-btn" id="btn-inventoryTab" onclick="toggleAccordionTab('inventoryTab')">
+            <span>📦 التبويب الرابع: مخزن وتوريد المواد الإنشائية الرئيسية</span>
+            <i class="fas fa-chevron-down arrow-icon"></i>
+        </button>
+        <div id="inventoryTab" class="tab-content">
+            <h3>📦 مخزن وتوريد المواد الإنشائية الموردة للموقع</h3>
+            <div id="inventoryList"></div>
+            <button onclick="showAddInventoryForm()">📥 تسجيل وتوريد وجبة مواد للموقع</button>
+            
+            <div id="addInventoryForm" class="inline-form-box hidden">
+                <h4>🧱 تسجيل وجبة مواد إنشائية واصلة</h4>
+                <select id="matTypeInput">
+                    <option value="طابوق">طابوق</option>
+                    <option value="إسمنت">إسمنت</option>
+                    <option value="حديد تسليح">حديد تسليح</option>
+                    <option value="كاشي ورخام">كاشي ورخام</option>
+                    <option value="رمل وحصى">رمل وحصى</option>
+                    <option value="مواد أخرى">مواد وتجهيزات أخرى</option>
+                </select>
+                <input type="text" id="matQtyInput" placeholder="الكمية الموردة (مثال: 5000 طابوقة، 10 طن)">
+                <input type="text" id="matCostInput" placeholder="السعر الكلي المدفوع عليها د.ع" oninput="formatNumberInput(this)">
+                <input type="date" id="matDateInput">
+                <button onclick="submitInventoryForm()">حفظ وتوريد للمخزن</button>
+                <button onclick="hideAddInventoryForm()" style="background: #e74c3c;">إلغاء</button>
             </div>
         </div>
 
@@ -755,7 +832,7 @@
     <label>👷 الكادر</label>
     <textarea id="workersDetail"></textarea>
     <label>💰 المبالغ والتكاليف</label>
-    <textarea id="costDetail" placeholder="اكتب المبالغ هنا وسيتم تشكيل الفوارز تلقائياً..." oninput="formatTextareaNumbers(this)"></textarea>
+    <textarea id="costDetail" placeholder="اكتب المبالغ هنا..." oninput="formatTextareaNumbers(this)"></textarea>
     <h3>📸 الصور </h3>
     <input type="file" id="mediaInput" multiple accept="image/*,video/*">
     <div id="mediaList"></div>
@@ -809,9 +886,12 @@
     let poolActiveTabId = null; 
     let isShareMode = false;
 
+    // عناصر الصفحة
     const authPage = document.getElementById('authPage');
     const mainPage = document.getElementById('mainPage');
     const projectPage = document.getElementById('projectPage');
+    const globalFinancePage = document.getElementById('globalFinancePage');
+    const globalSubcontractorsPage = document.getElementById('globalSubcontractorsPage');
     const dayPage = document.getElementById('dayPage');
     const sharePage = document.getElementById('sharePage');
     const form = document.getElementById('auth-form');
@@ -823,17 +903,25 @@
     const confirmPasswordGroup = document.getElementById('confirm-password-group');
     const successMsg = document.getElementById('success-msg');
     const errorMsg = document.getElementById('error-msg');
-    const logoutBtn = document.getElementById('logout-btn');
-    const userDisplayName = document.getElementById('user-display-name');
-    const userDisplayEmail = document.getElementById('user-display-email');
     const forgotPasswordLink = document.getElementById('forgot-password-link'); 
 
     let isLoginMode = true;
     
     auth.onAuthStateChanged(user => {
         if (handleShareLink()) return;
-        if (user) { currentUser = user; showMainApp(); loadProjects(); } 
-        else { currentUser = null; hideAllPages(); authPage.classList.remove('hidden'); }
+        if (user) { 
+            currentUser = user; 
+            showMainApp(); 
+            loadProjects(); 
+            document.getElementById("sidebarUserEmail").innerText = user.email.split('@')[0];
+            loadAvatarFromStorage(); 
+        } 
+        else { 
+            currentUser = null; 
+            hideAllPages(); 
+            authPage.classList.remove('hidden'); 
+            toggleSidebar(false);
+        }
     });
 
     window.addEventListener('load', function() {
@@ -846,12 +934,12 @@
     });
 
     function showSuccess(message) {
-        successMsg.textContent = message; successMsg.style.display = 'block';
+        successMsg.textContent = message; successMsg.style.display = 'block'; errorMsg.style.display = 'none';
         setTimeout(() => { successMsg.style.display = 'none'; }, 2500);
     }
 
     function showError(message) {
-        errorMsg.textContent = message; errorMsg.style.display = 'block';
+        errorMsg.textContent = message; errorMsg.style.display = 'block'; successMsg.style.display = 'none';
         setTimeout(() => { errorMsg.style.display = 'none'; }, 3000);
     }
     
@@ -890,6 +978,206 @@
             .catch((error) => { showError('حدث خطأ أثناء إنشاء الحساب.'); });
     }
 
+    function toggleSidebar(open) {
+        const sidebar = document.getElementById("sidebarDrawer");
+        const overlay = document.getElementById("sidebarOverlay");
+        if(sidebar && overlay) {
+            if(open) { sidebar.classList.add("open"); overlay.classList.add("show"); } 
+            else { sidebar.classList.remove("open"); overlay.classList.remove("show"); }
+        }
+    }
+
+    function goToProjectsFromSidebar() {
+        toggleSidebar(false);
+        backToProjects();
+    }
+
+    function resetPasswordDirect() {
+        if (currentUser && currentUser.email) {
+            auth.sendPasswordResetEmail(currentUser.email).then(() => {
+                alert("تم إرسال رابط إعادة تعيين كلمة السر إلى بريدك الإلكتروني بنجاح! 🔑");
+            });
+        }
+    }
+
+    function uploadAvatarImage() {
+        const fileInput = document.getElementById("avatarFileInput");
+        if(fileInput.files && fileInput.files[0]) {
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let img = new Image();
+                img.onload = function() {
+                    let canvas = document.createElement('canvas');
+                    let ctx = canvas.getContext('2d');
+                    canvas.width = 120; canvas.height = 120;
+                    ctx.drawImage(img, 0, 0, 120, 120);
+                    let base64Img = canvas.toDataURL('image/jpeg', 0.6);
+                    document.getElementById("userAvatarImg").src = base64Img;
+                    if(currentUser) { localStorage.setItem("protrack_avatar_" + currentUser.uid, base64Img); showSuccess("تم تحديث صورتك الشخصية! 👤"); }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+        }
+    }
+
+    function loadAvatarFromStorage() {
+        if(currentUser) {
+            let savedAvatar = localStorage.getItem("protrack_avatar_" + currentUser.uid);
+            if(savedAvatar) { document.getElementById("userAvatarImg").src = savedAvatar; }
+            else { document.getElementById("userAvatarImg").src = "https://www.w3schools.com/howto/img_avatar.png"; }
+        }
+    }
+
+    function openGlobalFinancePage() {
+        toggleSidebar(false);
+        hideAllPages();
+        globalFinancePage.classList.remove('hidden');
+
+        const container = document.getElementById("globalFinanceTableContainer");
+        container.innerHTML = "";
+
+        if(projects.length === 0) {
+            container.innerHTML = "<p>لا توجد مشاريع مسجلة حالياً لاحتساب موقفها المالي.</p>";
+            return;
+        }
+
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>اسم المشروع الإنشائي</th>
+                        <th>الميزانية المقدرة</th>
+                        <th>المستلم من المالك</th>
+                        <th>الصرف الفعلي للمشروع</th>
+                        <th>صافي السيولة النقدية</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        let grandBudget = 0, grandReceived = 0, grandSpent = 0;
+
+        projects.forEach(p => {
+            let totalDayCost = (p.days || []).reduce((sum, d) => {
+                let cleanText = (d.costDetail || "").replace(/,/g, '');
+                const numbers = cleanText.match(/\d+/g);
+                if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
+                return sum;
+            }, 0);
+
+            let totalSubconCost = (p.subcontractors || []).reduce((sum, sub) => {
+                return sum + ((sub.logs || []).filter(l => l.type === "استحقاق").reduce((s, l) => s + (l.amount || 0), 0));
+            }, 0);
+
+            let totalInventoryCost = (p.inventory || []).reduce((sum, item) => sum + (item.cost || 0), 0);
+
+            let projectSpent = totalDayCost + totalSubconCost + totalInventoryCost;
+            let projectReceived = (p.payments || []).reduce((sum, pay) => sum + (pay.amount || 0), 0);
+            let projectNet = projectReceived - projectSpent;
+
+            grandBudget += (p.cost || 0);
+            grandReceived += projectReceived;
+            grandSpent += projectSpent;
+
+            tableHtml += `
+                <tr>
+                    <td><strong>${p.name}</strong></td>
+                    <td>${(p.cost || 0).toLocaleString()} د.ع</td>
+                    <td style="color:#2ecc71;">${projectReceived.toLocaleString()} د.ع</td>
+                    <td style="color:#e74c3c;">${projectSpent.toLocaleString()} د.ع</td>
+                    <td style="font-weight:bold; color:${projectNet >= 0 ? '#2ecc71' : '#e74c3c'};">${projectNet.toLocaleString()} د.ع</td>
+                </tr>
+            `;
+        });
+
+        let grandNet = grandReceived - grandSpent;
+        tableHtml += `
+                <tr style="background:rgba(33, 147, 176, 0.15); font-weight:bold;">
+                    <td>إجمالي جميع المواقع</td>
+                    <td>${grandBudget.toLocaleString()} د.ع</td>
+                    <td style="color:#2ecc71;">${grandReceived.toLocaleString()} د.ع</td>
+                    <td style="color:#e74c3c;">${grandSpent.toLocaleString()} د.ع</td>
+                    <td style="color:${grandNet >= 0 ? '#2ecc71' : '#e74c3c'};">${grandNet.toLocaleString()} د.ع</td>
+                </tr>
+            </tbody>
+        </table>
+        `;
+
+        container.innerHTML = tableHtml;
+    }
+
+    /* 👥 دالة فتح ومعالجة صفحة تصفية حسابات المقاولين والمجهزين الشاملة (الميزة الثالثة) */
+    function openGlobalSubcontractorsPage() {
+        toggleSidebar(false);
+        hideAllPages();
+        globalSubcontractorsPage.classList.remove('hidden');
+
+        const container = document.getElementById("globalSubcontractorsContainer");
+        container.innerHTML = "";
+
+        // كائن تجميعي مبرمج لدمج حركات نفس المقاول الفردي لو تكرر في أكثر من موقع
+        let globalLedger = {};
+
+        projects.forEach(p => {
+            if (p.subcontractors && p.subcontractors.length > 0) {
+                p.subcontractors.forEach(sub => {
+                    let cleanName = sub.name.trim();
+                    let req = (sub.logs || []).filter(l => l.type === "استحقاق").reduce((s, l) => s + (l.amount || 0), 0);
+                    let pd = (sub.logs || []).filter(l => l.type === "دفعة").reduce((s, l) => s + (l.amount || 0), 0);
+
+                    if (!globalLedger[cleanName]) {
+                        globalLedger[cleanName] = { type: sub.type, totalRequired: 0, totalPaid: 0, locations: [] };
+                    }
+                    globalLedger[cleanName].totalRequired += req;
+                    globalLedger[cleanName].totalPaid += pd;
+                    if(!globalLedger[cleanName].locations.includes(p.name)) {
+                        globalLedger[cleanName].locations.push(p.name);
+                    }
+                });
+            }
+        });
+
+        let keys = Object.keys(globalLedger);
+        if(keys.length === 0) {
+            container.innerHTML = "<p>لا يوجد ملفات مقاولين أو مجهزين مسجلين في المواقع حالياً.</p>";
+            return;
+        }
+
+        let tableHtml = `
+            <table>
+                <thead>
+                    <tr>
+                        <th>اسم المقاول / الجهة</th>
+                        <th>نوع التعامل</th>
+                        <th>المواقع الإنشائية المتواجد بها</th>
+                        <th>مجموع استحقاقه الكلي</th>
+                        <th>إجمالي المبالغ الواصلة</th>
+                        <th>المتبقي له في ذمتك</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        keys.forEach(name => {
+            let subData = globalLedger[name];
+            let balance = subData.totalRequired - subData.totalPaid;
+            tableHtml += `
+                <tr>
+                    <td><strong>👤 ${name}</strong></td>
+                    <td><small>${subData.type}</small></td>
+                    <td><small style="color:#3498db;">${subData.locations.join(" ، ")}</small></td>
+                    <td>${subData.totalRequired.toLocaleString()} د.ع</td>
+                    <td style="color:#2ecc71;">${subData.totalPaid.toLocaleString()} د.ع</td>
+                    <td style="font-weight:bold; color:${balance > 0 ? '#e74c3c' : '#2ecc71'};">${balance.toLocaleString()} د.ع</td>
+                </tr>
+            `;
+        });
+
+        tableHtml += `</tbody></table>`;
+        container.innerHTML = tableHtml;
+    }
+
     function toggleAccordionTab(tabId) {
         const targetContent = document.getElementById(tabId);
         const targetBtn = document.getElementById('btn-' + tabId);
@@ -904,23 +1192,17 @@
             
             targetContent.classList.add('active');
             targetBtn.classList.add('active');
-            poolActiveTabId = tabId; 
+            poolActiveTabId = tabId;
         }
     }
 
     function hideAllPages() {
         authPage.classList.add('hidden'); mainPage.classList.add('hidden');
-        projectPage.classList.add('hidden'); dayPage.classList.add('hidden'); sharePage.classList.add('hidden');
+        projectPage.classList.add('hidden'); globalFinancePage.classList.add('hidden');
+        globalSubcontractorsPage.classList.add('hidden'); dayPage.classList.add('hidden'); sharePage.classList.add('hidden');
     }
 
-    function showMainApp() {
-        hideAllPages(); mainPage.classList.remove('hidden');
-        if (currentUser) {
-            userDisplayName.textContent = currentUser.displayName || currentUser.email.split('@')[0];
-            userDisplayEmail.textContent = currentUser.email;
-        }
-    }
-
+    function showMainApp() { hideAllPages(); mainPage.classList.remove('hidden'); }
     function logout() { auth.signOut().then(() => { showSuccess('تم تسجيل الخروج بنجاح! 👋'); }); }
 
     loginBtn.addEventListener('click', function() {
@@ -937,7 +1219,6 @@
     });
 
     toggleLink.addEventListener('click', function(e) { e.preventDefault(); toggleMode(); });
-    logoutBtn.addEventListener('click', logout);
     form.addEventListener('keypress', function(e) { if (e.key === 'Enter') { e.preventDefault(); if (isLoginMode) { loginBtn.click(); } else { signupBtn.click(); } } });
 
     function loadProjects() {
@@ -968,19 +1249,20 @@
         if (projects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع.</p>"; return; }
         projects.forEach((p,i)=>{
             let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
-            
             let totalDayCost = (p.days || []).reduce((sum, d) => {
                 let cleanText = (d.costDetail || "").replace(/,/g, '');
                 const numbers = cleanText.match(/\d+/g);
                 if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
                 return sum;
             }, 0);
-            
+            let totalInventoryCost = (p.inventory || []).reduce((sum, item) => sum + (item.cost || 0), 0);
+            let totalSpent = totalDayCost + totalInventoryCost;
+
             const div=document.createElement("div"); div.className="project flex-between";
             div.innerHTML=`
                 <div style="flex: 1;" onclick="openProject(${i})">
                     <b>${p.name}</b><br>
-                    <small>💰 ${totalDayCost.toLocaleString()} | 📊 ${progress}%</small>
+                    <small>💰 صرفيات: ${totalSpent.toLocaleString()} د.ع | 📊 إنجاز: ${progress}%</small>
                 </div>
                 <div class="project-actions">
                     <button class="action-btn edit-btn" onclick="event.stopPropagation(); editProjectDirect(${i})"><i class="fas fa-edit"></i></button>
@@ -998,15 +1280,14 @@
         if (filteredProjects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع تطابق البحث.</p>"; return; }
         filteredProjects.forEach((p, i) => {
             let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
-            let totalSpent = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
-            
             let totalDayCost = (p.days || []).reduce((sum, d) => {
                 let cleanText = (d.costDetail || "").replace(/,/g, '');
                 const numbers = cleanText.match(/\d+/g);
                 if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
                 return sum;
             }, 0);
-            let grandTotal = totalSpent + totalDayCost;
+            let totalInventoryCost = (p.inventory || []).reduce((sum, item) => sum + (item.cost || 0), 0);
+            let grandTotal = totalDayCost + totalInventoryCost;
             
             const originalIndex = projects.findIndex(proj => proj.id === p.id);
             const div = document.createElement("div"); div.className = "project flex-between";
@@ -1043,7 +1324,7 @@
             let dayDate = new Date(startDateObj); dayDate.setDate(dayDate.getDate() + i);
             generatedDays.push({ date: dayDate.toISOString().split("T")[0], workDescription: "", workersDetail: "", costDetail: "", media: [] });
         }
-        const newProject = { name, duration, cost, startDate: startDateStr, days: generatedDays, payments: [], subcontractors: [] };
+        const newProject = { name, duration, cost, startDate: startDateStr, days: generatedDays, payments: [], subcontractors: [], inventory: [] };
         saveProject(newProject).then(() => { document.getElementById("projectCost").value = ""; });
         document.getElementById("addProjectForm").classList.add("hidden");
         document.getElementById("projectName").value = ""; document.getElementById("projectDuration").value = "";
@@ -1092,7 +1373,9 @@
             return sum + ((sub.logs || []).filter(l => l.type === "استحقاق").reduce((s, l) => s + l.amount, 0));
         }, 0);
 
-        let grandTotalSpent = totalDayCost + totalSubconCost;
+        let totalInventoryCost = (p.inventory || []).reduce((sum, item) => sum + (item.cost || 0), 0);
+
+        let grandTotalSpent = totalDayCost + totalSubconCost + totalInventoryCost;
         let totalPayments = (p.payments || []).reduce((sum, pay) => sum + pay.amount, 0);
         let financialBalance = totalPayments - grandTotalSpent;
         let budgetPercent = p.cost > 0 ? Math.round((grandTotalSpent / p.cost) * 100) : 0;
@@ -1109,9 +1392,12 @@
             finStatusEl.style.color = "#e74c3c";
         }
 
-        if (!isShareMode) { renderPayments(); hideAddPaymentForm(); hideAddSubconForm(); }
+        if (!isShareMode) { 
+            renderPayments(); hideAddPaymentForm(); hideAddSubconForm(); hideAddInventoryForm();
+        }
         renderDays();
         renderSubcontractors();
+        renderInventory();
 
         if (preserveOpenTab && poolActiveTabId) {
             document.getElementById(poolActiveTabId).classList.add('active');
@@ -1123,11 +1409,7 @@
         }
     }
     
-    function backToProjects(){
-        hideAllPages();
-        mainPage.classList.remove("hidden"); loadProjects();
-    }
-    
+    function backToProjects(){ hideAllPages(); mainPage.classList.remove("hidden"); loadProjects(); }
     function backToProjectPageFromShare(){ if (isShareMode) return; sharePage.classList.add("hidden"); projectPage.classList.remove("hidden"); }
     
      function renderPayments(){
@@ -1165,20 +1447,10 @@
         let amount = parseInt(amountRaw.replace(/,/g, ''));
         let chosenDate = document.getElementById("paymentDateInput").value;
         
-        if(!amount || isNaN(amount) || !chosenDate) {
-            alert("❌ يرجى إدخال مبلغ الدفعة وتحديد التاريخ بشكل صحيح."); return;
-        }
-        
-        let totalPreviousPayments = (p.payments || []).reduce((sum, pay) => sum + pay.amount, 0);
-        if ((totalPreviousPayments + amount) > p.cost) {
-            alert(`❌ خطأ مالي: لا يمكن حفظ الدفعة! مجموع الدفعات المستلمة (${(totalPreviousPayments + amount).toLocaleString()}) سيتجاوز مبلغ عقد المشروع الكلي الفعلي (${p.cost.toLocaleString()}).`);
-            return;
-        }
-        
+        if(!amount || isNaN(amount) || !chosenDate) { alert("❌ أدخل الحقول كاملة."); return; }
         if(!p.payments) p.payments = [];
         p.payments.push({ amount: amount, date: chosenDate });
         p.payments.sort((a, b) => new Date(a.date) - new Date(b.date));
-        
         saveProject(p).then(() => { openProject(currentProjectIndex, true); });
     }
 
@@ -1192,16 +1464,15 @@
         let agreementRaw = document.getElementById("subconAgreementInput").value;
         let agreement = parseInt(agreementRaw.replace(/,/g, '')) || 0;
         
-        if(!name) { alert("❌ يرجى كتابة اسم المقاول أو المجهز"); return; }
+        if(!name) { alert("❌ يرجى كتابة الاسم"); return; }
         if(!p.subcontractors) p.subcontractors = [];
         p.subcontractors.push({ name, type, agreement, logs: [] });
-        
         saveProject(p).then(() => { hideAddSubconForm(); openProject(currentProjectIndex, true); });
     }
 
     function renderSubcontractors() {
         let p = projects[currentProjectIndex]; const list = document.getElementById("subcontractorsList"); list.innerHTML = "";
-        if(!p.subcontractors || p.subcontractors.length === 0) { list.innerHTML = "<p>لا يوجد مقاولين أو مجهزين مضافين حالياً.</p>"; return; }
+        if(!p.subcontractors || p.subcontractors.length === 0) { list.innerHTML = "<p>لا يوجد مقاولين مضافين حالياً.</p>"; return; }
         
         p.subcontractors.forEach((sub, idx) => {
             let totalRequired = (sub.logs || []).filter(l => l.type === "استحقاق").reduce((sum, l) => sum + l.amount, 0);
@@ -1212,15 +1483,15 @@
             div.innerHTML = `
                 <div class="flex-between" onclick="toggleSubconDetails(${idx})" style="cursor:pointer;">
                     <div><strong>👤 ${sub.name}</strong> <small>(${sub.type})</small><br>
-                    <small>الاتفاق الأولي: ${sub.agreement.toLocaleString()} | استحقاق: ${totalRequired.toLocaleString()} | واصل: ${totalPaid.toLocaleString()}</small></div>
-                    <div><span style="color:${balance > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">متبقي له: ${balance.toLocaleString()} د.ع</span> ⬇</div>
+                    <small>الاتفاق: ${sub.agreement.toLocaleString()} | استحقاق: ${totalRequired.toLocaleString()} | واصل: ${totalPaid.toLocaleString()}</small></div>
+                    <div><span style="color:${balance > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">له: ${balance.toLocaleString()} د.ع</span> ⬇</div>
                 </div>
                 <div id="subcon-details-${idx}" class="subcon-details">
                     <div class="inline-form-box">
-                        <h5>➕ تسجيل حركة حسابية جديدة</h5>
-                        <select id="logType-${idx}"><option value="استحقاق">استحقاق (عمل منجز / مواد واصلة)</option><option value="دفعة">دفعة واصلة (سلفة مالية مدفوعة)</option></select>
-                        <input type="text" id="logAmount-${idx}" placeholder="أدخل المبلغ د.ع" oninput="formatNumberInput(this)">
-                        <input type="text" id="logNote-${idx}" placeholder="بيان الحركة (مثال: وجبة طابوق، سلفة كاش)">
+                        <h5>➕ تسجيل حركة حسابية</h5>
+                        <select id="logType-${idx}"><option value="استحقاق">استحقاق (عمل منجز)</option><option value="دفعة">دفعة واصلة (سلفة)</option></select>
+                        <input type="text" id="logAmount-${idx}" placeholder="المبلغ د.ع" oninput="formatNumberInput(this)">
+                        <input type="text" id="logNote-${idx}" placeholder="بيان الحركة">
                         <button onclick="addSubconLog(${idx})" style="padding:6px 12px; font-size:13px;">حفظ الحركة</button>
                     </div>
                     <table>
@@ -1234,7 +1505,60 @@
             list.appendChild(div);
         });
     }
+
+    function showAddInventoryForm() {
+        document.getElementById("addInventoryForm").classList.remove("hidden");
+        document.getElementById("matDateInput").value = new Date().toISOString().split("T")[0];
+        document.getElementById("matQtyInput").value = "";
+        document.getElementById("matCostInput").value = "";
+    }
+    function hideAddInventoryForm() { document.getElementById("addInventoryForm").classList.add("hidden"); }
     
+    function submitInventoryForm() {
+        if (isShareMode) return;
+        let p = projects[currentProjectIndex];
+        let type = document.getElementById("matTypeInput").value;
+        let qty = document.getElementById("matQtyInput").value;
+        let costRaw = document.getElementById("matCostInput").value;
+        let cost = parseInt(costRaw.replace(/,/g, ''));
+        let date = document.getElementById("matDateInput").value;
+
+        if(!qty || !cost || !date) { alert("❌ يرجى ملء حقول المادة الموردة كاملة."); return; }
+        if(!p.inventory) p.inventory = [];
+
+        p.inventory.push({ type, qty, cost, date });
+        saveProject(p).then(() => { hideAddInventoryForm(); openProject(currentProjectIndex, true); });
+    }
+
+    function renderInventory() {
+        let p = projects[currentProjectIndex];
+        const list = document.getElementById("inventoryList"); list.innerHTML = "";
+        if(!p.inventory || p.inventory.length === 0) { list.innerHTML = "<p>المخزن فارغ. لا توجد مواد إنشائية موردة لهذا الموقع حالياً.</p>"; return; }
+
+        p.inventory.forEach((item, index) => {
+            const div = document.createElement("div"); div.className = "inventory-card flex-between";
+            div.innerHTML = `
+                <div>
+                    <strong>🏗️ مادة واصلة: ${item.type}</strong><br>
+                    <small>الكمية المستلمة: ${item.qty} | التاريخ: ${item.date}</small>
+                </div>
+                <div style="text-align: left;">
+                    <span style="font-weight:bold; color:#e74c3c; display:block;">السعر الكلي: ${item.cost.toLocaleString()} د.ع</span>
+                    <button class="delete" style="padding:3px 8px; font-size:11px; margin-top:5px;" onclick="deleteInventoryItem(${index})">✖ حذف</button>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    }
+
+    function deleteInventoryItem(idx) {
+        if(confirm("هل تريد حذف وجبة المواد هذه من مخزن الموقع؟")) {
+            let p = projects[currentProjectIndex];
+            p.inventory.splice(idx, 1);
+            saveProject(p).then(() => openProject(currentProjectIndex, true));
+        }
+    }
+
     function toggleSubconDetails(idx) { let el = document.getElementById("subcon-details-"+idx); el.style.display = el.style.display === "block" ? "none" : "block"; }
     
     function addSubconLog(idx) {
@@ -1246,14 +1570,12 @@
         if(!sub.logs) sub.logs = []; sub.logs.push({ type, amount: amt, note: note + " | " + new Date().toISOString().split("T")[0] });
         saveProject(p).then(() => openProject(currentProjectIndex, true));
     }
-    
     function deleteSubconLog(subIdx, logIdx) {
         let p = projects[currentProjectIndex]; p.subcontractors[subIdx].logs.splice(logIdx, 1);
         saveProject(p).then(() => openProject(currentProjectIndex, true));
     }
-    
     function deleteSubcontractor(idx) {
-        if(confirm("هل تريد حذف حساب هذا المقاول/المجهز بالكامل من المشروع؟")) {
+        if(confirm("هل تريد حذف حساب هذا المقاول/المجهز بالكامل؟")) {
             let p = projects[currentProjectIndex]; p.subcontractors.splice(idx, 1);
             saveProject(p).then(() => openProject(currentProjectIndex, true));
         }
@@ -1261,24 +1583,16 @@
 
     function formatNumberInput(input) {
         let value = input.value.replace(/,/g, '');
-        if (!isNaN(value) && value.length > 0) {
-            input.value = Number(value).toLocaleString('en-US');
-        } else {
-            value = value.replace(/[^\d]/g, '');
-            input.value = value ? Number(value).toLocaleString('en-US') : '';
-        }
+        if (!isNaN(value) && value.length > 0) { input.value = Number(value).toLocaleString('en-US'); } 
+        else { value = value.replace(/[^\d]/g, ''); input.value = value ? Number(value).toLocaleString('en-US') : ''; }
     }
 
     function formatTextareaNumbers(textarea) {
-        let cursorPosition = textarea.selectionStart; 
-        let text = textarea.value;
-        
+        let cursorPosition = textarea.selectionStart; let text = textarea.value;
         let formattedText = text.replace(/[\d,]+/g, function(match) {
-            let cleanNum = match.replace(/,/g, '');
-            if(cleanNum === "") return "";
+            let cleanNum = match.replace(/,/g, ''); if(cleanNum === "") return "";
             return Number(cleanNum).toLocaleString('en-US');
         });
-        
         let lengthDiff = formattedText.length - text.length;
         textarea.value = formattedText;
         textarea.setSelectionRange(cursorPosition + lengthDiff, cursorPosition + lengthDiff);
@@ -1357,10 +1671,7 @@
     
     function openDay(i){ 
         if (isShareMode) return;
-        currentDayIndex = i; 
-        hideAllPages(); 
-        dayPage.classList.remove("hidden"); 
-        
+        currentDayIndex = i; hideAllPages(); dayPage.classList.remove("hidden"); 
         let d = projects[currentProjectIndex].days[i]; 
         document.getElementById("dayDate").innerText = "📅 " + d.date + " (" + getDayName(d.date) + ")"; 
         document.getElementById("workDescription").value = d.workDescription || ""; 
@@ -1380,7 +1691,7 @@
         let files = document.getElementById("mediaInput").files;
         if (files.length === 0) { saveProject(p).then(() => { renderMedia(); openProject(currentProjectIndex, true); }); return; }
         let filesProcessed = 0;
-        showSuccess("جاري معالجة وضغط الصور لحفظها خفيفة... ⏳");
+        showSuccess("جاري معالجة وضغط الصور... ⏳");
         for (let f of files) {
             let reader = new FileReader();
             reader.onload = function(e) {
@@ -1393,9 +1704,7 @@
                     let compressedData = canvas.toDataURL('image/jpeg', 0.4);
                     if (!d.media) d.media = []; d.media.push(compressedData); filesProcessed++;
                     if (filesProcessed === files.length) {
-                        saveProject(p).then(() => {
-                            renderMedia(); document.getElementById("mediaInput").value = ""; openProject(currentProjectIndex, true);
-                        });
+                        saveProject(p).then(() => { renderMedia(); document.getElementById("mediaInput").value = ""; openProject(currentProjectIndex, true); });
                     }
                 };
                 img.src = e.target.result;
@@ -1405,27 +1714,25 @@
     }
     
     function renderMedia(){ 
-    if (isShareMode) return;
-    let d=projects[currentProjectIndex].days[currentDayIndex]; 
-    let container=document.getElementById("mediaList"); container.innerHTML=""; 
-    (d.media || []).forEach((src,j)=>{ 
-        let div=document.createElement("div"); div.style.cssText = "display:inline-block; position:relative;"; 
-        let img=document.createElement("img"); img.src=src; img.onclick=()=>openFullscreen(src); 
-        let del=document.createElement("button"); del.innerText="x"; del.className="delete"; 
-        del.style.cssText = "position:absolute; top:0; right:0;"; 
-        del.onclick=(event)=>{
-            event.stopPropagation();
-            if (confirm("هل أنت متأكد من حذف هذه الصورة؟")) { deleteImage(currentDayIndex,j); }
-        }; 
-        div.appendChild(img); div.appendChild(del); container.appendChild(div); 
-    }); 
-}
+        if (isShareMode) return;
+        let d=projects[currentProjectIndex].days[currentDayIndex]; 
+        let container=document.getElementById("mediaList"); container.innerHTML=""; 
+        (d.media || []).forEach((src,j)=>{ 
+            let div=document.createElement("div"); div.style.cssText = "display:inline-block; position:relative;"; 
+            let img=document.createElement("img"); img.src=src; img.onclick=()=>openFullscreen(src); 
+            let del=document.createElement("button"); del.innerText="x"; del.className="delete"; 
+            del.style.cssText = "position:absolute; top:0; right:0;"; 
+            del.onclick=(event)=>{
+                event.stopPropagation(); if (confirm("هل أنت متأكد من حذف هذه الصورة؟")) { deleteImage(currentDayIndex,j); }
+            }; 
+            div.appendChild(img); div.appendChild(del); container.appendChild(div); 
+        }); 
+    }
     
     function deleteImage(dayIndex,imgIndex){ 
         if (isShareMode) return;
         let p = projects[currentProjectIndex]; let d = p.days[dayIndex];
-        d.media.splice(imgIndex,1); 
-        saveProject(p).then(() => { if(dayIndex===currentDayIndex) renderMedia(); });
+        d.media.splice(imgIndex,1); saveProject(p).then(() => { if(dayIndex===currentDayIndex) renderMedia(); });
     }
     
     function openFullscreen(src){ 
@@ -1434,10 +1741,9 @@
         fs.onclick=()=>fs.remove(); document.body.appendChild(fs); 
     }
     
-   // 🔥 إرجاع نظام المنبثق الذكي التلقائي للمشاركة مثل ما كان
    function shareProject() {
         if (isShareMode) return;
-        const shareOption = prompt("اختر نوع التصدير والمشاركة:\n1. مشاركة التقرير كاملاً (رابط ويب زبائن)\n2. طباعة كتقرير رسمي PDF");
+        const shareOption = prompt("اختر نوع التصدير والمشاركة:\n1. مشاركة جميع الأيام (رابط)\n2. مشاركة/طباعة أيام معينة");
         let projectToShare = projects[currentProjectIndex];
         let shareLink = window.location.origin + window.location.pathname + `?share=${projectToShare.id}&uid=${currentUser.uid}`;
         if (shareOption === "1") { prompt("انسخ الرابط لمشاركة جميع الأيام:", shareLink); } 
@@ -1446,28 +1752,29 @@
 
     function showDaySelectionPopup() {
         if (isShareMode) return;
-        let popupContainer = document.createElement("div");
-        popupContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;";
-        let popupContent = document.createElement("div");
-        popupContent.style.cssText = "background: #fff; padding: 20px; border-radius: 12px; width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto; text-align: right; direction: rtl; color: #333;";
-        let title = document.createElement("h3"); title.style.color = "#333"; title.innerText = "اختر الأيام للتقرير والمشاركة:"; popupContent.appendChild(title);
+        let popupContainer = document.createElement("div"); popupContainer.className = "custom-popup-wrapper";
+        let popupContent = document.createElement("div"); popupContent.className = "custom-popup-content";
+        let title = document.createElement("h3"); title.innerText = "اختر الأيام للتقرير والمشاركة:"; popupContent.appendChild(title);
 
         let currentProject = projects[currentProjectIndex];
-        if (currentProject && currentProject.days) {
+        if (currentProject && currentProject.days && currentProject.days.length > 0) {
             currentProject.days.forEach((day, index) => {
-                let dayDiv = document.createElement("div"); dayDiv.style.marginBottom = "10px";
-                let checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.id = "day-" + index; checkbox.style.cssText = "width: auto; margin-left: 10px;";
+                let dayDiv = document.createElement("div"); dayDiv.style.cssText = "margin-bottom:12px; display:flex; align-items:center;";
+                let checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.id = "day-" + index;
                 let label = document.createElement("label"); label.htmlFor = "day-" + index; label.innerText = `اليوم ${index + 1} - ${day.date}`;
                 dayDiv.appendChild(checkbox); dayDiv.appendChild(label); popupContent.appendChild(dayDiv);
             });
-        }
+        } else { let pEmpty = document.createElement("p"); pEmpty.innerText = "لا توجد أيام مسجلة."; popupContent.appendChild(pEmpty); }
         
         let buttonDiv = document.createElement("div"); buttonDiv.style.cssText = "display: flex; flex-direction: column; gap: 8px; margin-top: 20px;";
-        
         let linkBtn = document.createElement("button"); linkBtn.innerText = "🔗 إنشاء رابط ويب للأيام المحددة"; linkBtn.style.backgroundColor = "#3498db";
         linkBtn.onclick = () => {
             let selectedIndices = [];
-            popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => { if (checkbox.checked) selectedIndices.push(index); });
+            if(currentProject.days) {
+                currentProject.days.forEach((_, index) => {
+                    let chk = document.getElementById("day-" + index); if (chk && chk.checked) selectedIndices.push(index);
+                });
+            }
             if (selectedIndices.length > 0) {
                 let projectId = projects[currentProjectIndex].id; let daysString = selectedIndices.join(',');
                 let shareLink = window.location.origin + window.location.pathname + `?share=${projectId}&uid=${currentUser.uid}&days=${daysString}`;
@@ -1479,17 +1786,17 @@
         let pdfBtn = document.createElement("button"); pdfBtn.innerText = "🖨️ تحميل وطباعة كتقرير رسمي PDF"; pdfBtn.style.backgroundColor = "#2ecc71";
         pdfBtn.onclick = () => {
             let selectedIndices = [];
-            popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => { if (checkbox.checked) selectedIndices.push(index); });
+            if(currentProject.days) {
+                currentProject.days.forEach((_, index) => {
+                    let chk = document.getElementById("day-" + index); if (chk && chk.checked) selectedIndices.push(index);
+                });
+            }
             if (selectedIndices.length > 0) {
                 popupContainer.remove();
                 let originalDays = [...currentProject.days];
                 currentProject.days = currentProject.days.filter((day, index) => selectedIndices.includes(index));
                 renderSharePage(currentProject);
-                setTimeout(() => {
-                    window.print();
-                    currentProject.days = originalDays;
-                    openProject(currentProjectIndex, true);
-                }, 500);
+                setTimeout(() => { window.print(); currentProject.days = originalDays; openProject(currentProjectIndex, true); }, 500);
             } else { alert("لم يتم اختيار أي يوم للطباعة."); }
         };
 
@@ -1497,13 +1804,7 @@
         cancelBtn.onclick = () => popupContainer.remove();
         
         buttonDiv.appendChild(pdfBtn); buttonDiv.appendChild(linkBtn); buttonDiv.appendChild(cancelBtn);
-        popupContent.appendChild(buttonDiv); popupContent.appendChild(buttonDiv); popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
-    }
-
-    function resetPassword() {
-        const email = document.getElementById("email").value;
-        if (email) { auth.sendPasswordResetEmail(email).then(() => { alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."); }); } 
-        else { alert("يرجى إدخال بريدك الإلكتروني أولاً في الحقل المخصص."); }
+        popupContent.appendChild(buttonDiv); popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
     }
 
     function renderSharePage(projectData) {
@@ -1560,20 +1861,15 @@ function handleShareLink() {
 }
 
     document.addEventListener('DOMContentLoaded', (event) => {
-        const darkModeToggle = document.getElementById('darkModeToggle');
+        const sidebarThemeBtn = document.getElementById('sidebarThemeBtn');
         const currentTheme = localStorage.getItem("theme");
         if (currentTheme === "dark") { document.body.classList.add("light-mode"); } 
         else if (currentTheme === "light") { document.body.classList.remove("light-mode"); }
-        function updateDarkModeIcon() {
-            if (document.body.classList.contains("light-mode")) { darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>'; } 
-            else { darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>'; }
-        }
-        updateDarkModeIcon();
-        darkModeToggle.addEventListener('click', () => {
+        
+        sidebarThemeBtn.addEventListener('click', () => {
             document.body.classList.toggle("light-mode");
             if (document.body.classList.contains("light-mode")) { localStorage.setItem("theme", "dark"); } 
             else { localStorage.setItem("theme", "light"); }
-            updateDarkModeIcon();
         });
     });
 </script>
