@@ -153,7 +153,7 @@
         .card-stat small { color: #888; display: block; font-size: 0.8rem; margin-bottom: 4px; }
         .card-stat span { font-weight: bold; font-size: 1.1rem; }
         
-        /* 🗂️ نظام شريط التبويبات العمودي والاحترافي الجدید المتتالي تحت بعضه */
+        /* 🗂️ نظام شريط التبويبات العمودي والاحترافي الجدید (Accordion Style) */
         .tabs-vertical-container {
             display: flex;
             flex-direction: column;
@@ -806,7 +806,7 @@
     let currentProjectIndex = null;
     let currentDayIndex = null;
     let currentUser = null;
-    let poolActiveTabId = null; // الاحتفاظ بهوية القسم المفتوح حالياً لضمان البقاء فيه عند الحفظ التلقائي
+    let poolActiveTabId = null; 
     let isShareMode = false;
 
     const authPage = document.getElementById('authPage');
@@ -890,25 +890,21 @@
             .catch((error) => { showError('حدث خطأ أثناء إنشاء الحساب.'); });
     }
 
-    // 🔥 الخوارزمية الهندسية الجدیدة لنظام القوائم المنسدلة العمودية (Accordion System) للفتح والإغلاق التبادلي والكامل
     function toggleAccordionTab(tabId) {
         const targetContent = document.getElementById(tabId);
         const targetBtn = document.getElementById('btn-' + tabId);
         
         if (targetContent.classList.contains('active')) {
-            // إذا كان مفتوحاً مسبقاً، يتم إغلاقه الحين
             targetContent.classList.remove('active');
             targetBtn.classList.remove('active');
             poolActiveTabId = null;
         } else {
-            // إغلاق كل الأقسام المفتوحة لتجنب الازدحام والتشتت بالموقع
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             document.querySelectorAll('.tab-accordion-btn').forEach(btn => btn.classList.remove('active'));
             
-            // فتح القسم المطلوب فوراً
             targetContent.classList.add('active');
             targetBtn.classList.add('active');
-            poolActiveTabId = tabId; // حفظ الهوية للبقاء داخلها عند عمليات الحفظ
+            poolActiveTabId = tabId; 
         }
     }
 
@@ -1085,7 +1081,6 @@
         document.getElementById("daysLeft").innerText = "⏳ متبقي " + left + " يوم";
         document.getElementById("projCost").innerText = "💰 الميزانية المقدرة الكلية: " + p.cost.toLocaleString() + " د.ع";
         
-        // احتساب مبالغ اليوميات
         let totalDayCost = (p.days || []).reduce((sum, d) => {
             let cleanText = (d.costDetail || "").replace(/,/g, '');
             const numbers = cleanText.match(/\d+/g);
@@ -1093,7 +1088,6 @@
             return sum;
         }, 0);
 
-        // احتساب استحقاقات المقاولين والمجهزين
         let totalSubconCost = (p.subcontractors || []).reduce((sum, sub) => {
             return sum + ((sub.logs || []).filter(l => l.type === "استحقاق").reduce((s, l) => s + l.amount, 0));
         }, 0);
@@ -1119,7 +1113,6 @@
         renderDays();
         renderSubcontractors();
 
-        // 🔥 تعديل هندسي ذكي: أول ما يفتح المشروع تبدأ التبويبات مغلقة (مخفية) تماماً إلا إذا كنا نحدث بيانات داخل تبويب معين
         if (preserveOpenTab && poolActiveTabId) {
             document.getElementById(poolActiveTabId).classList.add('active');
             document.getElementById('btn-' + poolActiveTabId).classList.add('active');
@@ -1186,7 +1179,6 @@
         p.payments.push({ amount: amount, date: chosenDate });
         p.payments.sort((a, b) => new Date(a.date) - new Date(b.date));
         
-        // الحفظ التلقائي مع البقاء في نفس الصفحة ونفس التبويب المفتوح
         saveProject(p).then(() => { openProject(currentProjectIndex, true); });
     }
 
@@ -1442,13 +1434,76 @@
         fs.onclick=()=>fs.remove(); document.body.appendChild(fs); 
     }
     
+   // 🔥 إرجاع نظام المنبثق الذكي التلقائي للمشاركة مثل ما كان
    function shareProject() {
         if (isShareMode) return;
         const shareOption = prompt("اختر نوع التصدير والمشاركة:\n1. مشاركة التقرير كاملاً (رابط ويب زبائن)\n2. طباعة كتقرير رسمي PDF");
         let projectToShare = projects[currentProjectIndex];
         let shareLink = window.location.origin + window.location.pathname + `?share=${projectToShare.id}&uid=${currentUser.uid}`;
         if (shareOption === "1") { prompt("انسخ الرابط لمشاركة جميع الأيام:", shareLink); } 
-        else if (shareOption === "2") { window.print(); }
+        else if (shareOption === "2") { showDaySelectionPopup(); }
+    }
+
+    function showDaySelectionPopup() {
+        if (isShareMode) return;
+        let popupContainer = document.createElement("div");
+        popupContainer.style.cssText = "position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;";
+        let popupContent = document.createElement("div");
+        popupContent.style.cssText = "background: #fff; padding: 20px; border-radius: 12px; width: 90%; max-width: 420px; max-height: 80vh; overflow-y: auto; text-align: right; direction: rtl; color: #333;";
+        let title = document.createElement("h3"); title.style.color = "#333"; title.innerText = "اختر الأيام للتقرير والمشاركة:"; popupContent.appendChild(title);
+
+        let currentProject = projects[currentProjectIndex];
+        if (currentProject && currentProject.days) {
+            currentProject.days.forEach((day, index) => {
+                let dayDiv = document.createElement("div"); dayDiv.style.marginBottom = "10px";
+                let checkbox = document.createElement("input"); checkbox.type = "checkbox"; checkbox.id = "day-" + index; checkbox.style.cssText = "width: auto; margin-left: 10px;";
+                let label = document.createElement("label"); label.htmlFor = "day-" + index; label.innerText = `اليوم ${index + 1} - ${day.date}`;
+                dayDiv.appendChild(checkbox); dayDiv.appendChild(label); popupContent.appendChild(dayDiv);
+            });
+        }
+        
+        let buttonDiv = document.createElement("div"); buttonDiv.style.cssText = "display: flex; flex-direction: column; gap: 8px; margin-top: 20px;";
+        
+        let linkBtn = document.createElement("button"); linkBtn.innerText = "🔗 إنشاء رابط ويب للأيام المحددة"; linkBtn.style.backgroundColor = "#3498db";
+        linkBtn.onclick = () => {
+            let selectedIndices = [];
+            popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => { if (checkbox.checked) selectedIndices.push(index); });
+            if (selectedIndices.length > 0) {
+                let projectId = projects[currentProjectIndex].id; let daysString = selectedIndices.join(',');
+                let shareLink = window.location.origin + window.location.pathname + `?share=${projectId}&uid=${currentUser.uid}&days=${daysString}`;
+                prompt("انسخ الرابط لمشاركة الأيام المحددة:", shareLink);
+            } else { alert("لم يتم اختيار أي يوم."); }
+            popupContainer.remove();
+        };
+
+        let pdfBtn = document.createElement("button"); pdfBtn.innerText = "🖨️ تحميل وطباعة كتقرير رسمي PDF"; pdfBtn.style.backgroundColor = "#2ecc71";
+        pdfBtn.onclick = () => {
+            let selectedIndices = [];
+            popupContent.querySelectorAll("input[type='checkbox']").forEach((checkbox, index) => { if (checkbox.checked) selectedIndices.push(index); });
+            if (selectedIndices.length > 0) {
+                popupContainer.remove();
+                let originalDays = [...currentProject.days];
+                currentProject.days = currentProject.days.filter((day, index) => selectedIndices.includes(index));
+                renderSharePage(currentProject);
+                setTimeout(() => {
+                    window.print();
+                    currentProject.days = originalDays;
+                    openProject(currentProjectIndex, true);
+                }, 500);
+            } else { alert("لم يتم اختيار أي يوم للطباعة."); }
+        };
+
+        let cancelBtn = document.createElement("button"); cancelBtn.innerText = "إلغاء"; cancelBtn.style.backgroundColor = "#e74c3c";
+        cancelBtn.onclick = () => popupContainer.remove();
+        
+        buttonDiv.appendChild(pdfBtn); buttonDiv.appendChild(linkBtn); buttonDiv.appendChild(cancelBtn);
+        popupContent.appendChild(buttonDiv); popupContent.appendChild(buttonDiv); popupContainer.appendChild(popupContent); document.body.appendChild(popupContainer);
+    }
+
+    function resetPassword() {
+        const email = document.getElementById("email").value;
+        if (email) { auth.sendPasswordResetEmail(email).then(() => { alert("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."); }); } 
+        else { alert("يرجى إدخال بريدك الإلكتروني أولاً في الحقل المخصص."); }
     }
 
     function renderSharePage(projectData) {
