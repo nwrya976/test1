@@ -638,7 +638,7 @@
     </button>
 
     <div style="margin-top:auto; padding-top:15px; border-top:1px solid #333; font-size:12px;">
-        <p style="color:#888; margin-bottom:5px;">👨‍💻 الدعم الفني وتطوير البرمجيات:</p>
+        <p style="color:#888; margin-bottom:5px;">👨‍💻 الدعم الفني :</p>
         <a href="tel:07838987839" style="color:#6dd5ed; text-decoration:none; display:flex; align-items:center; gap:8px; margin-bottom:5px;">
             <i class="fas fa-phone-alt"></i> 07838987839
         </a>
@@ -683,7 +683,7 @@
 </div>
 
 <div class="container hidden" id="mainPage">
-    <h1>📋 قائمة المشاريع لبنايات المقاولات</h1>
+    <h1>📋 قائمة المشاريع </h1>
     <input type="text" id="searchInput" placeholder="🔍 بحث عن مشروع معين..." onkeyup="searchProjects()">
     <div id="projectList"></div>
     <button onclick="showAddProject()">➕ إضافة مشروع جديد</button>
@@ -691,7 +691,7 @@
         <input type="text" id="projectName" placeholder="اسم المشروع">
         <input type="number" id="projectDuration" placeholder="مدة المشروع (بالأيام)">
         <input type="text" id="projectCost" placeholder="تكلفة المشروع الكلية المقدرة" oninput="formatNumberInput(this)">
-        <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً؟" value="0">
+        <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً؟">
         <button onclick="addProject()">حفظ</button>
     </div>
 </div>
@@ -739,7 +739,7 @@
     <div class="tabs-vertical-container">
         
         <button class="tab-accordion-btn" id="btn-paymentsTab" onclick="toggleAccordionTab('paymentsTab')">
-            <span>💵 التبويب الأول: دفعات المالك المستلمة</span>
+            <span>💵 الدفعات المستلمة</span>
             <i class="fas fa-chevron-down arrow-icon"></i>
         </button>
         <div id="paymentsTab" class="tab-content">
@@ -758,7 +758,7 @@
         </div>
 
         <button class="tab-accordion-btn" id="btn-daysTab" onclick="toggleAccordionTab('daysTab')">
-            <span>📅 التبويب الثاني: يوميات الموقع والتقارير</span>
+            <span>📅 يوميات الموقع </span>
             <i class="fas fa-chevron-down arrow-icon"></i>
         </button>
         <div id="daysTab" class="tab-content">
@@ -769,7 +769,7 @@
         </div>
 
         <button class="tab-accordion-btn" id="btn-subcontractorsTab" onclick="toggleAccordionTab('subcontractorsTab')">
-            <span>👥 التبويب الثالث: المقاولون والمجهزون الثانويون</span>
+            <span>👥 المقاولون والمجهزون الثانويون</span>
             <i class="fas fa-chevron-down arrow-icon"></i>
         </button>
         <div id="subcontractorsTab" class="tab-content">
@@ -791,11 +791,11 @@
         </div>
 
         <button class="tab-accordion-btn" id="btn-inventoryTab" onclick="toggleAccordionTab('inventoryTab')">
-            <span>📦 التبويب الرابع: مخزن وتوريد المواد الإنشائية الرئيسية</span>
+            <span>📦 مخزن المواد الإنشائية الرئيسية</span>
             <i class="fas fa-chevron-down arrow-icon"></i>
         </button>
         <div id="inventoryTab" class="tab-content">
-            <h3>📦 مخزن وتوريد المواد الإنشائية الموردة للموقع</h3>
+            <h3>📦 مخزن المواد الإنشائية الموردة للموقع</h3>
             <div id="inventoryList"></div>
             <button onclick="showAddInventoryForm()">📥 تسجيل وتوريد وجبة مواد للموقع</button>
             
@@ -832,7 +832,7 @@
     <label>👷 الكادر</label>
     <textarea id="workersDetail"></textarea>
     <label>💰 المبالغ والتكاليف</label>
-    <textarea id="costDetail" placeholder="اكتب المبالغ هنا..." oninput="formatTextareaNumbers(this)"></textarea>
+    <textarea id="costDetail" placeholder="" oninput="formatTextareaNumbers(this)"></textarea>
     <h3>📸 الصور </h3>
     <input type="file" id="mediaInput" multiple accept="image/*,video/*">
     <div id="mediaList"></div>
