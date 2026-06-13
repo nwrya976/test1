@@ -381,41 +381,58 @@
             font-size: 13px;
         }
 
+        /* تخصيص مظهر النوافذ المنبثقة المدمجة لتطابق تصميم التطبيق الداخلي وطمس الخلفية */
         .custom-popup-wrapper {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.75);
+            background: rgba(18, 18, 28, 0.85);
+            backdrop-filter: blur(5px);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 100005 !important;
         }
         .custom-popup-content {
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
+            background: #282c34;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 25px 20px;
+            border-radius: 16px;
             width: 92%;
-            max-width: 400px;
-            max-height: 75vh;
+            max-width: 420px;
+            max-height: 80vh;
             overflow-y: auto;
             text-align: right;
             direction: rtl;
-            color: #222 !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            color: #e0e0e0 !important;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+        body.light-mode .custom-popup-content {
+            background: #ffffff;
+            border: 1px solid #c8ced3;
+            color: #111 !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
         .custom-popup-content h3 {
-            color: #111 !important;
-            font-size: 15px;
-            margin-bottom: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            margin-bottom: 16px;
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+        body.light-mode .custom-popup-content h3 {
             background: none !important;
             -webkit-text-fill-color: initial !important;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 6px;
+            color: #1a73e8 !important;
+            border-bottom-color: #eee;
         }
-        .custom-popup-content label { color: #333 !important; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .custom-popup-content label { color: #e0e0e0 !important; font-size: 13px; font-weight: bold; cursor: pointer; }
+        body.light-mode .custom-popup-content label { color: #333 !important; }
         .custom-popup-content input[type="checkbox"] {
             width: 16px !important;
             height: 16px !important;
@@ -1758,11 +1775,54 @@
     
    function shareProject() {
         if (isShareMode) return;
-        const shareOption = prompt("اختر نوع التصدير والمشاركة:\n1. مشاركة جميع الأيام (رابط)\n2. مشاركة/طباعة أيام معينة");
+        
         let projectToShare = projects[currentProjectIndex];
         let shareLink = window.location.origin + window.location.pathname + `?share=${projectToShare.id}&uid=${currentUser.uid}`;
-        if (shareOption === "1") { prompt("انسخ الرابط لمشاركة جميع الأيام:", shareLink); } 
-        else if (shareOption === "2") { showDaySelectionPopup(); }
+        
+        // إنشاء النافذة المنبثقة المخصصة بدلاً من الـ prompt التلقائي للمتصفح
+        let popupContainer = document.createElement("div"); popupContainer.className = "custom-popup-wrapper";
+        let popupContent = document.createElement("div"); popupContent.className = "custom-popup-content";
+        
+        let title = document.createElement("h3"); 
+        title.innerHTML = "<i class='fas fa-share-alt'></i> خيارات تصدير ومشاركة التقرير"; 
+        popupContent.appendChild(title);
+
+        let desc = document.createElement("p");
+        desc.style.cssText = "font-size:13px; color:#aaa; margin-bottom:15px;";
+        desc.innerText = "يرجى اختيار الطريقة المناسبة لتصدير بيانات هذا الموقع:";
+        popupContent.appendChild(desc);
+        
+        let buttonDiv = document.createElement("div"); 
+        buttonDiv.style.cssText = "display: flex; flex-direction: column; gap: 10px;";
+        
+        let option1Btn = document.createElement("button"); 
+        option1Btn.innerHTML = "🔗 مشاركة جميع الأيام (رابط ويب)"; 
+        option1Btn.style.backgroundColor = "#2193b0";
+        option1Btn.onclick = () => {
+            popupContainer.remove();
+            prompt("انسخ الرابط التالي لمشاركة كافة بيانات وأيام المشروع:", shareLink);
+        };
+        
+        let option2Btn = document.createElement("button"); 
+        option2Btn.innerHTML = "📅 اختيار وطباعة أيام محددة (تقرير رسمي)"; 
+        option2Btn.style.backgroundColor = "#96c93d";
+        option2Btn.onclick = () => {
+            popupContainer.remove();
+            showDaySelectionPopup();
+        };
+
+        let cancelBtn = document.createElement("button"); 
+        cancelBtn.innerText = "إلغاء"; 
+        cancelBtn.style.backgroundColor = "#e74c3c";
+        cancelBtn.onclick = () => popupContainer.remove();
+        
+        buttonDiv.appendChild(option1Btn); 
+        buttonDiv.appendChild(option2Btn); 
+        buttonDiv.appendChild(cancelBtn);
+        
+        popupContent.appendChild(buttonDiv); 
+        popupContainer.appendChild(popupContent); 
+        document.body.appendChild(popupContainer);
     }
 
     function showDaySelectionPopup() {
