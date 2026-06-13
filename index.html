@@ -586,7 +586,7 @@
             input, select, textarea, button { font-size: 12px; padding: 8px 10px; }
             table { display: block; overflow-x: auto; white-space: nowrap; }
             th, td { font-size: 11px; padding: 6px; }
-            .project { flex-direction: column; align-items: stretch; gap: 6px; }
+            .project { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; gap: 6px; }
             .project-actions { justify-content: flex-end; }
             .card-stat span { font-size: 0.85rem; }
         }
@@ -1236,11 +1236,12 @@
         if (projects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع.</p>"; return; }
         projects.forEach((p,i)=>{
             const div=document.createElement("div"); div.className="project flex-between";
+            div.style.cssText = "display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important;";
             div.innerHTML=`
                 <div style="flex: 1;" onclick="openProject(${i})">
                     <b>${p.name}</b>
                 </div>
-                <div class="project-actions">
+                <div class="project-actions" style="display: flex; gap: 4px; flex-shrink: 0;">
                     <button class="action-btn edit-btn" onclick="event.stopPropagation(); editProjectDirect(${i})"><i class="fas fa-edit"></i></button>
                     <button class="action-btn del-btn delete" onclick="event.stopPropagation(); deleteProjectDirect(${i})"><i class="fas fa-trash"></i></button>
                 </div>
@@ -1257,11 +1258,12 @@
         filteredProjects.forEach((p, i) => {
             const originalIndex = projects.findIndex(proj => proj.id === p.id);
             const div = document.createElement("div"); div.className = "project flex-between";
+            div.style.cssText = "display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important;";
             div.innerHTML = `
                 <div style="flex: 1;" onclick="openProject(${originalIndex})">
                     <b>${p.name}</b>
                 </div>
-                <div class="project-actions">
+                <div class="project-actions" style="display: flex; gap: 4px; flex-shrink: 0;">
                     <button class="action-btn edit-btn" onclick="event.stopPropagation(); editProjectDirect(${originalIndex})"><i class="fas fa-edit"></i></button>
                     <button class="action-btn del-btn delete" onclick="event.stopPropagation(); deleteProjectDirect(${originalIndex})"><i class="fas fa-trash"></i></button>
                 </div>
