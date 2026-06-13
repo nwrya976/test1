@@ -297,17 +297,18 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* لوحة التحكم المالية داخل المشروع */
+        /* لوحة التحكم المالية داخل المشروع (تم تعديلها للتمرير الأفقي بسطر واحد) */
         .dashboard-box {
             background: rgba(30, 34, 42, 0.8);
             border: 1px solid #444;
             border-radius: 10px;
             padding: 12px;
             margin: 12px 0;
+            overflow-x: auto;
+            white-space: nowrap;
         }
         .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            display: flex;
             gap: 10px;
             margin-top: 8px;
         }
@@ -317,6 +318,8 @@
             border-radius: 6px;
             text-align: center;
             border: 1px solid #333;
+            min-width: 160px;
+            flex: 1;
         }
         .card-stat small { color: #888; display: block; font-size: 0.75rem; margin-bottom: 2px; }
         .card-stat span { font-weight: bold; font-size: 0.95rem; }
@@ -781,7 +784,6 @@
                     <option value="مقاول ثانوي">مقاول ثانوي (بالقطعة / عمل محدد / لبخ ...)</option>
                     <option value="مجهز مواد">مجهز مواد إنشائية (حديد / رمل / سمنت ...)</option>
                 </select>
-                <input type="text" id="subconAgreementInput" placeholder="مبلغ العقد أو الاتفاق الأولي (اختياري)" oninput="formatNumberInput(this)">
                 <button onclick="submitSubconForm()">حفظ الجهة</button>
                 <button onclick="hideAddSubconForm()" style="background: #e74c3c;">إلغاء</button>
             </div>
@@ -1233,23 +1235,10 @@
         const list=document.getElementById("projectList"); list.innerHTML="";
         if (projects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع.</p>"; return; }
         projects.forEach((p,i)=>{
-            let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
-            let totalDayCost = (p.days || []).reduce((sum, d) => {
-                let cleanText = (d.costDetail || "").replace(/,/g, '');
-                const numbers = cleanText.match(/\d+/g);
-                if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
-                return sum;
-            }, 0);
-            let totalSubconCost = (p.subcontractors || []).reduce((sum, sub) => {
-                return sum + ((sub.logs || []).filter(l => l.type === "استحقاق").reduce((s, l) => s + (l.amount || 0), 0));
-            }, 0);
-            let totalSpent = totalDayCost + totalSubconCost;
-
             const div=document.createElement("div"); div.className="project flex-between";
             div.innerHTML=`
                 <div style="flex: 1;" onclick="openProject(${i})">
-                    <b>${p.name}</b><br>
-                    <small>💰 صرفيات: ${totalSpent.toLocaleString()} د.ع | 📊 إنجاز: ${progress}%</small>
+                    <b>${p.name}</b>
                 </div>
                 <div class="project-actions">
                     <button class="action-btn edit-btn" onclick="event.stopPropagation(); editProjectDirect(${i})"><i class="fas fa-edit"></i></button>
@@ -1266,24 +1255,11 @@
         const filteredProjects = projects.filter(p => p.name.toLowerCase().includes(query));
         if (filteredProjects.length === 0) { list.innerHTML = "<p>لا يوجد مشاريع تطابق البحث.</p>"; return; }
         filteredProjects.forEach((p, i) => {
-            let progress = Math.round(((p.days ? p.days.length : 0) / p.duration) * 100);
-            let totalDayCost = (p.days || []).reduce((sum, d) => {
-                let cleanText = (d.costDetail || "").replace(/,/g, '');
-                const numbers = cleanText.match(/\d+/g);
-                if (numbers) { return sum + numbers.reduce((daySum, num) => daySum + parseInt(num), 0); }
-                return sum;
-            }, 0);
-            let totalSubconCost = (p.subcontractors || []).reduce((sum, sub) => {
-                return sum + ((sub.logs || []).filter(l => l.type === "استحقاق").reduce((s, l) => s + (l.amount || 0), 0));
-            }, 0);
-            let grandTotal = totalDayCost + totalSubconCost;
-            
             const originalIndex = projects.findIndex(proj => proj.id === p.id);
             const div = document.createElement("div"); div.className = "project flex-between";
             div.innerHTML = `
                 <div style="flex: 1;" onclick="openProject(${originalIndex})">
-                    <b>${p.name}</b><br>
-                    <small>💰 ${grandTotal.toLocaleString()} | 📊 ${progress}%</small>
+                    <b>${p.name}</b>
                 </div>
                 <div class="project-actions">
                     <button class="action-btn edit-btn" onclick="event.stopPropagation(); editProjectDirect(${originalIndex})"><i class="fas fa-edit"></i></button>
@@ -1403,18 +1379,53 @@
         if (isShareMode) return;
         let p = projects[currentProjectIndex];
         const list = document.getElementById("paymentsList"); list.innerHTML = "";
-        (p.payments || []).forEach((pay, index) => {
-            const div = document.createElement("div");
-            div.style.cssText = "display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;";
-            div.innerHTML = `<span>💵 ${pay.amount.toLocaleString()} د.ع | 📅 ${pay.date} (${getDayName(pay.date)})</span><button class="delete">✖</button>`;
-            div.querySelector("button").onclick = () => {
-                p.payments.splice(index, 1); saveProject(p).then(() => { openProject(currentProjectIndex, true); });
-            };
-            list.appendChild(div);
-        });
+        
+        if (!p.payments || p.payments.length === 0) {
+            list.innerHTML = "<p>لا توجد دفعات مسجلة حالياً.</p>";
+        } else {
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>رقم الدفعة</th>
+                            <th>مبلغ الدفعة</th>
+                            <th>تاريخ الدفعة</th>
+                            <th>يوم الدفعة</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            p.payments.forEach((pay, index) => {
+                tableHtml += `
+                    <tr>
+                        <td><strong>${index + 1}</strong></td>
+                        <td style="color:#2ecc71; font-weight:bold;">${pay.amount.toLocaleString()} د.ع</td>
+                        <td>${pay.date}</td>
+                        <td>${getDayName(pay.date)}</td>
+                        <td>
+                            <button class="delete" style="padding:4px 8px; font-size:11px; margin:0;" onclick="deletePaymentItem(${index})">✖ حذف</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableHtml += `</tbody></table>`;
+            list.innerHTML = tableHtml;
+        }
+
         let totalPaid = (p.payments || []).reduce((sum, pr) => sum + pr.amount, 0);
         let remaining = p.cost - totalPaid;
         document.getElementById("remainingCost").innerText = "المتبقي من العقد الكلي: " + remaining.toLocaleString() + " د.ع";
+    }
+
+    function deletePaymentItem(index) {
+        let p = projects[currentProjectIndex];
+        if(confirm("هل تريد حذف هذه الدفعة المالية؟")) {
+            p.payments.splice(index, 1);
+            saveProject(p).then(() => { openProject(currentProjectIndex, true); });
+        }
     }
     
     function showAddPaymentForm() {
@@ -1448,13 +1459,11 @@
         let p = projects[currentProjectIndex];
         let name = document.getElementById("subconNameInput").value;
         let type = document.getElementById("subconTypeInput").value;
-        let agreementRaw = document.getElementById("subconAgreementInput").value;
-        let agreement = parseInt(agreementRaw.replace(/,/g, '')) || 0;
         
         if(!name) { alert("❌ يرجى كتابة الاسم"); return; }
         if(!p.subcontractors) p.subcontractors = [];
-        p.subcontractors.push({ name, type, agreement, logs: [] });
-        saveProject(p).then(() => { hideAddSubconForm(); openProject(currentProjectIndex, true); });
+        p.subcontractors.push({ name, type, agreement: 0, logs: [] });
+        saveProject(p).then(() => { hideAddSubconForm(); document.getElementById("subconNameInput").value = ""; openProject(currentProjectIndex, true); });
     }
 
     function renderSubcontractors() {
@@ -1470,7 +1479,7 @@
             div.innerHTML = `
                 <div class="flex-between" onclick="toggleSubconDetails(${idx})" style="cursor:pointer;">
                     <div><strong>👤 ${sub.name}</strong> <small>(${sub.type})</small><br>
-                    <small>الاتفاق: ${sub.agreement.toLocaleString()} | استحقاق: ${totalRequired.toLocaleString()} | واصل: ${totalPaid.toLocaleString()}</small></div>
+                    <small>استحقاق: ${totalRequired.toLocaleString()} | واصل: ${totalPaid.toLocaleString()}</small></div>
                     <div><span style="color:${balance > 0 ? '#e74c3c' : '#2ecc71'}; font-weight:bold;">له: ${balance.toLocaleString()} د.ع</span> ⬇</div>
                 </div>
                 <div id="subcon-details-${idx}" class="subcon-details">
