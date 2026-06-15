@@ -716,7 +716,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-<div id="sidebarToggleBtn" class="settings-toggle" onclick="toggleSidebar(true)">
+<div id="sidebarToggleBtn" class="settings-toggle hidden" onclick="toggleSidebar(true)">
     <i class="fas fa-cog"></i>
 </div>
 
@@ -766,26 +766,41 @@
     <div style="font-size:2.5rem; color:#00b09b;">📋</div>
     <h1 id="form-title">تسجيل الدخول إلى ProTrack</h1>
     <div id="error-msg" class="error-message"></div>
+    
     <form id="auth-form">
-        <div class="form-group">
-            <label>البريد الإلكتروني:</label>
-            <input type="email" id="email" placeholder="Your-Name@gmail.com" required>
+        <div id="main-auth-fields">
+            <div class="form-group">
+                <label>البريد الإلكتروني:</label>
+                <input type="email" id="email" placeholder="Your-Name@gmail.com" required>
+            </div>
+            <div class="form-group" id="password-group-container">
+                <label>كلمة المرور:</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+                <a href="#" style="font-size:0.8rem; color:#2193b0; display:block; text-align:right; margin-top:8px;" onclick="showResetPasswordView(); return false;" id="forgot-password-link">هل نسيت كلمة المرور؟</a>
+            </div>
+            <div class="form-group hidden" id="confirm-password-group">
+                <label>تأكيد كلمة المرور:</label>
+                <input type="password" id="confirm-password" placeholder="••••••••">
+            </div>
+            <div class="button-group">
+                <button type="button" id="login-btn" class="btn-primary">تسجيل دخول</button>
+                <button type="button" id="signup-btn" class="btn-primary hidden">إنشاء حساب</button>
+            </div>
         </div>
-        <div class="form-group">
-            <label>كلمة المرور:</label>
-            <input type="password" id="password" placeholder="••••••••" required>
-            <a href="#" style="font-size:0.8rem; color:#2193b0; display:block; text-align:right; margin-top:8px;" onclick="resetPassword(); return false;" id="forgot-password-link">هل نسيت كلمة المرور؟</a>
-        </div>
-        <div class="form-group hidden" id="confirm-password-group">
-            <label>تأكيد كلمة المرور:</label>
-            <input type="password" id="confirm-password" placeholder="••••••••">
-        </div>
-        <div class="button-group">
-            <button type="button" id="login-btn" class="btn-primary">تسجيل دخول</button>
-            <button type="button" id="signup-btn" class="btn-primary hidden">إنشاء حساب</button>
+
+        <div id="reset-password-fields" class="hidden">
+            <div class="form-group">
+                <label>أدخل البريد الإلكتروني الخاص بحسابك:</label>
+                <input type="email" id="reset-email" placeholder="Your-Name@gmail.com">
+            </div>
+            <div class="button-group" style="display:flex; flex-direction:column; gap:8px;">
+                <button type="button" onclick="submitInlineResetPassword()" style="background:linear-gradient(135deg, #2193b0, #6dd5ed); margin:0; width:100%;">إرسال رابط تعيين كلمة السر</button>
+                <button type="button" onclick="hideResetPasswordView()" style="background:#e74c3c; margin:0; width:100%;">إلغاء والعودة</button>
+            </div>
         </div>
     </form>
-    <div class="form-toggle">
+    
+    <div class="form-toggle" id="auth-toggle-container">
         <p id="toggle-text">ليس لديك حساب؟ <a href="#" id="toggle-link">إنشاء حساب جديد</a></p>
     </div>
 </div>
@@ -1118,19 +1133,31 @@
             loadProjects(); 
             document.getElementById("sidebarUserEmail").innerText = user.email.split('@')[0];
             loadAvatarFromStorage(); 
+            document.getElementById("sidebarToggleBtn").classList.remove("hidden");
         } else { 
             currentUser = null; 
             hideAllPages(); 
             authPage.classList.remove('hidden'); 
             toggleSidebar(false);
+            document.getElementById("sidebarToggleBtn").classList.add("hidden");
         }
     });
 
     window.addEventListener('load', function() {
         if (!handleShareLink()) {
             auth.onAuthStateChanged(user => {
-                if (user) { currentUser = user; showHubApp(); loadProjects(); } 
-                else { currentUser = null; hideAllPages(); authPage.classList.remove('hidden'); }
+                if (user) { 
+                    currentUser = user; 
+                    showHubApp(); 
+                    loadProjects(); 
+                    document.getElementById("sidebarToggleBtn").classList.remove("hidden");
+                } 
+                else { 
+                    currentUser = null; 
+                    hideAllPages(); 
+                    authPage.classList.remove('hidden'); 
+                    document.getElementById("sidebarToggleBtn").classList.add("hidden");
+                }
             });
         }
     });
@@ -1177,6 +1204,35 @@
                 });
             })
             .catch(() => { showError('حدث خطأ في إنشاء الحساب.'); });
+    }
+
+    function showResetPasswordView() {
+        document.getElementById("main-auth-fields").classList.add("hidden");
+        document.getElementById("auth-toggle-container").classList.add("hidden");
+        document.getElementById("reset-password-fields").classList.remove("hidden");
+        formTitle.textContent = 'استعادة كلمة المرور';
+        document.getElementById("reset-email").value = document.getElementById("email").value;
+    }
+
+    function hideResetPasswordView() {
+        document.getElementById("reset-password-fields").classList.add("hidden");
+        document.getElementById("main-auth-fields").classList.remove("hidden");
+        document.getElementById("auth-toggle-container").classList.remove("hidden");
+        formTitle.textContent = isLoginMode ? 'تسجيل الدخول إلى ProTrack' : 'إنشاء حساب جديد';
+    }
+
+    function submitInlineResetPassword() {
+        let userEmail = document.getElementById("reset-email").value.trim();
+        if (!userEmail) { showError("❌ الرجاء كتابة البريد الإلكتروني أولاً."); return; }
+        
+        auth.sendPasswordResetEmail(userEmail)
+            .then(() => {
+                showSuccess("تم إرسال الرابط! تفقد صندوق الرسائل أو الـ Spam 🔑");
+                setTimeout(() => { hideResetPasswordView(); }, 2000);
+            })
+            .catch((error) => {
+                showError("حدث خطأ: تأكد من كتابة البريد الإلكتروني المسجل بشكل صحيح.");
+            });
     }
 
     loginBtn.addEventListener('click', () => login(document.getElementById('email').value, document.getElementById('password').value));
@@ -1518,7 +1574,7 @@
     }
 
     function deleteInventoryItem(idx) {
-        if(confirm("هل تريد حذف هذه المادة؟")) {
+        if(confirm("هل تريد حذف هذه المادة?")) {
             let p = projects[currentProjectIndex]; p.inventory.splice(idx, 1);
             saveProject(p).then(() => openProject(currentProjectIndex, true));
         }
@@ -1560,7 +1616,7 @@
                         <tr><th>👷 الكادر</th><td>${(d.workersDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                         <tr><th>💰 المبالغ</th><td>${(d.costDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                     </table>
-                    <div> ${(d.media||[]).map((src,j)=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")} </div>
+                    <div> ${(d.media||[]).map((src,j)=>`<img src="${src}" loading="lazy" onclick="openFullscreen('${src}')">`).join("")} </div>
                     ${!isShareMode ? `<button onclick="openDay(${i})">✏ تعديل</button><button class="delete" onclick="deleteDay(${i});event.stopPropagation();">🗑 حذف اليوم</button>` : ''}
                 </div>`;
             list.appendChild(div);
@@ -1585,7 +1641,7 @@
                         <tr><th>👷 الكادر</th><td>${(d.workersDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                         <tr><th>💰 المبالغ</th><td>${(d.costDetail||"-").replace(/\n/g,"<br>")}</td></tr>
                     </table>
-                    <div> ${(d.media||[]).map(src=>`<img src="${src}" onclick="openFullscreen('${src}')">`).join("")} </div>
+                    <div> ${(d.media||[]).map(src=>`<img src="${src}" loading="lazy" onclick="openFullscreen('${src}')">`).join("")} </div>
                     ${!isShareMode ? `<button onclick="openDay(${originalIndex})">✏ تعديل</button><button class="delete" onclick="deleteDay(${originalIndex});event.stopPropagation();">🗑 حذف اليوم</button>` : ''}
                 </div>`;
             list.appendChild(div);
@@ -1627,28 +1683,49 @@
     
     function backToProject(){ openProject(currentProjectIndex, true); } 
     
+    // تعديل دالة حفظ التغييرات والوسائط لتتحول بالكامل لضغط فائق الجودة فوري Base64 في الـ Realtime Database مباشرة
     function saveDay(){ 
         if (isShareMode) return;
         let p = projects[currentProjectIndex]; let d = p.days[currentDayIndex];
         d.workDescription = document.getElementById("workDescription").value; 
         d.workersDetail = document.getElementById("workersDetail").value; 
         d.costDetail = document.getElementById("costDetail").value; 
+        
         let files = document.getElementById("mediaInput").files;
-        if (files.length === 0) { saveProject(p).then(() => { renderMedia(); openProject(currentProjectIndex, true); }); return; }
-        let filesProcessed = 0; showSuccess("جاري معالجة الصور... ⏳");
+        if (files.length === 0) { 
+            saveProject(p).then(() => { renderMedia(); openProject(currentProjectIndex, true); }); 
+            return; 
+        }
+        
+        let filesProcessed = 0; 
+        showSuccess("جاري معالجة وضغط الصور للأداء الفائق... ⏳");
+        
         for (let f of files) {
             let reader = new FileReader();
             reader.onload = function(e) {
                 let img = new Image();
                 img.onload = function() {
                     let canvas = document.createElement('canvas'); let ctx = canvas.getContext('2d');
-                    let maxWidth = 600; let ratio = maxWidth / img.width;
+                    
+                    // تحجيم ذكي جداً لتقليل الأبعاد لـ 400 بكسل كأقصى عرض لتوفير المساحة كلياً داخل قاعدة البيانات
+                    let maxWidth = 400; 
+                    let ratio = maxWidth / img.width;
                     canvas.width = maxWidth; canvas.height = img.height * ratio;
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    let compressedData = canvas.toDataURL('image/jpeg', 0.4);
-                    if (!d.media) d.media = []; d.media.push(compressedData); filesProcessed++;
+                    
+                    // تحويل الصورة المضغوطة بالكامل لجودة 0.4 (مضغوط فائق الخفة) لخزنه كـ Base64 ناصع وخفيف
+                    let compressedBase64 = canvas.toDataURL('image/jpeg', 0.4);
+                    
+                    if (!d.media) d.media = []; 
+                    d.media.push(compressedBase64);
+                    filesProcessed++;
+                    
                     if (filesProcessed === files.length) {
-                        saveProject(p).then(() => { renderMedia(); document.getElementById("mediaInput").value = ""; openProject(currentProjectIndex, true); });
+                        saveProject(p).then(() => { 
+                            renderMedia(); 
+                            document.getElementById("mediaInput").value = ""; 
+                            openProject(currentProjectIndex, true); 
+                        });
                     }
                 };
                 img.src = e.target.result;
@@ -1663,13 +1740,14 @@
         let container=document.getElementById("mediaList"); container.innerHTML=""; 
         (d.media || []).forEach((src,j)=>{ 
             let div=document.createElement("div"); div.style.cssText = "display:inline-block; position:relative;"; 
-            let img=document.createElement("img"); img.src=src; img.onclick=()=>openFullscreen(src); 
+            let img=document.createElement("img"); img.src=src; img.setAttribute("loading", "lazy"); img.onclick=()=>openFullscreen(src); 
             let del=document.createElement("button"); del.innerText="x"; del.className="delete"; del.style.cssText = "position:absolute; top:0; right:0;"; 
             del.onclick=(event)=>{ event.stopPropagation(); if (confirm("حذف الصورة؟")) { deleteImage(currentDayIndex,j); } }; 
             div.appendChild(img); div.appendChild(del); container.appendChild(div); 
         }); 
     }
     
+    // تعديل الحذف ليعمل محلياً ومباشرة داخل مصفوفة المشروع بقاعدة البيانات
     function deleteImage(dayIndex, imgIndex){ 
         if (isShareMode) return;
         let p = projects[currentProjectIndex]; let d = p.days[dayIndex];
@@ -1825,7 +1903,6 @@
                     let grandTotalDays = 0;
                     let grandTotalSulas = 0;
 
-                    // 📊 حساب الأيام والسلف بشكل تراكمي شامل من كافة المشاريع
                     projects.forEach(proj => {
                         if (proj.workers) {
                             let foundWorker = proj.workers.find(worker => worker.name === w.name);
@@ -1903,7 +1980,7 @@
         let name = document.getElementById("editWName").value.trim();
         let wage = parseInt(document.getElementById("editWWage").value.replace(/,/g, '')) || 0;
         let checkedBoxes = document.querySelectorAll('.edit-worker-proj-cb:checked');
-        if(!name || !wage || checkedBoxes.length === 0) { alert("❌ يرجى ملء الحقول المطلوبة وتحديد مشروع واحد على الأخل."); return; }
+        if(!name || !wage || checkedBoxes.length === 0) { alert("❌ يرجى ملء الحقول المطلوبة وتحديد مشروع واحد على الأقل."); return; }
 
         let targetProjIndices = []; checkedBoxes.forEach(cb => targetProjIndices.push(parseInt(cb.value)));
         
