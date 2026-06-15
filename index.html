@@ -635,6 +635,18 @@
         @media (max-width: 768px) {
             body { padding: 8px; }
             .container { padding: 15px 12px; margin-top: 45px; }
+            .auth-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin-top: 15px !important;
+                padding: 2rem 1.2rem !important;
+                border-radius: 10px !important;
+                box-shadow: none !important;
+            }
+            .auth-container input {
+                padding: 12px !important;
+                font-size: 14px !important;
+            }
             h1 { font-size: 20px; }
             h2 { font-size: 15px; }
             h3 { font-size: 13px; }
@@ -987,7 +999,7 @@
                 <input type="text" id="subconNameInput" placeholder="اسم المقاول أو الشركة المجهزة">
                 <select id="subconTypeInput">
                     <option value="مقاول ثانوي">مقاول ثانوي (بالقطعة / عمل محدد / لبخ ...)</option>
-                    <option value="مجهز مواد">مجهز مواد إنشائية (حديد / رمل / سمنت ...)</option>
+                    <option value="mجهز مواد">مجهز مواد إنشائية (حديد / رمل / سمنت ...)</option>
                 </select>
                 <button onclick="submitSubconForm()">حفظ الجهة</button>
                 <button onclick="hideAddSubconForm()" style="background: #e74c3c;">إلغاء</button>
@@ -1050,11 +1062,6 @@
     <div id="shareWorkersList"></div>
     <h2>📅 سجل الأيام واليوميات الفنية للموقع</h2>
     <div id="shareDaysList"></div>
-</div>
-
-<div class="developer-info">
-    <p>تطوير المهندس: كاظم قاسم</p>
-    <p>رقم الهاتف المباشر للاتصال: <a href="tel:07746424814">07746424814</a></p>
 </div>
 
 <script>
@@ -1601,7 +1608,7 @@
     
     function deleteDay(i){ 
         if(isShareMode) return;
-        if(confirm("هل تريد حذف هذا اليوم؟")){ 
+        if(confirm("هل تريد حذف هذا اليوم?")){ 
             let p = projects[currentProjectIndex]; p.days.splice(i,1); 
             saveProject(p).then(() => { openProject(currentProjectIndex, true); });
         } 
@@ -1815,15 +1822,23 @@
                     if (processedWorkers.some(item => item.name === w.name)) return;
                     
                     let associatedProjects = [];
+                    let grandTotalDays = 0;
+                    let grandTotalSulas = 0;
+
+                    // 📊 حساب الأيام والسلف بشكل تراكمي شامل من كافة المشاريع
                     projects.forEach(proj => {
-                        if (proj.workers && proj.workers.some(worker => worker.name === w.name)) {
-                            associatedProjects.push(proj.name);
+                        if (proj.workers) {
+                            let foundWorker = proj.workers.find(worker => worker.name === w.name);
+                            if (foundWorker) {
+                                associatedProjects.push(proj.name);
+                                grandTotalDays += (foundWorker.days || 0);
+                                grandTotalSulas += (foundWorker.payments || []).reduce((sum, pay) => sum + (pay.amount || 0), 0);
+                            }
                         }
                     });
 
-                    let totalDue = (w.days || 0) * (w.wage || 0);
-                    let totalSulas = (w.payments || []).reduce((sum, pay) => sum + (pay.amount || 0), 0);
-                    let netRemaining = totalDue - totalSulas;
+                    let totalDue = grandTotalDays * (w.wage || 0);
+                    let netRemaining = totalDue - grandTotalSulas;
                     
                     let row = `
                         <tr>
@@ -1833,8 +1848,8 @@
                                 <div id="wProjDrop-${pIdx}-${wIdx}" class="project-list-dropdown-content">${associatedProjects.map(name => `• ${name}`).join("<br>")}</div>
                             </td>
                             <td>${(w.wage || 0).toLocaleString()} د.ع</td>
-                            <td style="color:#3498db; font-weight:bold;">${w.days || 0} يوم</td>
-                            <td style="color:#ea580c; font-weight:bold;">${totalSulas.toLocaleString()} د.ع</td>
+                            <td style="color:#3498db; font-weight:bold;">${grandTotalDays} يوم</td>
+                            <td style="color:#ea580c; font-weight:bold;">${grandTotalSulas.toLocaleString()} د.ع</td>
                             <td style="color:#2ecc71; font-weight:bold;">${netRemaining.toLocaleString()} د.ع</td>
                             <td>
                                 <div style="display:flex; gap:4px;">
@@ -1888,7 +1903,7 @@
         let name = document.getElementById("editWName").value.trim();
         let wage = parseInt(document.getElementById("editWWage").value.replace(/,/g, '')) || 0;
         let checkedBoxes = document.querySelectorAll('.edit-worker-proj-cb:checked');
-        if(!name || !wage || checkedBoxes.length === 0) { alert("❌ يرجى ملء الحقول المطلوبة وتحديد مشروع واحد على الأقل."); return; }
+        if(!name || !wage || checkedBoxes.length === 0) { alert("❌ يرجى ملء الحقول المطلوبة وتحديد مشروع واحد على الأخل."); return; }
 
         let targetProjIndices = []; checkedBoxes.forEach(cb => targetProjIndices.push(parseInt(cb.value)));
         
