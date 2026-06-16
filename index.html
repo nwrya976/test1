@@ -604,7 +604,8 @@
             margin: 4px;
             cursor: pointer;
             border: 2px solid #ddd;
-            transition: transform 0.2s, border-color 0.2s;
+            transition: transform 0.2s;
+            border-color: #022;
         }
         img:hover, video:hover { transform: scale(1.05); border-color: #3498db; }
 
@@ -945,7 +946,7 @@
 </div>
 
 <div class="container hidden" id="projectPage">
-    <button class="back" onclick="backToProjects()">⬅ رجوع للمشاريع</button>
+    <button class="back" onclick="backToProjects()">⬅ رجوع لقائمة المشاريع</button>
     <h2 id="projTitle" style="margin-top: 8px;"></h2>
     
     <div class="dashboard-box" id="projectDashboard">
@@ -998,7 +999,13 @@
             <h3>📅 الأيام واليوميات</h3>
             <input type="date" id="searchDayInput" onchange="searchDays()">
             <div id="daysList"></div>
-            <button onclick="addDay()">➕ إضافة يوم</button>
+            <button onclick="showInlineAddDayForm()">➕ إضافة يوم</button>
+            <div id="inlineAddDayBox" class="inline-form-box hidden">
+                <h4>📅 تحديد تاريخ اليومية الجديدة</h4>
+                <input type="date" id="newDayDateInput">
+                <button onclick="submitInlineAddDayForm()">تأكيد وإضافة اليوم</button>
+                <button onclick="hideInlineAddDayForm()" style="background: #e74c3c;">إلغاء</button>
+            </div>
         </div>
 
         <button class="tab-accordion-btn" id="btn-subcontractorsTab" onclick="toggleAccordionTab('subcontractorsTab')">
@@ -1433,7 +1440,7 @@
         }
 
         if (!isShareMode) { 
-            renderPayments(); hideAddPaymentForm(); hideAddSubconForm(); hideAddInventoryForm();
+            renderPayments(); hideAddPaymentForm(); hideAddSubconForm(); hideAddInventoryForm(); hideInlineAddDayForm();
         }
         renderDays(); renderSubcontractors(); renderInventory();
         
@@ -1481,7 +1488,7 @@
         document.getElementById("paymentDateInput").value = new Date().toISOString().split("T")[0];
         document.getElementById("paymentAmountInput").value = "";
     }
-    function hideAddPaymentForm() { document.getElementById("addProjectForm").classList.add("hidden"); }
+    function hideAddPaymentForm() { document.getElementById("addPaymentForm").classList.add("hidden"); }
     
     function submitPaymentForm() {
         if (isShareMode) return;
@@ -1492,7 +1499,8 @@
         if(!p.payments) p.payments = [];
         p.payments.push({ amount: amount, date: chosenDate });
         p.payments.sort((a, b) => new Date(a.date) - new Date(b.date));
-        saveProject(p).then(() => { openProject(currentProjectIndex, true); });
+        // 🌟 تعديل: إخفاء البيانات والصندوق تلقائياً بعد الحفظ الناجح
+        saveProject(p).then(() => { hideAddPaymentForm(); openProject(currentProjectIndex, true); });
     }
 
     function showAddSubconForm() { document.getElementById("addSubconForm").classList.remove("hidden"); }
@@ -1506,6 +1514,26 @@
         if(!p.subcontractors) p.subcontractors = [];
         p.subcontractors.push({ name, type, agreement: 0, logs: [] });
         saveProject(p).then(() => { hideAddSubconForm(); document.getElementById("subconNameInput").value = ""; openProject(currentProjectIndex, true); });
+    }
+
+    // 🌟 وظائف جديدة للتحكم في صندوق إضافة اليومية بدون prompt المتصفح
+    function showInlineAddDayForm() {
+        if (isShareMode) return;
+        document.getElementById("inlineAddDayBox").classList.remove("hidden");
+        document.getElementById("newDayDateInput").value = new Date().toISOString().split("T")[0];
+    }
+    function hideInlineAddDayForm() {
+        document.getElementById("inlineAddDayBox").classList.add("hidden");
+    }
+    function submitInlineAddDayForm() {
+        if (isShareMode) return;
+        let p = projects[currentProjectIndex]; if (!p.days) p.days = [];
+        let chosenDate = document.getElementById("newDayDateInput").value;
+        if (!chosenDate) { alert("❌ يرجى اختيار تاريخ محدد أولاً."); return; }
+        if (p.days.some(day => day.date === chosenDate)) { alert("❌ هذا التاريخ مسجل مسبقاً!"); return; }
+        p.days.push({date: chosenDate, workDescription: "", workersDetail: "", costDetail: "", media: []}); 
+        p.days.sort((a, b) => new Date(a.date) - new Date(b.date));
+        saveProject(p).then(() => { hideInlineAddDayForm(); openProject(currentProjectIndex, true); });
     }
 
     function renderSubcontractors() {
@@ -1651,17 +1679,7 @@
     function toggleDayDetails(i){ let el=document.getElementById("details-"+i); el.style.display=el.style.display==="block"?"none":"block"; }
     function getDayName(dateStr){ const days=["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"]; return days[new Date(dateStr).getDay()]; }
     
-    function addDay(){ 
-        if (isShareMode) return;
-        let p = projects[currentProjectIndex]; if (!p.days) p.days = [];
-        let chosenDate = prompt("📅 أدخل تاريخ اليومية (YYYY-MM-DD):", new Date().toISOString().split("T")[0]);
-        if (!chosenDate) return;
-        if (p.days.some(day => day.date === chosenDate)) { alert("❌ هذا التاريخ مسجل مسبقاً!"); return; }
-        p.days.push({date: chosenDate, workDescription: "", workersDetail: "", costDetail: "", media: []}); 
-        p.days.sort((a, b) => new Date(a.date) - new Date(b.date));
-        saveProject(p).then(() => { openProject(currentProjectIndex, true); });
-    }
-    
+    // تم إلغاء استخدام دالة addDay القديمة لصالح الصندوق المدمج الجديد
     function deleteDay(i){ 
         if(isShareMode) return;
         if(confirm("هل تريد حذف هذا اليوم?")){ 
@@ -2150,7 +2168,7 @@
             if(target) {
                 if(!target.payments) target.payments = [];
                 target.payments.push({ amount: amount, date: new Date().toLocaleString("ar-EG") });
-                saveProject(targetProject).then(() => {
+                targetProject.saveProject(targetProject).then(() => {
                     document.getElementById("payHubWorkerName").value = ""; document.getElementById("payHubAmount").value = "";
                     renderGlobalWorkersTable(); showSuccess("تم صرف وقيد السلفة بنجاح! 💰");
                 });
@@ -2372,7 +2390,6 @@
         const sidebarThemeBtn = document.getElementById('sidebarThemeBtn');
         const currentTheme = localStorage.getItem("theme");
         
-        // ☀️ تعديل جوهري: تفعيل وضع الإضاءة (light-mode) مباشرة كوضع أساسي للتطبيق عند الفتح
         if (currentTheme === "dark") { 
             document.body.classList.remove("light-mode"); 
         } else { 
