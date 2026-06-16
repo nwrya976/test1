@@ -833,7 +833,7 @@
         <input type="text" id="projectName" placeholder="اسم المشروع">
         <input type="number" id="projectDuration" placeholder="مدة المشروع (بالأيام)">
         <input type="text" id="projectCost" placeholder="تكلفة المشروع الكلية المقدرة" oninput="formatNumberInput(this)">
-        <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً؟">
+        <input type="number" id="daysSinceStart" placeholder="كم يوم مضى على المباشرة بالمشروع فعلياً?">
         <button onclick="addProject()">حفظ</button>
     </div>
 </div>
@@ -1683,7 +1683,6 @@
     
     function backToProject(){ openProject(currentProjectIndex, true); } 
     
-    // تعديل دالة حفظ التغييرات والوسائط لتتحول بالكامل لضغط فائق الجودة فوري Base64 في الـ Realtime Database مباشرة
     function saveDay(){ 
         if (isShareMode) return;
         let p = projects[currentProjectIndex]; let d = p.days[currentDayIndex];
@@ -1707,13 +1706,11 @@
                 img.onload = function() {
                     let canvas = document.createElement('canvas'); let ctx = canvas.getContext('2d');
                     
-                    // تحجيم ذكي جداً لتقليل الأبعاد لـ 400 بكسل كأقصى عرض لتوفير المساحة كلياً داخل قاعدة البيانات
                     let maxWidth = 400; 
                     let ratio = maxWidth / img.width;
                     canvas.width = maxWidth; canvas.height = img.height * ratio;
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
-                    // تحويل الصورة المضغوطة بالكامل لجودة 0.4 (مضغوط فائق الخفة) لخزنه كـ Base64 ناصع وخفيف
                     let compressedBase64 = canvas.toDataURL('image/jpeg', 0.4);
                     
                     if (!d.media) d.media = []; 
@@ -1747,7 +1744,6 @@
         }); 
     }
     
-    // تعديل الحذف ليعمل محلياً ومباشرة داخل مصفوفة المشروع بقاعدة البيانات
     function deleteImage(dayIndex, imgIndex){ 
         if (isShareMode) return;
         let p = projects[currentProjectIndex]; let d = p.days[dayIndex];
@@ -1812,7 +1808,7 @@
         let pdfBtn = document.createElement("button"); pdfBtn.innerText = "🖨️ تحميل وطباعة كتقرير رسمي PDF"; pdfBtn.style.backgroundColor = "#2ecc71";
         pdfBtn.onclick = () => {
             let selectedIndices = [];
-            currentProject.days.forEach((_, index) => { if (document.getElementById("day-" + index).checked) selectedIndices.push(index); });
+            currentProject.days.forEach((_, index) => { if (document.getElementById("day-" + index).checked) selectedIndices.includes(index); });
             if (selectedIndices.length > 0) {
                 popupContainer.remove(); let originalDays = [...currentProject.days];
                 currentProject.days = currentProject.days.filter((_, index) => selectedIndices.includes(index));
@@ -2375,12 +2371,18 @@
     document.addEventListener('DOMContentLoaded', () => {
         const sidebarThemeBtn = document.getElementById('sidebarThemeBtn');
         const currentTheme = localStorage.getItem("theme");
-        if (currentTheme === "dark") { document.body.classList.add("light-mode"); } 
-        else if (currentTheme === "light") { document.body.classList.remove("light-mode"); }
+        
+        // ☀️ تعديل جوهري: تفعيل وضع الإضاءة (light-mode) مباشرة كوضع أساسي للتطبيق عند الفتح
+        if (currentTheme === "dark") { 
+            document.body.classList.remove("light-mode"); 
+        } else { 
+            document.body.classList.add("light-mode"); 
+        }
+        
         if(sidebarThemeBtn) {
             sidebarThemeBtn.addEventListener('click', () => {
                 document.body.classList.toggle("light-mode");
-                localStorage.setItem("theme", document.body.classList.contains("light-mode") ? "dark" : "light");
+                localStorage.setItem("theme", document.body.classList.contains("light-mode") ? "light" : "dark");
             });
         }
     });
